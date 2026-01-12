@@ -3,21 +3,20 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-    Bell,
+    Megaphone,
     Search,
     Filter,
-    FileText,
-    Download,
     Calendar,
-    Megaphone,
     ChevronRight,
     Pin
 } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 const NoticesPage = () => {
     const [filter, setFilter] = useState('All');
     const [searchQuery, setSearchQuery] = useState('');
+    const [showMobileFilters, setShowMobileFilters] = useState(false);
 
     const notices = [
         {
@@ -138,17 +137,59 @@ const NoticesPage = () => {
 
                     {/* LEFT COLUMN: Main Feed */}
                     <div className="space-y-6">
-                        {/* Mobile Search Bar (Visible only on mobile) */}
-                        <div className="bg-white p-2 rounded-xl border border-slate-200 shadow-sm flex items-center mb-6 md:hidden">
-                            <Search className="w-5 h-5 text-slate-400 ml-3" />
-                            <input
-                                type="text"
-                                placeholder="Search notices..."
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full px-4 py-2 bg-transparent focus:outline-none text-slate-700"
-                            />
+
+                        {/* Mobile Header: Search + Filter Toggle (Visible only on mobile) */}
+                        <div className="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3 mb-2 md:hidden">
+                            <div className="relative flex-1">
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                <input
+                                    type="text"
+                                    placeholder="Search notices..."
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    className="w-full pl-9 pr-4 py-2 bg-slate-50 rounded-xl focus:outline-none text-sm text-slate-700 font-medium placeholder:text-slate-400"
+                                />
+                            </div>
+                            <button
+                                onClick={() => setShowMobileFilters(!showMobileFilters)}
+                                className={`p-2.5 rounded-xl border transition-all ${showMobileFilters ? 'bg-brandColor text-white border-brandColor' : 'bg-slate-50 text-slate-500 border-slate-200 active:bg-slate-100'}`}
+                            >
+                                <Filter className="w-5 h-5" />
+                            </button>
                         </div>
+
+                        {/* Mobile Filter Drawer (Collapsible) */}
+                        <AnimatePresence>
+                            {showMobileFilters && (
+                                <motion.div
+                                    initial={{ height: 0, opacity: 0 }}
+                                    animate={{ height: 'auto', opacity: 1 }}
+                                    exit={{ height: 0, opacity: 0 }}
+                                    className="overflow-hidden md:hidden"
+                                >
+                                    <div className="bg-white rounded-2xl p-4 border border-slate-100 shadow-lg mb-6">
+                                        <div className="flex justify-between items-center mb-3">
+                                            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Select Category</h4>
+                                            <button onClick={() => setShowMobileFilters(false)} className="text-xs text-brandColor font-bold">Close</button>
+                                        </div>
+                                        <div className="flex flex-wrap gap-2">
+                                            {categories.map((cat) => (
+                                                <button
+                                                    key={cat}
+                                                    onClick={() => { setFilter(cat); setShowMobileFilters(false); }}
+                                                    className={`px-4 py-2 rounded-lg text-sm font-bold transition-all border ${filter === cat
+                                                            ? 'bg-brandColor text-white border-brandColor shadow-md shadow-blue-900/20'
+                                                            : 'bg-slate-50 text-slate-500 border-slate-100 hover:bg-slate-100'
+                                                        }`}
+                                                >
+                                                    {cat}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
 
                         <AnimatePresence mode="popLayout">
                             {filteredNotices.length > 0 ? (
@@ -213,11 +254,11 @@ const NoticesPage = () => {
                         </AnimatePresence>
                     </div>
 
-                    {/* RIGHT COLUMN: Sticky Sidebar */}
-                    <div className="space-y-6 md:sticky md:top-24 h-fit">
+                    {/* RIGHT COLUMN: Sticky Sidebar (Desktop Only) */}
+                    <div className="space-y-6 md:sticky md:top-24 h-fit hidden md:block">
 
                         {/* Search Widget (Desktop) */}
-                        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-lg shadow-slate-200/50 hidden md:block">
+                        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-lg shadow-slate-200/50">
                             <h3 className="font-bold text-slate-800 mb-4 flex items-center gap-2">
                                 <Search className="w-5 h-5 text-brandColor" /> Search Notices
                             </h3>
@@ -244,8 +285,8 @@ const NoticesPage = () => {
                                         key={cat}
                                         onClick={() => setFilter(cat)}
                                         className={`w-full text-left px-4 py-3 rounded-xl text-sm font-bold flex justify-between items-center transition-all ${filter === cat
-                                            ? 'bg-brandColor text-white shadow-md shadow-blue-900/20'
-                                            : 'bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-slate-700'
+                                                ? 'bg-brandColor text-white shadow-md shadow-blue-900/20'
+                                                : 'bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-slate-700'
                                             }`}
                                     >
                                         {cat}
