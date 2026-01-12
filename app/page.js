@@ -5,6 +5,8 @@ import CredibilitySection from "./components/CredibilitySection";
 import FindYourWay from "./components/FindYourWay";
 import NewsEventsSection from "./components/NewsEventsSection";
 import TestimonialsSection from "./components/TestimonialsSection";
+import CallToActionSection from "./components/CallToActionSection";
+import BackToTop from "./components/BackToTop";
 
 export default function Home() {
   return (
@@ -16,6 +18,8 @@ export default function Home() {
       <CredibilitySection />
       <NewsEventsSection />
       <TestimonialsSection />
+      <CallToActionSection />
+      <BackToTop />
     </div>
   );
 }

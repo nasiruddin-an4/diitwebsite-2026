@@ -21,7 +21,7 @@ const ProgramExplorer = () => {
 
     return (
         <section className="py-20 bg-white">
-            <div className="max-w-7xl mx-auto px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto px-6 md:px-0">
                 {/* Section Header */}
                 <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-16">
                     <div>

@@ -54,7 +54,7 @@ const StatsCounter = () => {
 
     return (
         <section ref={sectionRef} className="py-20 bg-white">
-            <div className="max-w-7xl mx-auto px-4 lg:px-8">
+            <div className="max-w-7xl mx-auto px-4 md:px-0">
                 {/* Section Header */}
                 <div className="text-center mb-16">
                     <h2 className="font-bold text-4xl lg:text-5xl text-blue-900 mb-4">

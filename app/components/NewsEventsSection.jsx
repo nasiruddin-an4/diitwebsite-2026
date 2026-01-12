@@ -19,7 +19,7 @@ const NewsEventsSection = () => {
 
     return (
         <section className="py-20 bg-slate-50">
-            <div className="max-w-7xl mx-auto px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto px-6 md:px-0">
                 {/* Section Header */}
                 <div className="flex justify-between items-center mb-12">
                     <h2 className="font-bold text-3xl md:text-4xl text-gray-900">
