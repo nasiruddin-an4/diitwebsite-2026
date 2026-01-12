@@ -1,0 +1,259 @@
+{
+    "navigationItems": [
+        {
+            "name": "Admissions",
+            "dropdown": [
+                {
+                    "name": "Admission Eligibility",
+                    "path": "/admissions"
+                },
+                {
+                    "name": "Online Admission",
+                    "path": "/admission/online"
+                },
+                {
+                    "name": "Tuition Fees",
+                    "path": "/admission/fees"
+                },
+                {
+                    "name": "Scholarships & Waivers",
+                    "path": "/admission/scholarships"
+                },
+                {
+                    "name": "Admission Circulars",
+                    "path": "/admission/circulars"
+                },
+                {
+                    "name": "Facilities",
+                    "path": "/campus/facilities"
+                }
+            ]
+        },
+        {
+            "name": "Academics",
+            "dropdown": [
+                {
+                    "name": "Academic Calendar",
+                    "path": "/academics/calendar"
+                },
+                {
+                    "name": "Class Routine",
+                    "path": "/academics/routine"
+                },
+                {
+                    "name": "Exam Results",
+                    "path": "/academics/results"
+                },
+                {
+                    "name": "DIIT Notices",
+                    "path": "/notices"
+                },
+                {
+                    "name": "NU Notices",
+                    "path": "https://www.nu.ac.bd/recent-news-notice.php",
+                    "target": "_blank",
+                    "external": true
+                },
+                {
+                    "name": "Faculty Members",
+                    "path": "/faculty"
+                },
+                {
+                    "name": "Administrative",
+                    "path": "/administrative"
+                },
+                {
+                    "name": "Alumni",
+                    "path": "/alumni"
+                }
+            ]
+        },
+        {
+            "name": "Departments",
+            "dropdown": [
+                {
+                    "name": "B.Sc. in Computer Science and Engineering",
+                    "path": "/programs"
+                },
+                {
+                    "name": "Bachelor of Business Administration (BBA)",
+                    "path": "/bba"
+                },
+                {
+                    "name": "BBA in Tourism and Hospitality Management",
+                    "path": "/bba-tourism"
+                },
+                {
+                    "name": "Master of Business Administration (MBA)",
+                    "path": "/mba"
+                },
+                {
+                    "name": "MBA in Tourism and Hospitality Management",
+                    "path": "/mba-tourism"
+                }
+            ]
+        },
+        {
+            "name": "Campus Life",
+            "dropdown": [
+                {
+                    "name": "Clubs & Societies",
+                    "path": "campus"
+                },
+                {
+                    "name": "Events & Activities",
+                    "path": "/campus/events"
+                },
+                {
+                    "name": "Student Support Services",
+                    "path": "/campus/support"
+                },
+                {
+                    "name": "Alumni Stories",
+                    "path": "/alumni/stories"
+                },
+                {
+                    "name": "Alumni Events",
+                    "path": "/alumni/events"
+                }
+            ]
+        },
+        {
+            "name": "Research",
+            "dropdown": [
+                {
+                    "name": "Publications",
+                    "path": "/publications"
+                },
+                {
+                    "name": "Research",
+                    "path": "/research"
+                },
+                {
+                    "name": "Project",
+                    "path": "/labproject"
+                }
+            ]
+        },
+        {
+            "name": "About",
+            "dropdown": [
+                {
+                    "name": "About Us",
+                    "path": "/about"
+                },
+                {
+                    "name": "FAQ",
+                    "path": "/faq"
+                },
+                {
+                    "name": "Career",
+                    "path": "/career"
+                },
+                {
+                    "name": "Contact",
+                    "path": "/contact"
+                }
+            ]
+        }
+    ],
+    "heroSlides": [
+        {
+            "id": 1,
+            "title": "Shape Your Future with Excellence",
+            "description": "Join DIIT to experience world-class education in technology and business, empowering you to lead the digital era.",
+            "image": "https://images.unsplash.com/photo-1562774053-701939374585?q=80&w=1986&auto=format&fit=crop",
+            "buttonText": "Explore Programs",
+            "buttonLink": "/programs"
+        },
+        {
+            "id": 2,
+            "title": "Innovation Starts Here",
+            "description": "Our state-of-the-art labs and research facilities provide the perfect environment for your ideas to flourish.",
+            "image": "https://images.unsplash.com/photo-1531482615713-2afd69097998?q=80&w=2070&auto=format&fit=crop",
+            "buttonText": "View Facilities",
+            "buttonLink": "/campus/facilities"
+        },
+        {
+            "id": 3,
+            "title": "A Community of Achievers",
+            "description": "Be part of a vibrant campus life with diverse clubs, events, and alumni network that supports your journey.",
+            "image": "https://images.unsplash.com/photo-1523580494863-6f3031224c94?q=80&w=2070&auto=format&fit=crop",
+            "buttonText": "Student Life",
+            "buttonLink": "/campus"
+        }
+    ],
+    "statsCounter": [
+        {
+            "id": 1,
+            "value": 3200,
+            "suffix": "+",
+            "label": "Student Enrolled"
+        },
+        {
+            "id": 2,
+            "value": 80,
+            "suffix": "+",
+            "label": "Expert Faculty"
+        },
+        {
+            "id": 3,
+            "value": 1300,
+            "suffix": "+",
+            "label": "Successful Graduates"
+        },
+        {
+            "id": 4,
+            "value": 800,
+            "suffix": "+",
+            "label": "Students Employed"
+        }
+    ],
+    "programsData": [
+        {
+            "id": 1,
+            "title": "Computer Science & Engineering",
+            "category": "engineering",
+            "duration": "4 Years",
+            "degree": "B.Sc. in CSE",
+            "description": "Comprehensive program covering software development, AI, machine learning, and system design with hands-on industry projects.",
+            "image": "https://i.postimg.cc/XqGPTNhH/bba.png"
+        },
+        {
+            "id": 2,
+            "title": "Bachelor of Business Administration (BBA)",
+            "category": "business",
+            "duration": "4 Years",
+            "degree": "BBA",
+            "description": "Strategic business education focusing on leadership, entrepreneurship, digital marketing, and global business practices.",
+            "image": "https://i.postimg.cc/02v3tvnY/kenny-eliason-z-FSo6bn-ZJTw-unsplash.jpg"
+        },
+        {
+            "id": 3,
+            "title": "BBA in Tourism and Hospitality Management",
+            "category": "tourism",
+            "duration": "4 Years",
+            "degree": "BBA in BTHM",
+            "description": "Comprehensive program focusing on the management of tourism, hospitality, and event planning.",
+            "image": "https://i.postimg.cc/vmC25wDr/element5-digital-Oy-Cl7-Y4y0-Bk-unsplash.jpg"
+        },
+        {
+            "id": 4,
+            "title": "Masters of Business Administration (MBA)",
+            "category": "MBA",
+            "duration": "4 Years",
+            "degree": "MBA",
+            "description": "Creative program combining traditional design principles with modern digital tools, UX/UI design, and multimedia production.",
+            "image": "https://i.postimg.cc/Prd3W4fp/kenny-eliason-1-a-A2-Fadydc-unsplash.jpg"
+        },
+        {
+            "id": 5,
+            "title": "MBA in Tourism and Hospitality Management",
+            "category": "MTHM",
+            "duration": "4 Years",
+            "degree": "MBA in BTHM",
+            "description": "Cutting-edge program focusing on big data, statistical analysis, machine learning, and business intelligence.",
+            "image": "https://i.postimg.cc/9M31rPNG/cse.jpg"
+        }
+    ]
+}
