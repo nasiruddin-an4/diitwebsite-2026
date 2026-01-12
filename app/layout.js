@@ -21,7 +21,7 @@ export default function RootLayout({ children }) {
         className={`${manrope.variable} antialiased font-sans`}
       >
         <Header />
-        <main>{children}</main>
+        <main className="min-h-screen pt-[80px] lg:pt-[90px]">{children}</main>
         <Footer />
       </body>
     </html>

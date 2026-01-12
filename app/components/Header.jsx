@@ -84,84 +84,81 @@ const Header = () => {
                         </div>
                     </Link>
 
-                    {/* Desktop Navigation (Aligned Right) */}
-                    <div className="hidden xl:flex items-center gap-8 ml-auto">
-                        <nav className="flex items-center gap-6 h-full">
-                            {navigationItems.map((item) => (
-                                <div
-                                    key={item.name}
-                                    className="relative h-full flex items-center"
-                                    onMouseEnter={() => setActiveDropdown(item.name)}
-                                    onMouseLeave={() => setActiveDropdown(null)}
+                    {/* Desktop Navigation */}
+                    <nav className="hidden xl:flex items-center gap-8 ml-auto mr-6">
+                        {navigationItems.map((item) => (
+                            <div
+                                key={item.name}
+                                className="relative h-full flex items-center"
+                                onMouseEnter={() => setActiveDropdown(item.name)}
+                                onMouseLeave={() => setActiveDropdown(null)}
+                            >
+                                <Link
+                                    href={item.path || "#"}
+                                    className={`relative z-10 py-2 text-[18px] font-semibold transition-colors duration-200 flex items-center gap-1.5 ${activeDropdown === item.name
+                                        ? "text-brandColor"
+                                        : "text-slate-700 hover:text-brandColor"
+                                        }`}
                                 >
-                                    <Link
-                                        href={item.path || "#"}
-                                        className={`relative z-10 py-2 text-[18px] font-semibold transition-colors duration-200 flex items-center gap-1.5 ${activeDropdown === item.name
-                                            ? "text-brandColor"
-                                            : "text-slate-700 hover:text-brandColor"
-                                            }`}
-                                    >
-                                        {item.name}
-                                        {item.dropdown && (
-                                            <ChevronDown className={`w-3 h-3 transition-transform duration-300 ${activeDropdown === item.name ? "rotate-180" : ""}`} />
-                                        )}
-                                    </Link>
+                                    {item.name}
+                                    {item.dropdown && (
+                                        <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${activeDropdown === item.name ? "rotate-180" : ""}`} />
+                                    )}
+                                </Link>
 
-                                    {/* Dropdown */}
-                                    <AnimatePresence>
-                                        {item.dropdown && activeDropdown === item.name && (
-                                            <motion.div
-                                                initial={{ opacity: 0, y: 10 }}
-                                                animate={{ opacity: 1, y: 0 }}
-                                                exit={{ opacity: 0, y: 10 }}
-                                                transition={{ duration: 0.2 }}
-                                                className="absolute top-full right-0 mt-4 w-[360px] bg-white shadow-xl shadow-slate-200/50 rounded-xl border-t-4 border-brandColor overflow-hidden z-40 ring-1 ring-black/5"
-                                            >
-                                                <div className="py-4">
-                                                    {item.dropdown.map((subItem, idx) => (
-                                                        <div key={idx} className="relative group/sub">
-                                                            <Link
-                                                                href={subItem.path || "#"}
-                                                                className="block px-8 py-3 text-[18px] font-semibold text-slate-600 hover:text-brandColor hover:bg-slate-50 transition-colors"
-                                                            >
-                                                                {subItem.name}
-                                                            </Link>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            </motion.div>
-                                        )}
-                                    </AnimatePresence>
-                                </div>
-                            ))}
-                        </nav>
+                                {/* Dropdown */}
+                                <AnimatePresence>
+                                    {item.dropdown && activeDropdown === item.name && (
+                                        <motion.div
+                                            initial={{ opacity: 0, y: 10 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            exit={{ opacity: 0, y: 10 }}
+                                            transition={{ duration: 0.2 }}
+                                            className="absolute top-full right-0 mt-4 w-[360px] bg-white shadow-xl shadow-slate-200/50 rounded-xl border-t-4 border-brandColor overflow-hidden z-40 ring-1 ring-black/5"
+                                        >
+                                            <div className="py-4">
+                                                {item.dropdown.map((subItem, idx) => (
+                                                    <div key={idx} className="relative group/sub">
+                                                        <Link
+                                                            href={subItem.path || "#"}
+                                                            className="block px-8 py-3 text-[18px] font-semibold text-slate-600 hover:text-brandColor hover:bg-slate-50 transition-colors"
+                                                        >
+                                                            {subItem.name}
+                                                        </Link>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </div>
+                        ))}
+                    </nav>
 
-                        {/* Right Actions */}
-                        <div className="flex items-center gap-5">
-                            <button
-                                onClick={() => setSearchOpen(!searchOpen)}
-                                className="p-2.5 text-slate-600 hover:text-brandColor hover:bg-slate-50 rounded-full transition-all"
-                                aria-label="Search"
-                            >
-                                <Search className="w-5 h-5" />
-                            </button>
+                    {/* Shared Actions (Search, Apply, Mobile Toggle) */}
+                    <div className="flex items-center gap-3 md:gap-5 ml-auto xl:ml-0">
+                        <button
+                            onClick={() => setSearchOpen(!searchOpen)}
+                            className="p-2.5 text-slate-600 hover:text-brandColor cursor-pointer hover:bg-slate-50 rounded-full transition-all"
+                            aria-label="Search"
+                        >
+                            <Search className="w-6 h-6 md:w-6 md:h-6" />
+                        </button>
 
-                            <Link
-                                href="/admissions/how-to-apply"
-                                className="hidden md:inline-flex items-center justify-center px-7 py-3 text-[15px] font-bold text-white bg-brandColor hover:bg-blue-800 transition-all duration-300 rounded-lg shadow-lg hover:shadow-brandColor/30 hover:-translate-y-0.5"
-                            >
-                                Apply Now
-                            </Link>
-                        </div>
+                        <Link
+                            href="/admissions/how-to-apply"
+                            className="hidden md:inline-flex items-center justify-center px-6 py-2.5 lg:px-7 lg:py-3 text-[15px] font-bold text-white bg-brandColor hover:bg-blue-800 transition-all duration-300 rounded-lg shadow-lg hover:shadow-brandColor/30 hover:-translate-y-0.5"
+                        >
+                            Apply Now
+                        </Link>
+
+                        <button
+                            onClick={toggleMenu}
+                            className="xl:hidden p-2 text-slate-700 hover:text-brandColor transition-colors cursor-pointer"
+                        >
+                            {isMenuOpen ? <X className="w-8 h-8" /> : <Menu className="w-8 h-8" />}
+                        </button>
                     </div>
-
-                    {/* Mobile Toggle (Keep visible on mobile) */}
-                    <button
-                        onClick={toggleMenu}
-                        className="xl:hidden ml-auto p-2 text-slate-700 hover:text-brandColor transition-colors"
-                    >
-                        {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-                    </button>
                 </div>
             </header>
 
@@ -202,7 +199,7 @@ const Header = () => {
                                         </div>
                                         <button
                                             onClick={() => setSearchOpen(false)}
-                                            className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors"
+                                            className="p-2 text-slate-400 hover:text-red-500 cursor-pointer hover:bg-red-50 rounded-full transition-colors"
                                         >
                                             <X className="w-5 h-5" />
                                         </button>
@@ -241,6 +238,7 @@ const Header = () => {
                         exit={{ opacity: 0 }}
                         onClick={closeMenu}
                         className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 lg:hidden"
+                        transition={{ duration: 0.3 }}
                     />
                 )}
             </AnimatePresence >
@@ -252,6 +250,7 @@ const Header = () => {
                         initial={{ x: "100%" }}
                         animate={{ x: 0 }}
                         exit={{ x: "100%" }}
+                        transition={{ type: "tween", duration: 0.3, ease: "easeInOut" }}
                         className="fixed inset-y-0 right-0 z-50 w-[85vw] sm:w-[350px] bg-white shadow-2xl lg:hidden flex flex-col"
                     >
                         <div className="p-6 border-b border-gray-100 flex items-center justify-between">
@@ -268,11 +267,11 @@ const Header = () => {
                                         <div>
                                             <button
                                                 onClick={() => toggleMobileSubmenu(item.name)}
-                                                className="w-full flex items-center justify-between py-4 text-[15px] font-medium text-slate-800 hover:text-brandColor"
+                                                className="w-full flex items-center justify-between py-4 text-[18px] font-medium text-slate-800 hover:text-brandColor"
                                             >
                                                 {item.name}
                                                 <ChevronDown
-                                                    className={`w-4 h-4 text-slate-400 transition-transform ${mobileExpanded[item.name] ? 'rotate-180' : ''}`}
+                                                    className={`w-6 h-6 text-slate-400 transition-transform ${mobileExpanded[item.name] ? 'rotate-180' : ''}`}
                                                 />
                                             </button>
                                             <AnimatePresence>
@@ -289,7 +288,7 @@ const Header = () => {
                                                                     key={sIdx}
                                                                     href={subItem.path || "#"}
                                                                     onClick={closeMenu}
-                                                                    className="block py-1.5 text-sm text-slate-500 hover:text-brandColor"
+                                                                    className="block py-1.5 text-[16px] text-slate-600 hover:text-brandColor"
                                                                 >
                                                                     {subItem.name}
                                                                 </Link>
