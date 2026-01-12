@@ -4,9 +4,9 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Pagination } from "swiper/modules";
+import { Autoplay, EffectFade } from "swiper/modules";
 import "swiper/css";
-import "swiper/css/pagination";
+import "swiper/css/effect-fade";
 import HomePageData from "@/public/Data/HomePage.json";
 
 const NewsEventsSection = () => {
@@ -38,20 +38,19 @@ const NewsEventsSection = () => {
                     {/* Featured News Carousel - Left Side */}
                     <div className="relative">
                         <Swiper
-                            modules={[Autoplay, Pagination]}
+                            modules={[Autoplay, EffectFade]}
+                            effect="fade"
+                            fadeEffect={{
+                                crossFade: true
+                            }}
                             spaceBetween={0}
                             slidesPerView={1}
                             loop={true}
+                            speed={800}
                             autoplay={{
-                                delay: 4000,
+                                delay: 3000,
                                 disableOnInteraction: false,
                                 pauseOnMouseEnter: true,
-                            }}
-                            pagination={{
-                                clickable: true,
-                                el: '.featured-pagination',
-                                bulletClass: 'featured-bullet',
-                                bulletActiveClass: 'featured-bullet-active',
                             }}
                             onSlideChange={(swiper) => setActiveIndex(swiper.realIndex)}
                             className="rounded-2xl overflow-hidden"
@@ -91,8 +90,19 @@ const NewsEventsSection = () => {
                             ))}
                         </Swiper>
 
-                        {/* Custom Pagination */}
-                        <div className="featured-pagination flex justify-center gap-2 mt-6" />
+                        {/* Custom Pagination Dots */}
+                        <div className="flex justify-center gap-2 mt-6">
+                            {featuredNews.map((_, idx) => (
+                                <button
+                                    key={idx}
+                                    className={`h-1 rounded-full transition-all duration-300 cursor-pointer ${activeIndex === idx
+                                        ? "w-8 bg-brandColor"
+                                        : "w-4 bg-gray-300 hover:bg-gray-400"
+                                        }`}
+                                    aria-label={`Go to slide ${idx + 1}`}
+                                />
+                            ))}
+                        </div>
                     </div>
 
                     {/* News List - Right Side */}
@@ -135,25 +145,6 @@ const NewsEventsSection = () => {
                     </div>
                 </div>
             </div>
-
-            {/* Custom Pagination Styles */}
-            <style jsx global>{`
-                .featured-bullet {
-                    width: 8px;
-                    height: 8px;
-                    border-radius: 9999px;
-                    background-color: #d1d5db;
-                    cursor: pointer;
-                    transition: all 0.3s ease;
-                }
-                .featured-bullet:hover {
-                    background-color: #9ca3af;
-                }
-                .featured-bullet-active {
-                    width: 32px;
-                    background-color: #002652;
-                }
-            `}</style>
         </section>
     );
 };

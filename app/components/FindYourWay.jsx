@@ -40,40 +40,35 @@ const FindYourWay = () => {
         },
     ];
 
-    // Split cards into two rows
+    // Split cards into two rows for desktop
     const firstRow = navigationCards.slice(0, 3);
     const secondRow = navigationCards.slice(3, 6);
 
-    const renderCard = (card) => (
+    // Desktop card render
+    const renderDesktopCard = (card) => (
         <Link
             key={card.id}
             href={card.link}
             onMouseEnter={() => setActiveCard(card.id)}
             onMouseLeave={() => setActiveCard(null)}
-            className="group block h-[140px] md:h-[180px] w-full"
+            className="group block h-[180px] w-full"
         >
-            {/* Fixed size card container */}
             <div
-                className={`relative h-full w-full flex flex-col items-center justify-center text-center px-4 md:px-6 transition-all duration-500 ease-out ${activeCard === card.id
-                    ? "bg-[#002652]"
-                    : "bg-transparent"
+                className={`relative h-full w-full flex flex-col items-center justify-center text-center px-6 transition-all duration-500 ease-out ${activeCard === card.id ? "bg-[#002652]" : "bg-transparent"
                     }`}
             >
-                {/* Title - fixed position */}
                 <h3
-                    className={`font-bold text-sm md:text-2xl text-white transition-all duration-500 ease-out absolute ${activeCard === card.id
-                        ? "top-8 md:top-10"
-                        : "top-1/2 -translate-y-1/2"
+                    className={`font-bold text-2xl text-white transition-all duration-500 ease-out absolute ${activeCard === card.id
+                            ? "top-10"
+                            : "top-1/2 -translate-y-1/2"
                         }`}
                 >
                     {card.title}
                 </h3>
-
-                {/* Arrow Icon - fixed position at bottom */}
                 <div
-                    className={`absolute bottom-8 md:bottom-10 w-9 h-9 rounded-full border border-white/50 flex items-center justify-center transition-all duration-500 ease-out ${activeCard === card.id
-                        ? "opacity-100 scale-100"
-                        : "opacity-0 scale-75"
+                    className={`absolute bottom-10 w-9 h-9 rounded-full border border-white/50 flex items-center justify-center transition-all duration-500 ease-out ${activeCard === card.id
+                            ? "opacity-100 scale-100"
+                            : "opacity-0 scale-75"
                         }`}
                 >
                     <ChevronRight className="w-4 h-4 text-white" />
@@ -82,8 +77,25 @@ const FindYourWay = () => {
         </Link>
     );
 
+    // Mobile card render - horizontal layout with title left, arrow right
+    const renderMobileCard = (card, isLast) => (
+        <Link
+            key={card.id}
+            href={card.link}
+            className={`group flex items-center justify-between px-6 py-5 transition-all duration-300 ${!isLast ? "border-b border-white/15" : ""
+                }`}
+        >
+            <h3 className="font-semibold text-base text-white">
+                {card.title}
+            </h3>
+            <div className="w-10 h-10 rounded-full border border-white/40 flex items-center justify-center group-hover:bg-white/10 transition-all duration-300">
+                <ChevronRight className="w-5 h-5 text-white" />
+            </div>
+        </Link>
+    );
+
     return (
-        <section className="relative min-h-[480px] md:min-h-[520px] overflow-hidden">
+        <section className="relative min-h-[520px] md:min-h-[520px] overflow-hidden">
             {/* Background Image with Blue Overlay */}
             <div className="absolute inset-0">
                 <img
@@ -96,13 +108,24 @@ const FindYourWay = () => {
 
             {/* Content Container */}
             <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 py-14 md:py-16">
-                <div className="flex flex-col lg:flex-row gap-10 lg:gap-14 items-start">
+                {/* Mobile Layout */}
+                <div className="lg:hidden">
+                    {/* Mobile Navigation Cards - Vertical List */}
+                    <div className="flex flex-col">
+                        {navigationCards.map((card, index) =>
+                            renderMobileCard(card, index === navigationCards.length - 1)
+                        )}
+                    </div>
+                </div>
+
+                {/* Desktop Layout */}
+                <div className="hidden lg:flex flex-row gap-14 items-start">
                     {/* Left Side - Title and Buttons */}
-                    <div className="lg:w-[280px] flex-shrink-0 text-white">
-                        <h2 className="font-bold text-3xl md:text-4xl mb-4 leading-tight">
+                    <div className="w-[280px] flex-shrink-0 text-white">
+                        <h2 className="font-bold text-4xl mb-4 leading-tight">
                             Find Your Way
                         </h2>
-                        <p className="text-white/70 text-sm md:text-base mb-8 leading-relaxed">
+                        <p className="text-white/70 text-base mb-8 leading-relaxed">
                             Explore the countless paths and opportunities that DIIT has to offer.
                         </p>
 
@@ -135,7 +158,7 @@ const FindYourWay = () => {
                                             : ""
                                     }
                                 >
-                                    {renderCard(card)}
+                                    {renderDesktopCard(card)}
                                 </div>
                             ))}
                         </div>
@@ -151,7 +174,7 @@ const FindYourWay = () => {
                                             : ""
                                     }
                                 >
-                                    {renderCard(card)}
+                                    {renderDesktopCard(card)}
                                 </div>
                             ))}
                         </div>

@@ -544,5 +544,86 @@
             "image": "https://images.unsplash.com/photo-1521737711867-e3b97375f902?q=80&w=1974&auto=format&fit=crop",
             "excerpt": "New partnerships will provide students with valuable industry experience through structured internship programs."
         }
-    ]
+    ],
+    "testimonials": {
+        "students": [
+            {
+                "name": "Farhan Ahmed",
+                "role": "Final Year Student",
+                "program": "B.Sc. in CSE",
+                "rating": 5,
+                "image": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop",
+                "text": "DIIT has been transformative for my career. The faculty members are incredibly supportive, and the practical learning approach helped me secure an internship at a top tech company."
+            },
+            {
+                "name": "Tasnim Akter",
+                "role": "3rd Year Student",
+                "program": "BBA",
+                "rating": 5,
+                "image": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=200&auto=format&fit=crop",
+                "text": "The business program at DIIT is exceptional. From case studies to real-world projects, every aspect of learning is designed to prepare us for the corporate world."
+            },
+            {
+                "name": "Rakib Hassan",
+                "role": "Alumni - Batch 2024",
+                "program": "B.Sc. in CSE",
+                "rating": 5,
+                "image": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200&auto=format&fit=crop",
+                "text": "The skills I gained at DIIT directly contributed to my success. I'm now working as a Software Engineer at a multinational company, thanks to the solid foundation DIIT provided."
+            },
+            {
+                "name": "Nusrat Jahan",
+                "role": "2nd Year Student",
+                "program": "BBA in THM",
+                "rating": 4,
+                "image": "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=200&auto=format&fit=crop",
+                "text": "Studying Tourism and Hospitality at DIIT has opened so many doors. The industry connections and practical exposure are unmatched."
+            },
+            {
+                "name": "Mehedi Hasan",
+                "role": "Final Year Student",
+                "program": "B.Sc. in CSE",
+                "rating": 5,
+                "image": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=200&auto=format&fit=crop",
+                "text": "The coding bootcamps and hackathons organized by DIIT helped me develop problem-solving skills that are invaluable in the tech industry."
+            }
+        ],
+        "guardians": [
+            {
+                "name": "Mr. Abdul Karim",
+                "role": "Parent of CSE Student",
+                "rating": 5,
+                "image": "",
+                "text": "As a parent, I'm extremely satisfied with DIIT. The regular updates, parent-teacher meetings, and the overall development of my child have exceeded my expectations."
+            },
+            {
+                "name": "Mrs. Fatema Begum",
+                "role": "Parent of BBA Student",
+                "rating": 5,
+                "image": "",
+                "text": "DIIT provides a safe and nurturing environment for students. The faculty genuinely cares about each student's success, and it shows in their dedication."
+            },
+            {
+                "name": "Mr. Shafiqul Islam",
+                "role": "Parent of THM Student",
+                "rating": 5,
+                "image": "",
+                "text": "The practical exposure and industry visits have been fantastic for my daughter. She's already received job offers before graduation!"
+            },
+            {
+                "name": "Mrs. Rehana Akter",
+                "role": "Parent of CSE Student",
+                "rating": 4,
+                "image": "",
+                "text": "The placement support at DIIT is commendable. My son got placed in a reputed company, and the career cell was instrumental in his success."
+            },
+            {
+                "name": "Mr. Mizanur Rahman",
+                "role": "Parent of MBA Student",
+                "rating": 5,
+                "image": "",
+                "text": "DIIT's MBA program has transformed my daughter into a confident professional. The quality of education and industry exposure is world-class."
+            }
+        ]
+    }
 }

@@ -4,6 +4,7 @@ import ProgramExplorer from "./components/ProgramExplorer";
 import CredibilitySection from "./components/CredibilitySection";
 import FindYourWay from "./components/FindYourWay";
 import NewsEventsSection from "./components/NewsEventsSection";
+import TestimonialsSection from "./components/TestimonialsSection";
 
 export default function Home() {
   return (
@@ -14,6 +15,7 @@ export default function Home() {
       <FindYourWay />
       <CredibilitySection />
       <NewsEventsSection />
+      <TestimonialsSection />
     </div>
   );
 }
