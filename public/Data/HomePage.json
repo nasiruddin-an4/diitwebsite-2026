@@ -94,44 +94,19 @@
             ]
         },
         {
-            "name": "Campus Life",
+            "name": "News & Events",
             "dropdown": [
                 {
-                    "name": "Clubs & Societies",
-                    "path": "campus"
+                    "name": "News",
+                    "path": "/news"
                 },
                 {
-                    "name": "Events & Activities",
-                    "path": "/campus/events"
+                    "name": "Events",
+                    "path": "/events"
                 },
                 {
-                    "name": "Student Support Services",
-                    "path": "/campus/support"
-                },
-                {
-                    "name": "Alumni Stories",
-                    "path": "/alumni/stories"
-                },
-                {
-                    "name": "Alumni Events",
-                    "path": "/alumni/events"
-                }
-            ]
-        },
-        {
-            "name": "Research",
-            "dropdown": [
-                {
-                    "name": "Publications",
-                    "path": "/publications"
-                },
-                {
-                    "name": "Research",
-                    "path": "/research"
-                },
-                {
-                    "name": "Project",
-                    "path": "/labproject"
+                    "name": "Campus Activities",
+                    "path": "/campus-activities"
                 }
             ]
         },
