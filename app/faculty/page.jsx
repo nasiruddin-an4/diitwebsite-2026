@@ -10,7 +10,7 @@ const FacultyPage = () => {
     const [searchQuery, setSearchQuery] = useState('');
     // Removed 'Administration' from tabs as per request to handle Principal separately
     const [selectedDept, setSelectedDept] = useState('All');
-    const departments = ['All', 'CSE', 'BBA', 'THM'];
+    const departments = ['All', 'CSE', 'BBA', 'THM', 'MBA'];
 
     // separate Principal (ID 1) and others
     const principal = facultyData.find(m => m.id === 1);
