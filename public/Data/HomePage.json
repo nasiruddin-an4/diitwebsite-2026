@@ -255,5 +255,96 @@
             "description": "Cutting-edge program focusing on big data, statistical analysis, machine learning, and business intelligence.",
             "image": "https://i.postimg.cc/9M31rPNG/cse.jpg"
         }
+    ],
+    "internationalPartners": [
+        {
+            "id": 1,
+            "name": "Google",
+            "logo": "https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg",
+            "country": "USA",
+            "type": "Technology Partnership",
+            "description": "Joint initiatives in digital innovation, research collaborations, and student development through global exchange programs."
+        },
+        {
+            "id": 2,
+            "name": "Microsoft",
+            "logo": "https://upload.wikimedia.org/wikipedia/commons/9/96/Microsoft_logo_%282012%29.svg",
+            "country": "USA",
+            "type": "Cloud & AI Training",
+            "description": "Partnership focusing on cloud computing, AI upskilling, and digital transformation through Microsoft Learn and Azure programs."
+        },
+        {
+            "id": 3,
+            "name": "Amazon Web Services",
+            "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg",
+            "country": "USA",
+            "type": "Cloud Computing",
+            "description": "Collaboration to strengthen cloud technology education, offering AWS Academy access and industry-grade certifications for students."
+        },
+        {
+            "id": 4,
+            "name": "IBM",
+            "logo": "https://upload.wikimedia.org/wikipedia/commons/5/51/IBM_logo.svg",
+            "country": "USA",
+            "type": "Enterprise Solutions",
+            "description": "Provides research partnerships and professional programs in data analytics, cybersecurity, and enterprise-level IT systems."
+        },
+        {
+            "id": 5,
+            "name": "Cisco",
+            "logo": "https://upload.wikimedia.org/wikipedia/commons/6/64/Cisco_logo.svg",
+            "country": "USA",
+            "type": "Networking Academy",
+            "description": "Supports students and professionals with Cisco Networking Academy, offering certifications in networking, IoT, and cybersecurity."
+        },
+        {
+            "id": 6,
+            "name": "Oracle",
+            "logo": "https://upload.wikimedia.org/wikipedia/commons/5/50/Oracle_logo.svg",
+            "country": "USA",
+            "type": "Database & Systems",
+            "description": "Academic collaboration promoting database management, enterprise software training, and Oracle Cloud certification programs."
+        }
+    ],
+    "collaborationTypes": [
+        {
+            "title": "Student Exchange Programs"
+        },
+        {
+            "title": "Faculty Exchange & Development"
+        },
+        {
+            "title": "Joint Research Initiatives"
+        },
+        {
+            "title": "Joint Academic Events and Conferences"
+        },
+        {
+            "title": "Summer and Winter Exchange Programs"
+        },
+        {
+            "title": "Industry Internships"
+        },
+        {
+            "title": "Academic Resource Sharing"
+        },
+        {
+            "title": "Joint Certifications and Degree Programs"
+        },
+        {
+            "title": "Academic Programs"
+        }
+    ],
+    "collaborationBenefits": [
+        "Global internship and job placement opportunities",
+        "Access to cutting-edge technology and tools",
+        "Industry-certified training and skill development programs",
+        "International conference participation and paper presentation",
+        "Collaborative research and innovation funding",
+        "Guest lectures and workshops from global experts",
+        "Student and faculty mobility across partner institutions",
+        "Joint academic projects and entrepreneurship incubation support",
+        "Cross-cultural learning and international exposure",
+        "Priority access to global scholarships and exchange programs"
     ]
 }
