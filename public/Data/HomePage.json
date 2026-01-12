@@ -5,7 +5,7 @@
             "dropdown": [
                 {
                     "name": "Admission Eligibility",
-                    "path": "/admissions"
+                    "path": "/admissionEligibility"
                 },
                 {
                     "name": "Online Admission",
@@ -20,10 +20,6 @@
                     "path": "/admission/scholarships"
                 },
                 {
-                    "name": "Admission Circulars",
-                    "path": "/admission/circulars"
-                },
-                {
                     "name": "Facilities",
                     "path": "/campus/facilities"
                 }
@@ -35,14 +31,6 @@
                 {
                     "name": "Academic Calendar",
                     "path": "/academics/calendar"
-                },
-                {
-                    "name": "Class Routine",
-                    "path": "/academics/routine"
-                },
-                {
-                    "name": "Exam Results",
-                    "path": "/academics/results"
                 },
                 {
                     "name": "DIIT Notices",
