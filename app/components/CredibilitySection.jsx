@@ -74,7 +74,7 @@ const CredibilitySection = () => {
                             {collaborationTypes.map((collab, idx) => (
                                 <li key={idx} className="flex items-center gap-3 text-slate-300">
                                     <div className="w-1.5 h-1.5 rounded-full bg-slate-400 shrink-0" />
-                                    <span className="text-sm font-medium leading-relaxed">{collab.title}</span>
+                                    <span className="text-md font-medium leading-relaxed">{collab.title}</span>
                                 </li>
                             ))}
                         </ul>
@@ -123,7 +123,7 @@ const CredibilitySection = () => {
                                                 {/* Text Content - Transparent/Dark */}
                                                 <div className="px-1">
                                                     <h4 className="font-bold text-white text-base mb-1 group-hover:text-yellow-400 transition-colors">{partner.name}</h4>
-                                                    <p className="text-[10px] font-semibold text-slate-400 mb-2 uppercase tracking-wide">{partner.type}</p>
+                                                    <p className="text-[14px] font-semibold text-slate-400 mb-2 tracking-wide">{partner.type}</p>
                                                     <p className="text-xs text-slate-400/90 leading-relaxed">{partner.description}</p>
                                                 </div>
                                             </div>
@@ -146,7 +146,7 @@ const CredibilitySection = () => {
                 </div>
 
                 {/* Benefits Section */}
-                <div className="max-w-4xl mx-auto text-center border-t border-white/10">
+                <div className="max-w-4xl mx-auto text-center border-t border-white/10 pt-4">
                     <div className="relative flex justify-center h-24 overflow-hidden items-center">
                         {collaborationBenefits.map((benefit, idx) => (
                             <div
@@ -162,7 +162,7 @@ const CredibilitySection = () => {
                                         className={`w-8 h-8 md:w-10 md:h-10 text-slate-400 opacity-60 transition-transform duration-700 ${idx === currentBenefitIndex ? "rotate-180" : "-rotate-0"
                                             }`}
                                     />
-                                    <h2 className="text-white font-semibold text-xl md:text-2xl leading-tight text-center">
+                                    <h2 className="text-white font-semibold text-2xl md:text-3xl leading-tight text-center">
                                         {benefit}
                                     </h2>
                                     <Quote className="w-8 h-8 md:w-10 md:h-10 text-slate-400 opacity-60 hidden md:block" />

@@ -2,6 +2,8 @@ import Hero from "./components/Hero";
 import StatsCounter from "./components/StatsCounter";
 import ProgramExplorer from "./components/ProgramExplorer";
 import CredibilitySection from "./components/CredibilitySection";
+import FindYourWay from "./components/FindYourWay";
+import NewsEventsSection from "./components/NewsEventsSection";
 
 export default function Home() {
   return (
@@ -9,7 +11,9 @@ export default function Home() {
       <Hero />
       <StatsCounter />
       <ProgramExplorer />
+      <FindYourWay />
       <CredibilitySection />
+      <NewsEventsSection />
     </div>
   );
 }

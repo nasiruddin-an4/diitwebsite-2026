@@ -2,13 +2,14 @@
 
 :root {
   --background: #ffffff;
+  --brand-color: #002652;
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-brandColor: var(--brand-color);
   --font-sans: var(--font-manrope);
 }
-
 
 body {
   background: var(--background);
