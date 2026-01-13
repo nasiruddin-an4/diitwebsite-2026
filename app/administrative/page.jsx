@@ -101,7 +101,7 @@ const AdministrativePage = () => {
             </div>
 
             {/* Hero Section */}
-            <div className="relative pt-32 pb-16 px-4">
+            <div className="relative pt-32 px-4">
                 <div className="max-w-7xl mx-auto text-center relative z-10">
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
@@ -132,23 +132,74 @@ const AdministrativePage = () => {
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
-                className="relative z-10 px-4 mb-24"
+                className="relative z-10 px-4"
             >
                 <div className="max-w-7xl mx-auto">
                     <motion.div variants={itemVariants} className="text-center mb-16">
-                        <h2 className="text-3xl font-bold text-slate-900 mb-4">Our Governing Body</h2>
-                        <div className="h-1.5 w-20 bg-gradient-to-r from-blue-600 to-purple-600 mx-auto rounded-full" />
                     </motion.div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-8">
-                        {governingBody.map((member, index) => (
+                    {/* Chairman Section - Featured */}
+                    {governingBody.length > 0 && (
+                        <div className="mb-16">
+                            <motion.div
+                                variants={itemVariants}
+                                className="bg-white rounded-3xl p-8 md:p-12 shadow-xl shadow-slate-200/50 border border-slate-100 flex flex-col md:flex-row gap-10 items-center md:items-start relative overflow-hidden group"
+                            >
+                                <div className="absolute top-0 right-0 w-64 h-64 bg-blue-100/50 rounded-full blur-3xl -z-10 transition-all group-hover:bg-blue-100/80" />
+
+                                {/* Chairman Image */}
+                                <div className="w-full md:w-80 shrink-0">
+                                    <div className="block relative aspect-[4/5] rounded-2xl overflow-hidden bg-slate-100 shadow-lg group-hover:shadow-2xl transition-all duration-500">
+                                        <img
+                                            src={governingBody[0].image}
+                                            alt={governingBody[0].name}
+                                            className="w-full h-full object-cover object-top transform group-hover:scale-105 transition-transform duration-700"
+                                        />
+                                        <div className="absolute inset-0 ring-1 ring-inset ring-black/10 rounded-2xl" />
+                                    </div>
+                                </div>
+
+                                {/* Chairman Info */}
+                                <div className="flex-1 text-center md:text-left py-4">
+                                    <div className="inline-block px-4 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-bold uppercase tracking-wider mb-4 border border-blue-200">
+                                        Leadership
+                                    </div>
+                                    <h2 className="text-3xl md:text-4xl font-bold text-slate-800 mb-2">
+                                        {governingBody[0].name}
+                                    </h2>
+                                    <p className="text-xl text-slate-500 font-medium mb-6">{governingBody[0].designation}</p>
+
+                                    <div className="w-20 h-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full mb-8 mx-auto md:mx-0" />
+
+                                    <div className="flex flex-wrap items-center justify-center md:justify-start gap-4">
+                                        {governingBody[0].email && (
+                                            <a href={`mailto:${governingBody[0].email}`} className="flex items-center gap-2 px-6 py-3 rounded-xl bg-slate-50 hover:bg-white border border-slate-200 hover:border-blue-300 hover:shadow-lg transition-all text-slate-600 hover:text-blue-600 font-medium group/btn">
+                                                <Mail className="w-4 h-4 text-slate-400 group-hover/btn:text-blue-600 transition-colors" />
+                                                <span className="hidden sm:inline">{governingBody[0].email}</span>
+                                                <span className="sm:hidden">Email</span>
+                                            </a>
+                                        )}
+                                        {governingBody[0].linkedin && (
+                                            <a href={governingBody[0].linkedin} className="flex items-center gap-2 px-6 py-3 rounded-xl bg-blue-600/10 text-blue-700 font-bold hover:bg-blue-600 hover:text-white transition-all">
+                                                <Linkedin className="w-4 h-4" /> LinkedIn Profile
+                                            </a>
+                                        )}
+                                    </div>
+                                </div>
+                            </motion.div>
+                        </div>
+                    )}
+
+                    {/* Rest of the Governing Body */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        {governingBody.slice(1).map((member, index) => (
                             <motion.div
                                 key={index}
                                 variants={itemVariants}
-                                whileHover={{ y: -8 }}
-                                className="group bg-white rounded-2xl shadow-sm hover:shadow-xl hover:shadow-blue-900/5 border border-slate-100 overflow-hidden transition-all duration-300"
+                                className="group bg-transparent"
                             >
-                                <div className="aspect-[3/4] overflow-hidden bg-slate-100 relative">
+                                {/* Image Card */}
+                                <div className="block relative mb-4 overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-100 group-hover:shadow-xl group-hover:ring-blue-600/20 transition-all duration-300 aspect-[3/4]">
                                     <img
                                         src={member.image}
                                         alt={member.name}
@@ -170,9 +221,13 @@ const AdministrativePage = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="p-5 text-center">
-                                    <h3 className="text-slate-900 font-bold text-lg mb-1 leading-tight line-clamp-2 min-h-[3.5rem] flex items-center justify-center">{member.name}</h3>
-                                    <p className="text-blue-600 text-xs font-semibold uppercase tracking-wide leading-relaxed">{member.designation}</p>
+
+                                {/* Content Info */}
+                                <div className="text-center px-2">
+                                    <h3 className="text-lg font-bold text-slate-800 mb-1 leading-tight group-hover:text-brandColor transition-colors">
+                                        {member.name}
+                                    </h3>
+                                    <p className="text-slate-800/80 text-sm font-semibold tracking-wide mb-3 line-clamp-2 min-h-[1.5rem]">{member.designation}</p>
                                 </div>
                             </motion.div>
                         ))}
@@ -194,51 +249,58 @@ const AdministrativePage = () => {
                         <p className="text-slate-500 mt-4 max-w-2xl mx-auto">Meet the dedicated support staff who ensure smooth operations and student success at DIIT.</p>
                     </motion.div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         {administrationStaff.map((staff, index) => (
                             <motion.div
                                 key={index}
                                 variants={itemVariants}
-                                whileHover={{ y: -5 }}
-                                className="bg-white rounded-xl p-6 shadow-sm border border-slate-100 hover:shadow-lg hover:border-purple-100 transition-all group relative overflow-hidden"
+                                className="group bg-transparent"
                             >
-                                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 to-purple-400 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
-                                
-                                <div className="flex flex-col items-center text-center">
-                                    <div className="w-24 h-24 rounded-full mb-5 overflow-hidden border-4 border-slate-50 group-hover:border-purple-50 transition-all shadow-sm relative">
-                                        {staff.image && !staff.image.includes('placeholder') ? (
-                                            <img 
-                                                src={staff.image} 
-                                                alt={staff.name}
-                                                className="w-full h-full object-cover"
-                                            />
-                                        ) : (
-                                            <div className="w-full h-full flex items-center justify-center bg-slate-100">
-                                                <User className="w-10 h-10 text-slate-300" />
-                                            </div>
-                                        )}
-                                    </div>
-                                    
-                                    <h3 className="text-lg font-bold text-slate-900 mb-1 line-clamp-1">{staff.name}</h3>
-                                    <p className="text-slate-500 text-sm font-medium mb-5 h-10 flex items-center">{staff.designation}</p>
+                                {/* Image Card */}
+                                <div className="block relative mb-4 overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-100 group-hover:shadow-xl group-hover:ring-blue-600/20 transition-all duration-300 aspect-[3/4]">
+                                    {staff.image && !staff.image.includes('placeholder') ? (
+                                        <img
+                                            src={staff.image}
+                                            alt={staff.name}
+                                            className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-110"
+                                        />
+                                    ) : (
+                                        <div className="w-full h-full flex items-center justify-center bg-slate-100">
+                                            <User className="w-20 h-20 text-slate-300" />
+                                        </div>
+                                    )}
 
-                                    {/* Interaction Buttons */}
-                                    <div className="flex items-center gap-2 w-full pt-4 border-t border-slate-50">
-                                        <a 
-                                            href={`mailto:${staff.email}`} 
-                                            className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg bg-slate-50 text-slate-600 text-xs font-bold hover:bg-blue-50 hover:text-blue-600 transition-colors"
-                                            title="Send Email"
-                                        >
-                                            <Mail className="w-3.5 h-3.5" /> Email
-                                        </a>
-                                        <a 
-                                            href={`tel:${staff.phone}`}
-                                            className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg bg-slate-50 text-slate-600 text-xs font-bold hover:bg-green-50 hover:text-green-600 transition-colors"
-                                            title="Call Now"
-                                        >
-                                            <Phone className="w-3.5 h-3.5" /> Call
-                                        </a>
+                                    {/* Social Overlay */}
+                                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
+                                        <div className="flex gap-2 justify-center translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-100">
+                                            {staff.email && (
+                                                <a
+                                                    href={`mailto:${staff.email}`}
+                                                    className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-white hover:bg-white hover:text-blue-600 transition-colors"
+                                                    title="Send Email"
+                                                >
+                                                    <Mail className="w-4 h-4" />
+                                                </a>
+                                            )}
+                                            {staff.phone && (
+                                                <a
+                                                    href={`tel:${staff.phone}`}
+                                                    className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-white hover:bg-white hover:text-green-600 transition-colors"
+                                                    title="Call Now"
+                                                >
+                                                    <Phone className="w-4 h-4" />
+                                                </a>
+                                            )}
+                                        </div>
                                     </div>
+                                </div>
+
+                                {/* Content Info */}
+                                <div className="text-center px-2">
+                                    <h3 className="text-lg font-bold text-slate-800 mb-1 leading-tight group-hover:text-brandColor transition-colors">
+                                        {staff.name}
+                                    </h3>
+                                    <p className="text-brandColor/80 text-sm font-semibold tracking-wide mb-3 line-clamp-2 min-h-6">{staff.designation}</p>
                                 </div>
                             </motion.div>
                         ))}

@@ -121,6 +121,7 @@ const Header = () => {
                                                     <div key={idx} className="relative group/sub">
                                                         <Link
                                                             href={subItem.path || "#"}
+                                                            target={subItem.target}
                                                             className="block px-8 py-3 text-[18px] font-semibold text-slate-600 hover:text-brandColor hover:bg-slate-50 transition-colors"
                                                         >
                                                             {subItem.name}
@@ -287,6 +288,7 @@ const Header = () => {
                                                                 <Link
                                                                     key={sIdx}
                                                                     href={subItem.path || "#"}
+                                                                    target={subItem.target}
                                                                     onClick={closeMenu}
                                                                     className="block py-1.5 text-[16px] text-slate-600 hover:text-brandColor"
                                                                 >

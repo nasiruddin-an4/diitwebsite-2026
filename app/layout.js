@@ -2,6 +2,7 @@ import { Manrope } from "next/font/google";
 import "./globals.css";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import BackToTop from "./components/BackToTop";
 
 const manrope = Manrope({
   variable: "--font-manrope",
@@ -21,7 +22,8 @@ export default function RootLayout({ children }) {
         className={`${manrope.variable} antialiased font-sans`}
       >
         <Header />
-        <main className="min-h-screen pt-[80px] lg:pt-[90px]">{children}</main>
+        <main className="min-h-screen pt-16">{children}</main>
+        <BackToTop />
         <Footer />
       </body>
     </html>

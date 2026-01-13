@@ -31,7 +31,7 @@ const Hero = () => {
     };
 
     return (
-        <div className="relative h-[85vh] w-full overflow-hidden bg-slate-900">
+        <div className="relative h-[90vh] w-full overflow-hidden bg-slate-900">
             <AnimatePresence mode="wait">
                 <motion.div
                     key={currentSlide}

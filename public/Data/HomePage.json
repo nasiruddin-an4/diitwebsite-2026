@@ -57,27 +57,27 @@
             ]
         },
         {
-            "name": "Departments",
+            "name": "Programs",
             "dropdown": [
                 {
                     "name": "B.Sc. in Computer Science and Engineering",
-                    "path": "/programs"
+                    "path": "/programs/cse"
                 },
                 {
                     "name": "Bachelor of Business Administration (BBA)",
-                    "path": "/bba"
+                    "path": "/programs/bba"
                 },
                 {
                     "name": "BBA in Tourism and Hospitality Management",
-                    "path": "/bba-tourism"
+                    "path": "/programs/bthm"
                 },
                 {
                     "name": "Master of Business Administration (MBA)",
-                    "path": "/mba"
+                    "path": "/programs/mba"
                 },
                 {
                     "name": "MBA in Tourism and Hospitality Management",
-                    "path": "/mba-tourism"
+                    "path": "/programs/mthm"
                 }
             ]
         },
@@ -180,7 +180,7 @@
             "duration": "4 Years",
             "degree": "B.Sc. in CSE",
             "description": "Comprehensive program covering software development, AI, machine learning, and system design with hands-on industry projects.",
-            "image": "https://i.postimg.cc/XqGPTNhH/bba.png"
+            "image": "https://i.postimg.cc/C1g0kHfF/CSE-4x.png"
         },
         {
             "id": 2,
@@ -189,7 +189,7 @@
             "duration": "4 Years",
             "degree": "BBA",
             "description": "Strategic business education focusing on leadership, entrepreneurship, digital marketing, and global business practices.",
-            "image": "https://i.postimg.cc/02v3tvnY/kenny-eliason-z-FSo6bn-ZJTw-unsplash.jpg"
+            "image": "https://i.postimg.cc/Qt3D1kWh/BBA-4x.png"
         },
         {
             "id": 3,
@@ -198,7 +198,7 @@
             "duration": "4 Years",
             "degree": "BBA in BTHM",
             "description": "Comprehensive program focusing on the management of tourism, hospitality, and event planning.",
-            "image": "https://i.postimg.cc/vmC25wDr/element5-digital-Oy-Cl7-Y4y0-Bk-unsplash.jpg"
+            "image": "https://i.postimg.cc/zBrNKSRH/THM-4x.png"
         },
         {
             "id": 4,
@@ -207,7 +207,7 @@
             "duration": "4 Years",
             "degree": "MBA",
             "description": "Creative program combining traditional design principles with modern digital tools, UX/UI design, and multimedia production.",
-            "image": "https://i.postimg.cc/Prd3W4fp/kenny-eliason-1-a-A2-Fadydc-unsplash.jpg"
+            "image": "https://i.postimg.cc/NMctm7rQ/MBA-4x.png"
         },
         {
             "id": 5,
@@ -216,7 +216,7 @@
             "duration": "4 Years",
             "degree": "MBA in BTHM",
             "description": "Cutting-edge program focusing on big data, statistical analysis, machine learning, and business intelligence.",
-            "image": "https://i.postimg.cc/9M31rPNG/cse.jpg"
+            "image": "https://i.postimg.cc/9Mh2Ztq2/MTHM-4x.png"
         }
     ],
     "internationalPartners": [

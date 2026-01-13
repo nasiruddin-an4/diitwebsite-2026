@@ -81,11 +81,11 @@ const ProgramExplorer = () => {
                                     <h3 className="font-bold text-2xl text-blue-900 mb-1 group-hover:text-blue-600 transition-colors duration-300">
                                         {program?.title}
                                     </h3>
-                                    <p className="text-sm text-gray-500 font-medium mb-4 uppercase tracking-wider">
+                                    {/* <p className="text-sm text-gray-500 font-medium mb-4 uppercase tracking-wider">
                                         {program?.degree}
-                                    </p>
+                                    </p> */}
 
-                                    <p className="text-base text-gray-600 mb-6 line-clamp-3">
+                                    <p className="text-base text-gray-600 mb-6 line-clamp-2">
                                         {program?.description}
                                     </p>
 
