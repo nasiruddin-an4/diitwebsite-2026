@@ -1,0 +1,71 @@
+{
+    "categories": [
+        "All",
+        "Admissions",
+        "Academics",
+        "Campus Life",
+        "Fees & Scholarships"
+    ],
+    "faqs": [
+        {
+            "id": 1,
+            "question": "Is DIIT affiliated with the National University?",
+            "answer": "Yes, Daffodil Institute of Information Technology (DIIT) is affiliated with the National University of Bangladesh. We offer professional Honours programs including BBA, CSE, and BTHM.",
+            "category": "Admissions"
+        },
+        {
+            "id": 2,
+            "question": "What are the admission requirements for the CSE program?",
+            "answer": "For the B.Sc. in Computer Science & Engineering (CSE), candidates must have passed HSC or equivalent with Physics and Mathematics. A minimum GPA as prescribed by the National University is required.",
+            "category": "Admissions"
+        },
+        {
+            "id": 3,
+            "question": "How do I apply for admission?",
+            "answer": "You can apply online through our website or visit our campus admissions office. You will need to submit your academic transcripts, photos, and other relevant documents.",
+            "category": "Admissions"
+        },
+        {
+            "id": 4,
+            "question": "Does DIIT offer any scholarship facilities?",
+            "answer": "Yes, DIIT offers merit-based scholarships for students with excellent academic results in SSC and HSC. We also have financial aid options for deserving students.",
+            "category": "Fees & Scholarships"
+        },
+        {
+            "id": 5,
+            "question": "What are the tuition fees for the BBA program?",
+            "answer": "Tuition fees vary by program and semester. Please contact our admissions office or download the latest fee structure brochure from the Admissions page for detailed information.",
+            "category": "Fees & Scholarships"
+        },
+        {
+            "id": 6,
+            "question": "Do you provide internship opportunities?",
+            "answer": "Absolutely. DIIT has a dedicated Career Placement Cell that helps students secure internships and jobs. We have partnerships with various IT firms and corporate houses.",
+            "category": "Academics"
+        },
+        {
+            "id": 7,
+            "question": "Are the computer labs accessible to students after class hours?",
+            "answer": "Yes, our computer labs are open for students to practice and complete assignments. Lab supervision is available during designated hours.",
+            "category": "Campus Life"
+        },
+        {
+            "id": 8,
+            "question": "Is there a library on campus?",
+            "answer": "Yes, we have a well-stocked library with physical books, journals, and a digital section for research. It is a quiet zone for study and preparation.",
+            "category": "Campus Life"
+        },
+        {
+            "id": 9,
+            "question": "Does DIIT provide transport facilities?",
+            "answer": "We do not have a dedicated bus service, but our campus is centrally located in Dhaka with excellent connectivity via public transport.",
+            "category": "Campus Life"
+        },
+        {
+            "id": 10,
+            "question": "What extra-curricular activities are available?",
+            "answer": "Students can join various clubs such as the Computer Club, Business Club, Cultural Club, and Sports Club. We regularly organize fests, programming contests, and cultural programs.",
+            "category": "Campus Life"
+        }
+    ]
+}

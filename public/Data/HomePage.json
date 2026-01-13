@@ -85,12 +85,8 @@
             "name": "News & Events",
             "dropdown": [
                 {
-                    "name": "News",
+                    "name": "News & Events",
                     "path": "/news"
-                },
-                {
-                    "name": "Events",
-                    "path": "/events"
                 },
                 {
                     "name": "Campus Activities",
@@ -123,17 +119,17 @@
     "heroSlides": [
         {
             "id": 1,
-            "title": "Shape Your Future with Excellence",
+            "title": "Graduation Ceremony",
             "description": "Join DIIT to experience world-class education in technology and business, empowering you to lead the digital era.",
-            "image": "https://images.unsplash.com/photo-1562774053-701939374585?q=80&w=1986&auto=format&fit=crop",
+            "image": "https://i.postimg.cc/jSVWchS8/hero1.jpg",
             "buttonText": "Explore Programs",
             "buttonLink": "/programs"
         },
         {
             "id": 2,
-            "title": "Innovation Starts Here",
+            "title": "DIIT's First Batch Graduates",
             "description": "Our state-of-the-art labs and research facilities provide the perfect environment for your ideas to flourish.",
-            "image": "https://images.unsplash.com/photo-1531482615713-2afd69097998?q=80&w=2070&auto=format&fit=crop",
+            "image": "https://i.postimg.cc/2SpqGxST/hero2.jpg",
             "buttonText": "View Facilities",
             "buttonLink": "/campus/facilities"
         },
@@ -141,7 +137,7 @@
             "id": 3,
             "title": "A Community of Achievers",
             "description": "Be part of a vibrant campus life with diverse clubs, events, and alumni network that supports your journey.",
-            "image": "https://images.unsplash.com/photo-1523580494863-6f3031224c94?q=80&w=2070&auto=format&fit=crop",
+            "image": "https://i.postimg.cc/2SpqGxS2/laptop-2024.jpg",
             "buttonText": "Student Life",
             "buttonLink": "/campus"
         }
@@ -174,7 +170,7 @@
     ],
     "programsData": [
         {
-            "id": 1,
+            "id": "cse",
             "title": "Computer Science & Engineering",
             "category": "engineering",
             "duration": "4 Years",
@@ -183,7 +179,7 @@
             "image": "https://i.postimg.cc/C1g0kHfF/CSE-4x.png"
         },
         {
-            "id": 2,
+            "id": "bba",
             "title": "Bachelor of Business Administration (BBA)",
             "category": "business",
             "duration": "4 Years",
@@ -192,7 +188,7 @@
             "image": "https://i.postimg.cc/Qt3D1kWh/BBA-4x.png"
         },
         {
-            "id": 3,
+            "id": "bthm",
             "title": "BBA in Tourism and Hospitality Management",
             "category": "tourism",
             "duration": "4 Years",
@@ -201,7 +197,7 @@
             "image": "https://i.postimg.cc/zBrNKSRH/THM-4x.png"
         },
         {
-            "id": 4,
+            "id": "mba",
             "title": "Masters of Business Administration (MBA)",
             "category": "MBA",
             "duration": "4 Years",
@@ -210,7 +206,7 @@
             "image": "https://i.postimg.cc/NMctm7rQ/MBA-4x.png"
         },
         {
-            "id": 5,
+            "id": "mthm",
             "title": "MBA in Tourism and Hospitality Management",
             "category": "MTHM",
             "duration": "4 Years",
@@ -222,35 +218,35 @@
     "internationalPartners": [
         {
             "id": 1,
-            "name": "Google",
-            "logo": "https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg",
+            "name": "Jagran Lakecity University",
+            "logo": "https://i.postimg.cc/J4WVY0S2/Jagran-Lakecity-University.webp",
             "country": "USA",
-            "type": "Technology Partnership",
+            "type": "Higher Education Partnership",
             "description": "Joint initiatives in digital innovation, research collaborations, and student development through global exchange programs."
         },
         {
             "id": 2,
-            "name": "Microsoft",
-            "logo": "https://upload.wikimedia.org/wikipedia/commons/9/96/Microsoft_logo_%282012%29.svg",
-            "country": "USA",
-            "type": "Cloud & AI Training",
-            "description": "Partnership focusing on cloud computing, AI upskilling, and digital transformation through Microsoft Learn and Azure programs."
+            "name": "Bangladesh Psychiatric Care Ltd. (BPCL)",
+            "logo": "https://i.postimg.cc/L4k2pjkq/logo-(1).png",
+            "country": "Bangladesh",
+            "type": "Awareness of Mental Health issues",
+            "description": "This collaboration aims to raise awareness of mental health issues, promote psychological well-being, and ensure access to quality mental health support for the DIIT community."
         },
         {
             "id": 3,
-            "name": "Amazon Web Services",
-            "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg",
-            "country": "USA",
-            "type": "Cloud Computing",
-            "description": "Collaboration to strengthen cloud technology education, offering AWS Academy access and industry-grade certifications for students."
+            "name": "Tour Operators Association of Bangladesh (TOAB)",
+            "logo": "https://i.postimg.cc/Pf0Zgs4k/logo.png",
+            "country": "Bangladesh",
+            "type": "Tourism & Hospitality Management",
+            "description": "This partnership opens doors for real-world exposure, networking with industry professionals, and a stronger future in tourism and hospitality."
         },
         {
             "id": 4,
-            "name": "IBM",
-            "logo": "https://upload.wikimedia.org/wikipedia/commons/5/51/IBM_logo.svg",
-            "country": "USA",
-            "type": "Enterprise Solutions",
-            "description": "Provides research partnerships and professional programs in data analytics, cybersecurity, and enterprise-level IT systems."
+            "name": "Camarines Sur Polytechnic Colleges",
+            "logo": "https://i.postimg.cc/G2Q7M3DN/Camarines-Sur-Polytechnic-Colleges-Logo.png",
+            "country": "Philippines",
+            "type": "Academic & Research Collaboration",
+            "description": "Five-year collaboration supporting student and faculty exchange, joint research, conferences, and international academic cooperation."
         },
         {
             "id": 5,
@@ -444,15 +440,15 @@
     "newsEvents": [
         {
             "id": 1,
-            "title": "DIIT Hosts Next Gen Ideathon 2026",
+            "title": "On-Campus Exam at DIIT: A Proud Beginning for BBA, CSE & BTHM Students",
             "category": "NEWS",
-            "date": "07 Jan 2026",
-            "day": "07",
+            "date": "Jan. 1, 2026",
+            "day": "01",
             "month": "Jan",
             "year": "2026",
             "dayName": "Wednesday",
             "time": "12:00 pm",
-            "image": "https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=2070&auto=format&fit=crop",
+            "image": "https://i.postimg.cc/bJd0n4kv/news1.jpg",
             "excerpt": "DIIT successfully organized the Next Gen Ideathon 2026, bringing together innovative minds from across the country.",
             "content": [
                 "Dhaka International Institute of Technology (DIIT) witnessed a surge of creativity and innovation as it hosted the 'Next Gen Ideathon 2026'. The event brought together brilliant minds from various universities to brainstorm solutions for pressing global challenges.",
@@ -463,15 +459,15 @@
         },
         {
             "id": 2,
-            "title": "Second Cohort of \"Designing for Impact\" Faculty Workshop Held at DIIT",
+            "title": "A Proud Milestone: Celebrating the Graduation of BBA, CSE & BTHM",
             "category": "EVENT",
-            "date": "08 Jan 2026",
-            "day": "08",
-            "month": "Jan",
-            "year": "2026",
+            "date": "Dec. 14, 2025",
+            "day": "14",
+            "month": "Dec",
+            "year": "2025",
             "dayName": "Thursday",
             "time": "11:00 am",
-            "image": "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=2070&auto=format&fit=crop",
+            "image": "https://i.postimg.cc/cH673Pw4/news2.jpg",
             "excerpt": "Faculty members participated in an intensive workshop focused on designing impactful educational experiences.",
             "content": [
                 "DIIT successfully concluded the second cohort of the 'Designing for Impact' workshop, aimed at enhancing the pedagogical skills of its faculty members. The three-day intensive program focused on modern teaching methodologies, student engagement strategies, and outcome-based education (OBE).",
@@ -481,15 +477,15 @@
         },
         {
             "id": 3,
-            "title": "DIIT Launches Center of Research Excellence in Semiconductor Technology",
+            "title": "DIIT Strengthens Its Commitment to Students Through Scholarship Support",
             "category": "NEWS",
-            "date": "06 Jan 2026",
-            "day": "06",
-            "month": "Jan",
-            "year": "2026",
+            "date": "Nov. 24, 2025",
+            "day": "24",
+            "month": "Nov",
+            "year": "2025",
             "dayName": "Tuesday",
             "time": "11:15 am",
-            "image": "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2070&auto=format&fit=crop",
+            "image": "https://i.postimg.cc/G29PD6G3/news3.jpg",
             "excerpt": "A new research center dedicated to semiconductor technology has been established at DIIT.",
             "content": [
                 "In a significant leap towards advanced research capabilities, DIIT has inaugurated the Center of Research Excellence in Semiconductor Technology (CREST). The center aims to foster research and development in the field of VLSI design, microelectronics, and embedded systems.",
@@ -499,15 +495,15 @@
         },
         {
             "id": 4,
-            "title": "Annual Tech Fest 2026 Announced - Registration Now Open",
+            "title": "BBA 21st Batch Shines on Their Viva Day!",
             "category": "EVENT",
-            "date": "05 Jan 2026",
-            "day": "05",
-            "month": "Jan",
-            "year": "2026",
+            "date": "Nov. 9, 2025",
+            "day": "09",
+            "month": "Nov",
+            "year": "2025",
             "dayName": "Monday",
             "time": "10:00 am",
-            "image": "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?q=80&w=2012&auto=format&fit=crop",
+            "image": "https://i.postimg.cc/50ZzCyf5/BBA-21-nu-viva.jpg",
             "excerpt": "The biggest tech event of the year is here! Register now to participate in competitions and workshops.",
             "content": [
                 "Get ready for the most anticipated event of the year! DIIT is proud to announce the Annual Tech Fest 2026, scheduled to take place from February 20th to 22nd. The three-day extravaganza will feature a wide range of competitions, including coding marathons, robotics challenges, gaming tournaments, and project showcases.",
@@ -517,15 +513,15 @@
         },
         {
             "id": 5,
-            "title": "DIIT Signs MoU with Leading Tech Companies for Student Internships",
+            "title": "From Classroom to Career: CSE 20th Batch Industrial Visit",
             "category": "NEWS",
-            "date": "04 Jan 2026",
-            "day": "04",
-            "month": "Jan",
-            "year": "2026",
+            "date": "Nov. 1, 2025",
+            "day": "01",
+            "month": "Nov",
+            "year": "2025",
             "dayName": "Sunday",
             "time": "3:00 pm",
-            "image": "https://images.unsplash.com/photo-1521737711867-e3b97375f902?q=80&w=1974&auto=format&fit=crop",
+            "image": "https://i.postimg.cc/85qv6cTR/cse-20-industrial-visit.jpg",
             "excerpt": "New partnerships will provide students with valuable industry experience through structured internship programs.",
             "content": [
                 "DIIT has signed strategic Memorandums of Understanding (MoUs) with five leading tech companies to bolster student employability. The partners include major software firms, telecommunication giants, and fintech startups.",

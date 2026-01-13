@@ -1,0 +1,91 @@
+{
+    "hero": {
+        "title": "Build the Future of Education",
+        "subtitle": "Join a team of passionate educators and innovators dedicated to shaping the next generation of leaders."
+    },
+    "benefits": [
+        {
+            "id": 1,
+            "icon": "TrendingUp",
+            "title": "Professional Growth",
+            "description": "Continuous learning opportunities, workshops, and research grants."
+        },
+        {
+            "id": 2,
+            "icon": "Users",
+            "title": "Collaborative Culture",
+            "description": "Work with a diverse team of experts in a supportive and friendly environment."
+        },
+        {
+            "id": 3,
+            "icon": "Heart",
+            "title": "Health & Wellness",
+            "description": "Comprehensive health benefits and a healthy work-life balance."
+        },
+        {
+            "id": 4,
+            "icon": "Award",
+            "title": "Recognition",
+            "description": "Performance-based rewards and recognition for outstanding contributions."
+        }
+    ],
+    "jobs": [
+        {
+            "id": 1,
+            "title": "Lecturer, Computer Science",
+            "department": "Faculty",
+            "type": "Full-time",
+            "location": "Dhanmondi Campus",
+            "description": "We are looking for a dedicated Lecturer to teach undergraduate CSE courses. The ideal candidate should have a strong academic background and a passion for teaching.",
+            "requirements": [
+                "M.Sc. in Computer Science or Engineering from a reputed university.",
+                "Strong command over C++, Java, and Python.",
+                "Previous teaching experience is a plus.",
+                "Research publication is highly valued."
+            ],
+            "deadline": "2026-03-01"
+        },
+        {
+            "id": 2,
+            "title": "Assistant Professor, Business Administration",
+            "department": "Faculty",
+            "type": "Full-time",
+            "location": "Dhanmondi Campus",
+            "description": "Seeking an Assistant Professor to lead BBA courses and mentor students.",
+            "requirements": [
+                "PhD or MBA with significant industry/teaching experience.",
+                "Expertise in Marketing or Finance.",
+                "Ability to conduct seminars and workshops."
+            ],
+            "deadline": "2026-02-20"
+        },
+        {
+            "id": 3,
+            "title": "Lab Instructor",
+            "department": "Academic Support",
+            "type": "Full-time",
+            "location": "Dhanmondi Campus",
+            "description": "Responsible for managing computer labs and assisting students during practical sessions.",
+            "requirements": [
+                "B.Sc. in CSE or Diploma in Computer Technology.",
+                "Hands-on experience with hardware troubleshooting.",
+                "Knowledge of networking and software installation."
+            ],
+            "deadline": "2026-02-15"
+        },
+        {
+            "id": 4,
+            "title": "Admission Officer",
+            "department": "Administration",
+            "type": "Full-time",
+            "location": "Dhanmondi Campus",
+            "description": "To counsel prospective students and manage admission procedures.",
+            "requirements": [
+                "Bachelor's degree in any discipline.",
+                "Excellent communication and interpersonal skills.",
+                "Proficiency in MS Office."
+            ],
+            "deadline": "2026-03-10"
+        }
+    ]
+}

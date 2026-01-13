@@ -116,7 +116,7 @@ const CredibilitySection = () => {
                                                     <img
                                                         src={partner.logo}
                                                         alt={partner.name}
-                                                        className="max-h-12 w-auto object-contain"
+                                                        className="max-h-20 w-auto object-contain"
                                                     />
                                                 </div>
 

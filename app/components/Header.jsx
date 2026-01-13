@@ -147,7 +147,7 @@ const Header = () => {
                         </button>
 
                         <Link
-                            href="/admissions/how-to-apply"
+                            href="/admission/online"
                             className="hidden md:inline-flex items-center justify-center px-6 py-2.5 lg:px-7 lg:py-3 text-[15px] font-bold text-white bg-brandColor hover:bg-blue-800 transition-all duration-300 rounded-lg shadow-lg hover:shadow-brandColor/30 hover:-translate-y-0.5"
                         >
                             Apply Now

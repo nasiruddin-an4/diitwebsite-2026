@@ -11,22 +11,22 @@ const FindYourWay = () => {
         {
             id: "scholarships",
             title: "Scholarships",
-            link: "/scholarships",
+            link: "/admission/scholarships",
         },
         {
             id: "innovationlabs",
             title: "Innovation labs",
-            link: "/innovationlabs",
+            link: "/campus/facilities",
         },
         {
-            id: "research",
-            title: "Research",
-            link: "/research",
+            id: "alumni",
+            title: "Alumni",
+            link: "/alumni",
         },
         {
             id: "studentlife",
             title: "Student Life",
-            link: "/campus",
+            link: "/campus-activities",
         },
         {
             id: "faculty",
@@ -36,7 +36,7 @@ const FindYourWay = () => {
         {
             id: "tuition",
             title: "Tuition Fees",
-            link: "/tuition",
+            link: "/admission/fees",
         },
     ];
 
@@ -59,16 +59,16 @@ const FindYourWay = () => {
             >
                 <h3
                     className={`font-bold text-2xl text-white transition-all duration-500 ease-out absolute ${activeCard === card.id
-                            ? "top-10"
-                            : "top-1/2 -translate-y-1/2"
+                        ? "top-10"
+                        : "top-1/2 -translate-y-1/2"
                         }`}
                 >
                     {card.title}
                 </h3>
                 <div
                     className={`absolute bottom-10 w-9 h-9 rounded-full border border-white/50 flex items-center justify-center transition-all duration-500 ease-out ${activeCard === card.id
-                            ? "opacity-100 scale-100"
-                            : "opacity-0 scale-75"
+                        ? "opacity-100 scale-100"
+                        : "opacity-0 scale-75"
                         }`}
                 >
                     <ChevronRight className="w-4 h-4 text-white" />
@@ -131,16 +131,16 @@ const FindYourWay = () => {
 
                         <div className="flex flex-col gap-3">
                             <Link
-                                href="/programs"
+                                href="/about"
                                 className="flex items-center justify-center border border-white/60 text-white text-md py-3 rounded-full font-semibold hover:bg-brandColor hover:text-white transition-all duration-500"
                             >
-                                Undergraduate Programs
+                                About Us
                             </Link>
                             <Link
-                                href="/graduatePrograms"
+                                href="/contact"
                                 className="flex items-center justify-center border border-white/60 text-white text-md py-3 rounded-full font-semibold hover:bg-brandColor hover:text-white transition-all duration-500"
                             >
-                                Graduate Programs
+                                Contact
                             </Link>
                         </div>
                     </div>

@@ -16,22 +16,22 @@ import {
 
 const quickLinks = [
     { label: "About DIIT", href: "/about" },
-    { label: "Undergraduate Programs", href: "/programs/undergraduate" },
-    { label: "Postgraduate Programs", href: "/programs/postgraduate" },
-    { label: "Faculty Members", href: "/academics/faculty" },
+    { label: "Programs", href: "/programs" },
+    { label: "Faculty Members", href: "/faculty" },
     { label: "Academic Calendar", href: "/academics/calendar" },
+    { label: "Contact Us", href: "/contact" },
 ];
 
 const admissionLinks = [
-    { label: "Admission Overview", href: "/admissions/overview" },
-    { label: "How to Apply", href: "/admissions/how-to-apply" },
-    { label: "Tuition Fees", href: "/admissions/tuition-fees" },
-    { label: "Scholarships", href: "/admissions/scholarships" },
-    { label: "Programs & Eligibility", href: "/admissions/eligibility" },
+    { label: "Admission Overview", href: "/admissionEligibility" },
+    { label: "How to Apply", href: "/admission/online" },
+    { label: "Tuition Fees", href: "/admission/fees" },
+    { label: "Scholarships", href: "/admission/scholarships" },
+    { label: "Brochure", href: "/brochure" },
 ];
 
 const campusLinks = [
-    { label: "Campus Overview", href: "/campus/overview" },
+    { label: "Campus Overview", href: "/campus" },
     { label: "Facilities", href: "/campus/facilities" },
     { label: "Labs", href: "/campus/labs" },
     { label: "Library", href: "/campus/library" },
