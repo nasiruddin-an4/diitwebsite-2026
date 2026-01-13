@@ -453,7 +453,13 @@
             "dayName": "Wednesday",
             "time": "12:00 pm",
             "image": "https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=2070&auto=format&fit=crop",
-            "excerpt": "DIIT successfully organized the Next Gen Ideathon 2026, bringing together innovative minds from across the country."
+            "excerpt": "DIIT successfully organized the Next Gen Ideathon 2026, bringing together innovative minds from across the country.",
+            "content": [
+                "Dhaka International Institute of Technology (DIIT) witnessed a surge of creativity and innovation as it hosted the 'Next Gen Ideathon 2026'. The event brought together brilliant minds from various universities to brainstorm solutions for pressing global challenges.",
+                "Over 50 teams participated in the competition, presenting ideas ranging from sustainable energy solutions to AI-driven healthcare diagnostics. The jury panel included industry experts from top tech companies and academic leaders.",
+                "The winning team, 'Innovators Squad' from DIIT, secured the first prize for their project on 'Smart Waste Management Systems using IoT'. They received a cash prize of 100,000 BDT and an opportunity to incubate their startup at the DIIT Innovation Hub.",
+                "Principal Dr. Mohammed Shakhawat Hossain praised the students for their ingenuity and emphasized the importance of such platforms in fostering an entrepreneurial spirit among the youth."
+            ]
         },
         {
             "id": 2,
@@ -466,7 +472,12 @@
             "dayName": "Thursday",
             "time": "11:00 am",
             "image": "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=2070&auto=format&fit=crop",
-            "excerpt": "Faculty members participated in an intensive workshop focused on designing impactful educational experiences."
+            "excerpt": "Faculty members participated in an intensive workshop focused on designing impactful educational experiences.",
+            "content": [
+                "DIIT successfully concluded the second cohort of the 'Designing for Impact' workshop, aimed at enhancing the pedagogical skills of its faculty members. The three-day intensive program focused on modern teaching methodologies, student engagement strategies, and outcome-based education (OBE).",
+                "Renowned educationists conducted sessions on active learning, digital tools in the classroom, and designing assessments that measure critical thinking. Faculty members engaged in hands-on activities, redesigning their course modules to incorporate these new techniques.",
+                "The workshop is part of DIIT's continuous professional development program to ensure that its educators stay ahead of the curve and provide world-class education to students."
+            ]
         },
         {
             "id": 3,
@@ -479,7 +490,12 @@
             "dayName": "Tuesday",
             "time": "11:15 am",
             "image": "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2070&auto=format&fit=crop",
-            "excerpt": "A new research center dedicated to semiconductor technology has been established at DIIT."
+            "excerpt": "A new research center dedicated to semiconductor technology has been established at DIIT.",
+            "content": [
+                "In a significant leap towards advanced research capabilities, DIIT has inaugurated the Center of Research Excellence in Semiconductor Technology (CREST). The center aims to foster research and development in the field of VLSI design, microelectronics, and embedded systems.",
+                "Equipped with state-of-the-art simulation tools and hardware labs, CREST will provide students and faculty with the resources needed to conduct cutting-edge research. The center also plans to collaborate with international universities and semiconductor companies.",
+                "Speaking at the launch, the Head of the CSE Department stated, 'Semiconductors are the backbone of modern electronics. With CREST, we aim to produce skilled engineers who can contribute to the global semiconductor industry.'"
+            ]
         },
         {
             "id": 4,
@@ -492,7 +508,12 @@
             "dayName": "Monday",
             "time": "10:00 am",
             "image": "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?q=80&w=2012&auto=format&fit=crop",
-            "excerpt": "The biggest tech event of the year is here! Register now to participate in competitions and workshops."
+            "excerpt": "The biggest tech event of the year is here! Register now to participate in competitions and workshops.",
+            "content": [
+                "Get ready for the most anticipated event of the year! DIIT is proud to announce the Annual Tech Fest 2026, scheduled to take place from February 20th to 22nd. The three-day extravaganza will feature a wide range of competitions, including coding marathons, robotics challenges, gaming tournaments, and project showcases.",
+                "In addition to competitions, there will be workshops on trending technologies like Blockchain, Cloud Computing, and Cyber Security. Students can also look forward to fun events like treasure hunts, quiz contests, and cultural performances.",
+                "Registration is now open for students from all colleges and universities. Visit the official Tech Fest website to register and grab your chance to win exciting prizes!"
+            ]
         },
         {
             "id": 5,
@@ -505,7 +526,12 @@
             "dayName": "Sunday",
             "time": "3:00 pm",
             "image": "https://images.unsplash.com/photo-1521737711867-e3b97375f902?q=80&w=1974&auto=format&fit=crop",
-            "excerpt": "New partnerships will provide students with valuable industry experience through structured internship programs."
+            "excerpt": "New partnerships will provide students with valuable industry experience through structured internship programs.",
+            "content": [
+                "DIIT has signed strategic Memorandums of Understanding (MoUs) with five leading tech companies to bolster student employability. The partners include major software firms, telecommunication giants, and fintech startups.",
+                "Under these agreements, the partner companies will offer structured internship programs, industrial visits, and mentorship to DIIT students. They will also provide input on curriculum updates to ensure that students learn industry-relevant skills.",
+                "This initiative reflects DIIT's commitment to bridging the gap between academia and industry, ensuring that its graduates are job-ready from day one."
+            ]
         }
     ],
     "testimonials": {
