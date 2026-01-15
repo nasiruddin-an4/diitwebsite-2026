@@ -12,6 +12,7 @@ import {
     ArrowRight
 } from "lucide-react";
 import homePageData from "@/public/Data/HomePage.json";
+import Image from "next/image";
 
 const Header = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -79,8 +80,14 @@ const Header = () => {
 
                     {/* Logo (Aligned Left) */}
                     <Link href="/" className="flex items-center group relative z-50 mr-8 lg:mr-12">
-                        <div className="relative w-9 h-9 lg:w-10 lg:h-10 bg-brandColor rounded flex items-center justify-center text-white font-bold text-xl">
-                            D
+                        <div className="relative w-12 h-12 lg:w-24 lg:h-24">
+                            <Image
+                                src="/diitLogo.png"
+                                alt="DIIT Logo"
+                                fill
+                                className="object-contain"
+                                priority
+                            />
                         </div>
                     </Link>
 
