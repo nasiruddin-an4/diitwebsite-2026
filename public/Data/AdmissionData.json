@@ -1,0 +1,80 @@
+{
+  "eligibility": {
+    "hsc": {
+      "title": "HSC & Equivalent",
+      "ssc_years": "2021 / 2022 / 2023",
+      "ssc_gpa_business_arts": 2.0,
+      "ssc_gpa_science": 2.5,
+      "hsc_years": "2023 - 2025",
+      "hsc_gpa_business_arts": 2.0,
+      "hsc_gpa_science": 2.5,
+      "combined_gpa_business_arts": 4.5,
+      "combined_gpa_science": 4.75
+    },
+    "diploma": {
+      "title": "Diploma Holders",
+      "ssc_years": "2019 / 2020 / 2021",
+      "ssc_gpa": 2.5,
+      "diploma_years": "2023 / 2024 / 2025",
+      "diploma_gpa": 2.0,
+      "combined_gpa": 4.75
+    }
+  },
+  "online": {
+    "title": "Online Admission",
+    "steps": [
+      {
+        "title": "Step 1",
+        "description": "Fill out the online application form."
+      },
+      {
+        "title": "Step 2",
+        "description": "Pay the application fee."
+      }
+    ],
+    "applyLink": "https://admission.diit.edu.bd"
+  },
+  "fees": {
+    "title": "Tuition Fees Structure",
+    "programs": [
+      {
+        "name": "B.Sc. in CSE",
+        "total_credit": 144,
+        "cost_per_credit": 2500,
+        "total_cost": 450000
+      },
+      {
+        "name": "BBA",
+        "total_credit": 126,
+        "cost_per_credit": 2200,
+        "total_cost": 380000
+      },
+      {
+        "name": "BTHM",
+        "total_credit": 130,
+        "cost_per_credit": 2000,
+        "total_cost": 350000
+      }
+    ]
+  },
+  "scholarships": {
+    "title": "Scholarships & Waivers",
+    "items": [
+      {
+        "title": "Merit Scholarship",
+        "criteria": "GPA 5.00 in HSC",
+        "waiver": "100% Tuition Waiver"
+      },
+      {
+        "title": "Sibling Validation",
+        "criteria": "Two siblings studying together",
+        "waiver": "20% Tuition Waiver"
+      },
+      {
+        "title": "Freedom Fighter Quota",
+        "criteria": "Children of Freedom Fighters",
+        "waiver": "100% Tuition Waiver"
+      }
+    ]
+  }
+}

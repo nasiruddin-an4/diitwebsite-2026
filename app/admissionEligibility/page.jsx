@@ -17,6 +17,40 @@ import {
 import Link from 'next/link';
 
 const AdmissionEligibilityPage = () => {
+    const [data, setData] = React.useState(null);
+
+    React.useEffect(() => {
+        fetch('/public/Data/AdmissionData.json') // In production this should be an API call or imported json, but public folder is accessible
+        // actually better to filter through API if we want consistent "live" data or just import it 
+        // Since we are using an API for admin, let's use the API for frontend too to get latest DB state if using mongo
+        // But for public read, reading the JSON file directly or via a public API is best.
+        // Let's use a simple fetch to the generated JSON file in public folder for performance
+        // Time to time invalidation might be an issue, but for this stack it's fine.
+        // Actually, let's just use the same API endpoint 'GET /api/admin/data/AdmissionData' but we need to make sure it's public? 
+        // The API I created checks for filename matching constant, but doesn't check auth for GET. 
+        // Wait, I should check my API.
+
+        const loadData = async () => {
+            try {
+                // We'll fetch from the API to get the latest (including MongoDB if used)
+                const res = await fetch('/api/admin/data/AdmissionData');
+                const result = await res.json();
+                if (result.success && result.data && result.data.eligibility) {
+                    setData(result.data.eligibility);
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+        loadData();
+    }, []);
+
+    if (!data) return (
+        <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        </div>
+    );
+
     return (
         <div className="min-h-screen bg-slate-50 pb-20">
             {/* Hero Section */}
@@ -84,7 +118,7 @@ const AdmissionEligibilityPage = () => {
                                 <div className="p-3 bg-blue-50 rounded-xl text-brandColor">
                                     <CheckCircle2 className="w-6 h-6" />
                                 </div>
-                                <h3 className="text-2xl font-bold text-slate-900">HSC & Equivalent</h3>
+                                <h3 className="text-2xl font-bold text-slate-900">{data.hsc?.title}</h3>
                             </div>
 
                             <div className="space-y-8">
@@ -92,14 +126,14 @@ const AdmissionEligibilityPage = () => {
                                 <div>
                                     <div className="flex items-center gap-2 mb-3">
                                         <CalendarCheck className="w-4 h-4 text-blue-500" />
-                                        <h4 className="font-bold text-slate-800">SSC (2021 / 2022 / 2023)</h4>
+                                        <h4 className="font-bold text-slate-800">SSC ({data.hsc?.ssc_years})</h4>
                                     </div>
                                     <ul className="space-y-3 pl-2 border-l-2 border-slate-100">
                                         <li className="pl-4 text-slate-600 text-[15px]">
-                                            <span className="font-semibold text-slate-900">Business/Arts:</span> Minimum GPA 2.00
+                                            <span className="font-semibold text-slate-900">Business/Arts:</span> Minimum GPA {data.hsc?.ssc_gpa_business_arts?.toFixed(2)}
                                         </li>
                                         <li className="pl-4 text-slate-600 text-[15px]">
-                                            <span className="font-semibold text-slate-900">Science:</span> Minimum GPA 2.50
+                                            <span className="font-semibold text-slate-900">Science:</span> Minimum GPA {data.hsc?.ssc_gpa_science?.toFixed(2)}
                                         </li>
                                     </ul>
                                 </div>
@@ -108,14 +142,14 @@ const AdmissionEligibilityPage = () => {
                                 <div>
                                     <div className="flex items-center gap-2 mb-3">
                                         <CalendarCheck className="w-4 h-4 text-blue-500" />
-                                        <h4 className="font-bold text-slate-800">HSC / Diploma in Commerce (2023 - 2025)</h4>
+                                        <h4 className="font-bold text-slate-800">HSC / Diploma in Commerce ({data.hsc?.hsc_years})</h4>
                                     </div>
                                     <ul className="space-y-3 pl-2 border-l-2 border-slate-100">
                                         <li className="pl-4 text-slate-600 text-[15px]">
-                                            <span className="font-semibold text-slate-900">Business/Arts:</span> Minimum GPA 2.00
+                                            <span className="font-semibold text-slate-900">Business/Arts:</span> Minimum GPA {data.hsc?.hsc_gpa_business_arts?.toFixed(2)}
                                         </li>
                                         <li className="pl-4 text-slate-600 text-[15px]">
-                                            <span className="font-semibold text-slate-900">Science:</span> Minimum GPA 2.50
+                                            <span className="font-semibold text-slate-900">Science:</span> Minimum GPA {data.hsc?.hsc_gpa_science?.toFixed(2)}
                                         </li>
                                     </ul>
                                 </div>
@@ -126,11 +160,11 @@ const AdmissionEligibilityPage = () => {
                                     <div className="grid grid-cols-2 gap-4">
                                         <div>
                                             <span className="block text-xs text-slate-500 mb-1">Business/Arts</span>
-                                            <span className="text-2xl font-bold text-brandColor">4.50</span>
+                                            <span className="text-2xl font-bold text-brandColor">{data.hsc?.combined_gpa_business_arts?.toFixed(2)}</span>
                                         </div>
                                         <div>
                                             <span className="block text-xs text-slate-500 mb-1">Science</span>
-                                            <span className="text-2xl font-bold text-brandColor">4.75</span>
+                                            <span className="text-2xl font-bold text-brandColor">{data.hsc?.combined_gpa_science?.toFixed(2)}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -154,7 +188,7 @@ const AdmissionEligibilityPage = () => {
                                 <div className="p-3 bg-indigo-50 rounded-xl text-indigo-600">
                                     <Briefcase className="w-6 h-6" />
                                 </div>
-                                <h3 className="text-2xl font-bold text-slate-900">Diploma Holders</h3>
+                                <h3 className="text-2xl font-bold text-slate-900">{data.diploma?.title}</h3>
                             </div>
 
                             <div className="space-y-8 flex-1">
@@ -162,11 +196,11 @@ const AdmissionEligibilityPage = () => {
                                 <div>
                                     <div className="flex items-center gap-2 mb-3">
                                         <CalendarCheck className="w-4 h-4 text-indigo-500" />
-                                        <h4 className="font-bold text-slate-800">SSC (2019 / 2020 / 2021)</h4>
+                                        <h4 className="font-bold text-slate-800">SSC ({data.diploma?.ssc_years})</h4>
                                     </div>
                                     <ul className="space-y-3 pl-2 border-l-2 border-slate-100">
                                         <li className="pl-4 text-slate-600 text-[15px]">
-                                            Minimum GPA <span className="font-bold text-slate-900">2.50</span>
+                                            Minimum GPA <span className="font-bold text-slate-900">{data.diploma?.ssc_gpa?.toFixed(2)}</span>
                                         </li>
                                     </ul>
                                 </div>
@@ -175,11 +209,11 @@ const AdmissionEligibilityPage = () => {
                                 <div>
                                     <div className="flex items-center gap-2 mb-3">
                                         <CalendarCheck className="w-4 h-4 text-indigo-500" />
-                                        <h4 className="font-bold text-slate-800">Diploma (2023 / 2024 / 2025)</h4>
+                                        <h4 className="font-bold text-slate-800">Diploma ({data.diploma?.diploma_years})</h4>
                                     </div>
                                     <ul className="space-y-3 pl-2 border-l-2 border-slate-100">
                                         <li className="pl-4 text-slate-600 text-[15px]">
-                                            Minimum GPA <span className="font-bold text-slate-900">2.00</span>
+                                            Minimum GPA <span className="font-bold text-slate-900">{data.diploma?.diploma_gpa?.toFixed(2)}</span>
                                         </li>
                                     </ul>
                                 </div>
@@ -187,7 +221,7 @@ const AdmissionEligibilityPage = () => {
                                 {/* Combined Requirement Box */}
                                 <div className="bg-indigo-50/50 rounded-xl p-6 border border-indigo-100 mt-auto text-center">
                                     <h5 className="font-bold text-slate-900 mb-1">Required Combined GPA</h5>
-                                    <div className="text-4xl font-extrabold text-indigo-600">4.75</div>
+                                    <div className="text-4xl font-extrabold text-indigo-600">{data.diploma?.combined_gpa?.toFixed(2)}</div>
                                 </div>
                             </div>
                         </div>

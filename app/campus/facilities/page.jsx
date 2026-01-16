@@ -11,90 +11,29 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 const FacilitiesPage = () => {
+    const [facilities, setFacilities] = React.useState(null);
 
-    const facilities = [
-        {
-            icon: Monitor,
-            title: "Advanced Computer Labs",
-            description: "State-of-the-art workstations equipped for high-end programming, networking simulations, and multimedia design.",
-            color: "from-blue-600 to-indigo-600",
-            stat: "300+ PCs",
-            span: "md:col-span-2",
-            image: "/images/facilities/computer-lab.png"
-        },
-        {
-            icon: Utensils,
-            title: "THM Culinary Kitchen",
-            description: "A professional-grade production kitchen offering a real-world culinary environment for hospitality students.",
-            color: "from-orange-500 to-red-600",
-            stat: "Chef Grade",
-            span: "md:col-span-1",
-            image: "/images/facilities/kitchen.png"
-        },
-        {
-            icon: Library,
-            title: "Digital Library",
-            description: "Access to over 10,000 physical texts and widespread digital resources in a serene study environment.",
-            color: "from-emerald-500 to-teal-700",
-            stat: "Quiet Zone",
-            span: "md:col-span-1",
-            image: "/images/facilities/library.png"
-        },
-        {
-            icon: Mic2,
-            title: "Modern Auditorium",
-            description: "Our centralized hub for seminars, cultural festivities, and large-scale academic workshops.",
-            color: "from-violet-600 to-purple-800",
-            stat: "250+ Seats",
-            span: "md:col-span-2",
-            image: "/images/facilities/auditorium.png"
-        },
-        {
-            icon: Lightbulb,
-            title: "Innovation Hub",
-            description: "A dedicated co-working space designed to foster student startups and collaborative projects.",
-            color: "from-amber-400 to-orange-600",
-            stat: "Startup Zone",
-            span: "md:col-span-1",
-            image: "/images/facilities/innovation.png"
-        },
-        {
-            icon: Video,
-            title: "Smart Classrooms",
-            description: "Air-conditioned classrooms governed by multimedia projectors and advanced sound systems.",
-            color: "from-cyan-500 to-blue-700",
-            stat: "Interactive",
-            span: "md:col-span-1",
-            image: "/images/facilities/classroom.png"
-        },
-        {
-            icon: Stethoscope,
-            title: "Medical Corner",
-            description: "On-campus health support ensuring immediate first-aid and routine checkups for all students.",
-            color: "from-rose-400 to-pink-600",
-            stat: "Health First",
-            span: "md:col-span-1",
-            image: null // Fallback to gradient
-        },
-        {
-            icon: Trophy,
-            title: "Indoor Sports Zone",
-            description: "A vibrant recreation area featuring Table Tennis, Carrom, and Chess to unwind.",
-            color: "from-lime-500 to-green-600",
-            stat: "Recreation",
-            span: "md:col-span-1",
-            image: null
-        },
-        {
-            icon: Bus,
-            title: "Transport Service",
-            description: "Safe and reliable bus routes covering key areas of the city for hassle-free commuting.",
-            color: "from-slate-600 to-slate-800",
-            stat: "City Wide",
-            span: "md:col-span-2",
-            image: null
+    React.useEffect(() => {
+        const loadData = async () => {
+            try {
+                const res = await fetch('/api/admin/data/CampusData');
+                const result = await res.json();
+                if (result.success && result.data && result.data.facilities) {
+                    setFacilities(result.data.facilities);
+                }
+            } catch (e) {
+                console.error(e);
+            }
         }
-    ];
+        loadData();
+    }, []);
+
+
+    // Helper for icons mapping since JSON stores icon name as string
+    const getIcon = (iconName) => {
+        const icons = { Monitor, Utensils, Library, Video, Coffee, Wifi, Shield, Users, Mic2, Lightbulb, Stethoscope, Bus, Trophy, ArrowUpRight, Sparkles, MapPin };
+        return icons[iconName] || Lightbulb;
+    };
 
     const container = {
         hidden: { opacity: 0 },
@@ -113,6 +52,12 @@ const FacilitiesPage = () => {
             transition: { type: "spring", stiffness: 50, damping: 20 }
         }
     };
+
+    if (!facilities) return (
+        <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        </div>
+    );
 
     return (
         <div className="min-h-screen bg-slate-50 selection:bg-blue-100 selection:text-blue-900 pb-20">
@@ -155,58 +100,61 @@ const FacilitiesPage = () => {
                     animate="show"
                     className="grid grid-cols-1 md:grid-cols-4 gap-6 auto-rows-fr"
                 >
-                    {facilities.map((fac, idx) => (
-                        <motion.div
-                            key={idx}
-                            variants={item}
-                            whileHover={{ y: -5 }}
-                            className={`group relative bg-white rounded-[2rem] shadow-xl shadow-slate-200/60 overflow-hidden flex flex-col ${fac.span} ring-1 ring-slate-100 transition-all duration-300`}
-                        >
-                            {/* Image / Gradient Header */}
-                            <div className="relative h-64 overflow-hidden">
-                                {fac.image ? (
-                                    <Image
-                                        src={fac.image}
-                                        alt={fac.title}
-                                        fill
-                                        className="object-cover transition-transform duration-700 group-hover:scale-110"
-                                    />
-                                ) : (
-                                    <div className={`w-full h-full bg-linear-to-br ${fac.color} opacity-90`} />
-                                )}
+                    {facilities.map((fac, idx) => {
+                        const Icon = getIcon(fac.icon);
+                        return (
+                            <motion.div
+                                key={idx}
+                                variants={item}
+                                whileHover={{ y: -5 }}
+                                className={`group relative bg-white rounded-[2rem] shadow-xl shadow-slate-200/60 overflow-hidden flex flex-col ${fac.span} ring-1 ring-slate-100 transition-all duration-300`}
+                            >
+                                {/* Image / Gradient Header */}
+                                <div className="relative h-64 overflow-hidden">
+                                    {fac.image ? (
+                                        <Image
+                                            src={fac.image}
+                                            alt={fac.title}
+                                            fill
+                                            className="object-cover transition-transform duration-700 group-hover:scale-110"
+                                        />
+                                    ) : (
+                                        <div className={`w-full h-full bg-linear-to-br ${fac.color} opacity-90`} />
+                                    )}
 
-                                {/* Gradient Overlay */}
-                                <div className="absolute inset-0 bg-linear-to-t from-slate-900/80 via-transparent to-transparent opacity-80" />
+                                    {/* Gradient Overlay */}
+                                    <div className="absolute inset-0 bg-linear-to-t from-slate-900/80 via-transparent to-transparent opacity-80" />
 
-                                {/* Badge */}
-                                <div className="absolute top-4 right-4 bg-white/10 backdrop-blur-md border border-white/20 text-white text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider shadow-sm">
-                                    {fac.stat}
-                                </div>
-
-                                {/* Icon Overlay - Positioned bottom left */}
-                                <div className="absolute bottom-4 left-4 flex items-center gap-3">
-                                    <div className={`p-3 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-white shadow-lg`}>
-                                        <fac.icon className="w-6 h-6" />
+                                    {/* Badge */}
+                                    <div className="absolute top-4 right-4 bg-white/10 backdrop-blur-md border border-white/20 text-white text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider shadow-sm">
+                                        {fac.stat}
                                     </div>
-                                    <h3 className="text-xl font-bold text-white tracking-tight drop-shadow-md">
-                                        {fac.title}
-                                    </h3>
-                                </div>
-                            </div>
 
-                            {/* Text Content */}
-                            <div className="p-6 pt-5 bg-white flex-1 flex flex-col">
-                                <p className="text-slate-600 leading-relaxed text-sm flex-1">
-                                    {fac.description}
-                                </p>
-
-                                <div className="mt-5 flex items-center justify-between text-brandColor font-semibold text-sm group-hover:translate-x-1 transition-transform cursor-pointer">
-                                    <span>Learn more</span>
-                                    <ArrowUpRight className="w-4 h-4" />
+                                    {/* Icon Overlay - Positioned bottom left */}
+                                    <div className="absolute bottom-4 left-4 flex items-center gap-3">
+                                        <div className={`p-3 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-white shadow-lg`}>
+                                            <Icon className="w-6 h-6" />
+                                        </div>
+                                        <h3 className="text-xl font-bold text-white tracking-tight drop-shadow-md">
+                                            {fac.title}
+                                        </h3>
+                                    </div>
                                 </div>
-                            </div>
-                        </motion.div>
-                    ))}
+
+                                {/* Text Content */}
+                                <div className="p-6 pt-5 bg-white flex-1 flex flex-col">
+                                    <p className="text-slate-600 leading-relaxed text-sm flex-1">
+                                        {fac.description}
+                                    </p>
+
+                                    <div className="mt-5 flex items-center justify-between text-brandColor font-semibold text-sm group-hover:translate-x-1 transition-transform cursor-pointer">
+                                        <span>Learn more</span>
+                                        <ArrowUpRight className="w-4 h-4" />
+                                    </div>
+                                </div>
+                            </motion.div>
+                        )
+                    })}
                 </motion.div>
 
                 {/* Safety Section - Full Width Card */}

@@ -1,0 +1,117 @@
+{
+  "facilities": [
+    {
+      "icon": "Monitor",
+      "title": "Advanced Computer Labs",
+      "description": "State-of-the-art workstations equipped for high-end programming, networking simulations, and multimedia design.",
+      "color": "from-blue-600 to-indigo-600",
+      "stat": "300+ PCs",
+      "span": "md:col-span-2",
+      "image": "/images/facilities/computer-lab.png"
+    },
+    {
+      "icon": "Utensils",
+      "title": "THM Culinary Kitchen",
+      "description": "A professional-grade production kitchen offering a real-world culinary environment for hospitality students.",
+      "color": "from-orange-500 to-red-600",
+      "stat": "Chef Grade",
+      "span": "md:col-span-1",
+      "image": "/images/facilities/kitchen.png"
+    },
+    {
+      "icon": "Library",
+      "title": "Digital Library",
+      "description": "Access to over 10,000 physical texts and widespread digital resources in a serene study environment.",
+      "color": "from-emerald-500 to-teal-700",
+      "stat": "Quiet Zone",
+      "span": "md:col-span-1",
+      "image": "/images/facilities/library.png"
+    },
+    {
+      "icon": "Mic2",
+      "title": "Modern Auditorium",
+      "description": "Our centralized hub for seminars, cultural festivities, and large-scale academic workshops.",
+      "color": "from-violet-600 to-purple-800",
+      "stat": "250+ Seats",
+      "span": "md:col-span-2",
+      "image": "/images/facilities/auditorium.png"
+    },
+    {
+      "icon": "Lightbulb",
+      "title": "Innovation Hub",
+      "description": "A dedicated co-working space designed to foster student startups and collaborative projects.",
+      "color": "from-amber-400 to-orange-600",
+      "stat": "Startup Zone",
+      "span": "md:col-span-1",
+      "image": "/images/facilities/innovation.png"
+    },
+    {
+      "icon": "Video",
+      "title": "Smart Classrooms",
+      "description": "Air-conditioned classrooms governed by multimedia projectors and advanced sound systems.",
+      "color": "from-cyan-500 to-blue-700",
+      "stat": "Interactive",
+      "span": "md:col-span-1",
+      "image": "/images/facilities/classroom.png"
+    },
+    {
+      "icon": "Stethoscope",
+      "title": "Medical Corner",
+      "description": "On-campus health support ensuring immediate first-aid and routine checkups for all students.",
+      "color": "from-rose-400 to-pink-600",
+      "stat": "Health First",
+      "span": "md:col-span-1",
+      "image": null
+    },
+    {
+      "icon": "Trophy",
+      "title": "Indoor Sports Zone",
+      "description": "A vibrant recreation area featuring Table Tennis, Carrom, and Chess to unwind.",
+      "color": "from-lime-500 to-green-600",
+      "stat": "Recreation",
+      "span": "md:col-span-1",
+      "image": null
+    },
+    {
+      "icon": "Bus",
+      "title": "Transport Service",
+      "description": "Safe and reliable bus routes covering key areas of the city for hassle-free commuting.",
+      "color": "from-slate-600 to-slate-800",
+      "stat": "City Wide",
+      "span": "md:col-span-2",
+      "image": null
+    }
+  ],
+  "whyChoose": [
+    {
+      "icon": "Users",
+      "label": "Experienced Faculty",
+      "desc": "Learn from industry experts and renowned academics."
+    },
+    {
+      "icon": "Wifi",
+      "label": "Free Internet & Wi-Fi",
+      "desc": "High-speed connectivity across the entire campus."
+    },
+    {
+      "icon": "BookOpen",
+      "label": "Up to 50% Scholarship",
+      "desc": "Merit-based financial aid for deserving students."
+    },
+    {
+      "icon": "Briefcase",
+      "label": "Hostel Facilities",
+      "desc": "Safe and secure accommodation for students."
+    },
+    {
+      "icon": "CheckCircle2",
+      "label": "Online Class Facility",
+      "desc": "Seamless hybrid learning experience."
+    },
+    {
+      "icon": "Award",
+      "label": "Career Guidance",
+      "desc": "Dedicated support for internships and job placements."
+    }
+  ]
+}

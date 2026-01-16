@@ -1,173 +1,4 @@
 {
-    "navigationItems": [
-        {
-            "name": "Admissions",
-            "dropdown": [
-                {
-                    "name": "Admission Eligibility",
-                    "path": "/admissionEligibility"
-                },
-                {
-                    "name": "Online Admission",
-                    "path": "/admission/online"
-                },
-                {
-                    "name": "Tuition Fees",
-                    "path": "/admission/fees"
-                },
-                {
-                    "name": "Scholarships & Waivers",
-                    "path": "/admission/scholarships"
-                },
-                {
-                    "name": "Facilities",
-                    "path": "/campus/facilities"
-                }
-            ]
-        },
-        {
-            "name": "Academics",
-            "dropdown": [
-                {
-                    "name": "Academic Calendar",
-                    "path": "/academics/calendar"
-                },
-                {
-                    "name": "DIIT Notices",
-                    "path": "/notices"
-                },
-                {
-                    "name": "NU Notices",
-                    "path": "https://www.nu.ac.bd/recent-news-notice.php",
-                    "target": "_blank",
-                    "external": true
-                },
-                {
-                    "name": "Faculty Members",
-                    "path": "/faculty"
-                },
-                {
-                    "name": "Administrative",
-                    "path": "/administrative"
-                },
-                {
-                    "name": "Alumni",
-                    "path": "/alumni"
-                }
-            ]
-        },
-        {
-            "name": "Programs",
-            "dropdown": [
-                {
-                    "name": "B.Sc. in Computer Science and Engineering",
-                    "path": "/programs/cse"
-                },
-                {
-                    "name": "Bachelor of Business Administration (BBA)",
-                    "path": "/programs/bba"
-                },
-                {
-                    "name": "BBA in Tourism and Hospitality Management",
-                    "path": "/programs/bthm"
-                },
-                {
-                    "name": "Master of Business Administration (MBA)",
-                    "path": "/programs/mba"
-                },
-                {
-                    "name": "MBA in Tourism and Hospitality Management",
-                    "path": "/programs/mthm"
-                }
-            ]
-        },
-        {
-            "name": "News & Events",
-            "dropdown": [
-                {
-                    "name": "News & Events",
-                    "path": "/news"
-                },
-                {
-                    "name": "Campus Activities",
-                    "path": "/campus-activities"
-                }
-            ]
-        },
-        {
-            "name": "About",
-            "dropdown": [
-                {
-                    "name": "About Us",
-                    "path": "/about"
-                },
-                {
-                    "name": "FAQ",
-                    "path": "/faq"
-                },
-                {
-                    "name": "Career",
-                    "path": "/career"
-                },
-                {
-                    "name": "Contact",
-                    "path": "/contact"
-                }
-            ]
-        }
-    ],
-    "heroSlides": [
-        {
-            "id": 1,
-            "title": "Graduation Ceremony",
-            "description": "Join DIIT to experience world-class education in technology and business, empowering you to lead the digital era.",
-            "image": "https://i.postimg.cc/jSVWchS8/hero1.jpg",
-            "buttonText": "Explore Programs",
-            "buttonLink": "/programs"
-        },
-        {
-            "id": 2,
-            "title": "DIIT's First Batch Graduates",
-            "description": "Our state-of-the-art labs and research facilities provide the perfect environment for your ideas to flourish.",
-            "image": "https://i.postimg.cc/2SpqGxST/hero2.jpg",
-            "buttonText": "View Facilities",
-            "buttonLink": "/campus/facilities"
-        },
-        {
-            "id": 3,
-            "title": "A Community of Achievers",
-            "description": "Be part of a vibrant campus life with diverse clubs, events, and alumni network that supports your journey.",
-            "image": "https://i.postimg.cc/2SpqGxS2/laptop-2024.jpg",
-            "buttonText": "Student Life",
-            "buttonLink": "/campus"
-        }
-    ],
-    "statsCounter": [
-        {
-            "id": 1,
-            "value": 3200,
-            "suffix": "+",
-            "label": "Student Enrolled"
-        },
-        {
-            "id": 2,
-            "value": 80,
-            "suffix": "+",
-            "label": "Expert Faculty"
-        },
-        {
-            "id": 3,
-            "value": 1300,
-            "suffix": "+",
-            "label": "Successful Graduates"
-        },
-        {
-            "id": 4,
-            "value": 800,
-            "suffix": "+",
-            "label": "Students Employed"
-        }
-    ],
     "programsData": [
         {
             "id": "cse",
@@ -215,232 +46,10 @@
             "image": "https://i.postimg.cc/9Mh2Ztq2/MTHM-4x.png"
         }
     ],
-    "internationalPartners": [
-        {
-            "id": 1,
-            "name": "Jagran Lakecity University",
-            "logo": "https://i.postimg.cc/J4WVY0S2/Jagran-Lakecity-University.webp",
-            "country": "USA",
-            "type": "Higher Education Partnership",
-            "description": "Joint initiatives in digital innovation, research collaborations, and student development through global exchange programs."
-        },
-        {
-            "id": 2,
-            "name": "Bangladesh Psychiatric Care Ltd. (BPCL)",
-            "logo": "https://i.postimg.cc/L4k2pjkq/logo-(1).png",
-            "country": "Bangladesh",
-            "type": "Awareness of Mental Health issues",
-            "description": "This collaboration aims to raise awareness of mental health issues, promote psychological well-being, and ensure access to quality mental health support for the DIIT community."
-        },
-        {
-            "id": 3,
-            "name": "Tour Operators Association of Bangladesh (TOAB)",
-            "logo": "https://i.postimg.cc/Pf0Zgs4k/logo.png",
-            "country": "Bangladesh",
-            "type": "Tourism & Hospitality Management",
-            "description": "This partnership opens doors for real-world exposure, networking with industry professionals, and a stronger future in tourism and hospitality."
-        },
-        {
-            "id": 4,
-            "name": "Camarines Sur Polytechnic Colleges",
-            "logo": "https://i.postimg.cc/G2Q7M3DN/Camarines-Sur-Polytechnic-Colleges-Logo.png",
-            "country": "Philippines",
-            "type": "Academic & Research Collaboration",
-            "description": "Five-year collaboration supporting student and faculty exchange, joint research, conferences, and international academic cooperation."
-        },
-        {
-            "id": 5,
-            "name": "Cisco",
-            "logo": "https://upload.wikimedia.org/wikipedia/commons/6/64/Cisco_logo.svg",
-            "country": "USA",
-            "type": "Networking Academy",
-            "description": "Supports students and professionals with Cisco Networking Academy, offering certifications in networking, IoT, and cybersecurity."
-        },
-        {
-            "id": 6,
-            "name": "Oracle",
-            "logo": "https://upload.wikimedia.org/wikipedia/commons/5/50/Oracle_logo.svg",
-            "country": "USA",
-            "type": "Database & Systems",
-            "description": "Academic collaboration promoting database management, enterprise software training, and Oracle Cloud certification programs."
-        }
-    ],
-    "collaborationTypes": [
-        {
-            "title": "Student Exchange Programs"
-        },
-        {
-            "title": "Faculty Exchange & Development"
-        },
-        {
-            "title": "Joint Research Initiatives"
-        },
-        {
-            "title": "Joint Academic Events and Conferences"
-        },
-        {
-            "title": "Summer and Winter Exchange Programs"
-        },
-        {
-            "title": "Industry Internships"
-        },
-        {
-            "title": "Academic Resource Sharing"
-        },
-        {
-            "title": "Academic Programs"
-        }
-    ],
-    "collaborationBenefits": [
-        "Global internship and job placement opportunities",
-        "Access to cutting-edge technology and tools",
-        "Industry-certified training and skill development programs",
-        "International conference participation and paper presentation",
-        "Collaborative research and innovation funding",
-        "Guest lectures and workshops from global experts",
-        "Student and faculty mobility across partner institutions",
-        "Joint academic projects and entrepreneurship incubation support",
-        "Cross-cultural learning and international exposure",
-        "Priority access to global scholarships and exchange programs"
-    ],
-    "internships": [
-        {
-            "title": "Software Development Intern",
-            "company": "TechVenture Solutions",
-            "location": "Dhaka, Bangladesh",
-            "duration": "3 Months",
-            "type": "Paid"
-        },
-        {
-            "title": "Data Analyst Intern",
-            "company": "DataPro Analytics",
-            "location": "Remote",
-            "duration": "6 Months",
-            "type": "Paid"
-        },
-        {
-            "title": "Business Development Intern",
-            "company": "GlobalTrade BD",
-            "location": "Dhaka, Bangladesh",
-            "duration": "4 Months",
-            "type": "Stipend"
-        },
-        {
-            "title": "UI/UX Design Intern",
-            "company": "CreativeMinds Agency",
-            "location": "Dhaka, Bangladesh",
-            "duration": "3 Months",
-            "type": "Paid"
-        },
-        {
-            "title": "Digital Marketing Intern",
-            "company": "BrandBoost Digital",
-            "location": "Hybrid",
-            "duration": "3 Months",
-            "type": "Paid"
-        },
-        {
-            "title": "Cloud Engineering Intern",
-            "company": "CloudNine Technologies",
-            "location": "Remote",
-            "duration": "6 Months",
-            "type": "Paid"
-        }
-    ],
-    "placementStats": {
-        "placementRate": "95%",
-        "avgSalary": "৳45K",
-        "partnersCount": "50+",
-        "studentsPlaced": "800+"
-    },
-    "partnerCompanies": [
-        {
-            "name": "Google",
-            "logo": "https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg"
-        },
-        {
-            "name": "Microsoft",
-            "logo": "https://upload.wikimedia.org/wikipedia/commons/9/96/Microsoft_logo_%282012%29.svg"
-        },
-        {
-            "name": "Amazon",
-            "logo": "https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg"
-        },
-        {
-            "name": "IBM",
-            "logo": "https://upload.wikimedia.org/wikipedia/commons/5/51/IBM_logo.svg"
-        },
-        {
-            "name": "Grameenphone",
-            "logo": "https://upload.wikimedia.org/wikipedia/commons/2/2c/Grameenphone-Logo.wine.svg"
-        },
-        {
-            "name": "Robi",
-            "logo": "https://upload.wikimedia.org/wikipedia/en/3/34/Robi_Axiata_logo.svg"
-        },
-        {
-            "name": "Banglalink",
-            "logo": "https://upload.wikimedia.org/wikipedia/commons/d/da/Banglalink_logo_%282016%29.png"
-        },
-        {
-            "name": "BRAC Bank",
-            "logo": "https://upload.wikimedia.org/wikipedia/en/c/cb/BRAC_Bank_logo.svg"
-        },
-        {
-            "name": "Walton",
-            "logo": "https://upload.wikimedia.org/wikipedia/commons/4/41/Walton-Logo.svg"
-        },
-        {
-            "name": "Samsung",
-            "logo": "https://upload.wikimedia.org/wikipedia/commons/2/24/Samsung_Logo.svg"
-        },
-        {
-            "name": "Intel",
-            "logo": "https://upload.wikimedia.org/wikipedia/commons/7/7d/Intel_logo_%282006-2020%29.svg"
-        },
-        {
-            "name": "Accenture",
-            "logo": "https://upload.wikimedia.org/wikipedia/commons/c/cd/Accenture.svg"
-        }
-    ],
-    "workshops": [
-        {
-            "date": "25",
-            "month": "January 2026",
-            "title": "Resume Building Masterclass",
-            "description": "Learn to craft a compelling resume that stands out to recruiters and ATS systems.",
-            "category": "Career Skills",
-            "time": "10:00 AM - 1:00 PM"
-        },
-        {
-            "date": "08",
-            "month": "February 2026",
-            "title": "Tech Interview Bootcamp",
-            "description": "Intensive preparation for technical interviews covering DSA, system design, and behavioral questions.",
-            "category": "Technical",
-            "time": "9:00 AM - 5:00 PM"
-        },
-        {
-            "date": "15",
-            "month": "February 2026",
-            "title": "LinkedIn Profile Optimization",
-            "description": "Maximize your professional online presence and networking opportunities on LinkedIn.",
-            "category": "Networking",
-            "time": "2:00 PM - 5:00 PM"
-        },
-        {
-            "date": "22",
-            "month": "February 2026",
-            "title": "Entrepreneurship Summit",
-            "description": "Meet successful entrepreneurs and learn how to turn your ideas into thriving businesses.",
-            "category": "Entrepreneurship",
-            "time": "10:00 AM - 4:00 PM"
-        }
-    ],
     "newsEvents": [
         {
             "id": 1,
-            "title": "On-Campus Exam at DIIT: A Proud Beginning for BBA, CSE & BTHM Students",
+            "title": "Test On-Campus Exam at DIIT: A Proud Beginning for BBA, CSE & BTHM Students",
             "category": "NEWS",
             "date": "Jan. 1, 2026",
             "day": "01",
@@ -610,5 +219,372 @@
                 "text": "DIIT's MBA program has transformed my daughter into a confident professional. The quality of education and industry exposure is world-class."
             }
         ]
-    }
+    },
+    "internationalPartners": [
+        {
+            "id": 1,
+            "name": "Jagran Lakecity University",
+            "logo": "https://i.postimg.cc/J4WVY0S2/Jagran-Lakecity-University.webp",
+            "country": "USA",
+            "type": "Higher Education Partnership",
+            "description": "Joint initiatives in digital innovation, research collaborations, and student development through global exchange programs."
+        },
+        {
+            "id": 2,
+            "name": "Bangladesh Psychiatric Care Ltd. (BPCL)",
+            "logo": "https://i.postimg.cc/L4k2pjkq/logo-(1).png",
+            "country": "Bangladesh",
+            "type": "Awareness of Mental Health issues",
+            "description": "This collaboration aims to raise awareness of mental health issues, promote psychological well-being, and ensure access to quality mental health support for the DIIT community."
+        },
+        {
+            "id": 3,
+            "name": "Tour Operators Association of Bangladesh (TOAB)",
+            "logo": "https://i.postimg.cc/Pf0Zgs4k/logo.png",
+            "country": "Bangladesh",
+            "type": "Tourism & Hospitality Management",
+            "description": "This partnership opens doors for real-world exposure, networking with industry professionals, and a stronger future in tourism and hospitality."
+        },
+        {
+            "id": 4,
+            "name": "Camarines Sur Polytechnic Colleges",
+            "logo": "https://i.postimg.cc/G2Q7M3DN/Camarines-Sur-Polytechnic-Colleges-Logo.png",
+            "country": "Philippines",
+            "type": "Academic & Research Collaboration",
+            "description": "Five-year collaboration supporting student and faculty exchange, joint research, conferences, and international academic cooperation."
+        },
+        {
+            "id": 5,
+            "name": "Cisco",
+            "logo": "https://upload.wikimedia.org/wikipedia/commons/6/64/Cisco_logo.svg",
+            "country": "USA",
+            "type": "Networking Academy",
+            "description": "Supports students and professionals with Cisco Networking Academy, offering certifications in networking, IoT, and cybersecurity."
+        },
+        {
+            "id": 6,
+            "name": "Oracle",
+            "logo": "https://upload.wikimedia.org/wikipedia/commons/5/50/Oracle_logo.svg",
+            "country": "USA",
+            "type": "Database & Systems",
+            "description": "Academic collaboration promoting database management, enterprise software training, and Oracle Cloud certification programs."
+        }
+    ],
+    "statsCounter": [
+        {
+            "id": 1,
+            "value": 3500,
+            "suffix": "+",
+            "label": "Student Enrolled"
+        },
+        {
+            "id": 2,
+            "value": 80,
+            "suffix": "+",
+            "label": "Expert Faculty"
+        },
+        {
+            "id": 3,
+            "value": 1300,
+            "suffix": "+",
+            "label": "Successful Graduates"
+        },
+        {
+            "id": 4,
+            "value": 800,
+            "suffix": "+",
+            "label": "Students Employed"
+        }
+    ],
+    "collaborationBenefits": [
+        "Global internship and job placement opportunities",
+        "Access to cutting-edge technology and tools",
+        "Industry-certified training and skill development programs",
+        "International conference participation and paper presentation",
+        "Collaborative research and innovation funding",
+        "Guest lectures and workshops from global experts",
+        "Student and faculty mobility across partner institutions",
+        "Joint academic projects and entrepreneurship incubation support",
+        "Cross-cultural learning and international exposure",
+        "Priority access to global scholarships and exchange programs"
+    ],
+    "collaborationTypes": [
+        {
+            "title": "Student Exchange Programs"
+        },
+        {
+            "title": "Faculty Exchange & Development"
+        },
+        {
+            "title": "Joint Research Initiatives"
+        },
+        {
+            "title": "Joint Academic Events and Conferences"
+        },
+        {
+            "title": "Summer and Winter Exchange Programs"
+        },
+        {
+            "title": "Industry Internships"
+        },
+        {
+            "title": "Academic Resource Sharing"
+        },
+        {
+            "title": "Academic Programs"
+        }
+    ],
+    "internships": [
+        {
+            "title": "Software Development Intern",
+            "company": "TechVenture Solutions",
+            "location": "Dhaka, Bangladesh",
+            "duration": "3 Months",
+            "type": "Paid"
+        },
+        {
+            "title": "Data Analyst Intern",
+            "company": "DataPro Analytics",
+            "location": "Remote",
+            "duration": "6 Months",
+            "type": "Paid"
+        },
+        {
+            "title": "Business Development Intern",
+            "company": "GlobalTrade BD",
+            "location": "Dhaka, Bangladesh",
+            "duration": "4 Months",
+            "type": "Stipend"
+        },
+        {
+            "title": "UI/UX Design Intern",
+            "company": "CreativeMinds Agency",
+            "location": "Dhaka, Bangladesh",
+            "duration": "3 Months",
+            "type": "Paid"
+        },
+        {
+            "title": "Digital Marketing Intern",
+            "company": "BrandBoost Digital",
+            "location": "Hybrid",
+            "duration": "3 Months",
+            "type": "Paid"
+        },
+        {
+            "title": "Cloud Engineering Intern",
+            "company": "CloudNine Technologies",
+            "location": "Remote",
+            "duration": "6 Months",
+            "type": "Paid"
+        }
+    ],
+    "navigationItems": [
+        {
+            "name": "Admissions",
+            "dropdown": [
+                {
+                    "name": "Admission Eligibility",
+                    "path": "/admissionEligibility"
+                },
+                {
+                    "name": "Online Admission",
+                    "path": "/admission/online"
+                },
+                {
+                    "name": "Tuition Fees",
+                    "path": "/admission/fees"
+                },
+                {
+                    "name": "Scholarships & Waivers",
+                    "path": "/admission/scholarships"
+                },
+                {
+                    "name": "Facilities",
+                    "path": "/campus/facilities"
+                }
+            ]
+        },
+        {
+            "name": "Academics",
+            "dropdown": [
+                {
+                    "name": "Academic Calendar",
+                    "path": "/academics/calendar"
+                },
+                {
+                    "name": "DIIT Notices",
+                    "path": "/notices"
+                },
+                {
+                    "name": "NU Notices",
+                    "path": "https://www.nu.ac.bd/recent-news-notice.php",
+                    "target": "_blank",
+                    "external": true
+                },
+                {
+                    "name": "Faculty Members",
+                    "path": "/faculty"
+                },
+                {
+                    "name": "Administrative",
+                    "path": "/administrative"
+                },
+                {
+                    "name": "Alumni",
+                    "path": "/alumni"
+                }
+            ]
+        },
+        {
+            "name": "Programs",
+            "dropdown": [
+                {
+                    "name": "B.Sc. in Computer Science and Engineering",
+                    "path": "/programs/cse"
+                },
+                {
+                    "name": "Bachelor of Business Administration (BBA)",
+                    "path": "/programs/bba"
+                },
+                {
+                    "name": "BBA in Tourism and Hospitality Management",
+                    "path": "/programs/bthm"
+                },
+                {
+                    "name": "Master of Business Administration (MBA)",
+                    "path": "/programs/mba"
+                },
+                {
+                    "name": "MBA in Tourism and Hospitality Management",
+                    "path": "/programs/mthm"
+                }
+            ]
+        },
+        {
+            "name": "News & Events",
+            "dropdown": [
+                {
+                    "name": "News & Events",
+                    "path": "/news"
+                },
+                {
+                    "name": "Campus Activities",
+                    "path": "/campus-activities"
+                }
+            ]
+        },
+        {
+            "name": "About",
+            "dropdown": [
+                {
+                    "name": "About Us",
+                    "path": "/about"
+                },
+                {
+                    "name": "FAQ",
+                    "path": "/faq"
+                },
+                {
+                    "name": "Career",
+                    "path": "/career"
+                },
+                {
+                    "name": "Contact",
+                    "path": "/contact"
+                }
+            ]
+        }
+    ],
+    "partnerCompanies": [
+        {
+            "name": "Google",
+            "logo": "https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg"
+        },
+        {
+            "name": "Microsoft",
+            "logo": "https://upload.wikimedia.org/wikipedia/commons/9/96/Microsoft_logo_%282012%29.svg"
+        },
+        {
+            "name": "Amazon",
+            "logo": "https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg"
+        },
+        {
+            "name": "IBM",
+            "logo": "https://upload.wikimedia.org/wikipedia/commons/5/51/IBM_logo.svg"
+        },
+        {
+            "name": "Grameenphone",
+            "logo": "https://upload.wikimedia.org/wikipedia/commons/2/2c/Grameenphone-Logo.wine.svg"
+        },
+        {
+            "name": "Robi",
+            "logo": "https://upload.wikimedia.org/wikipedia/en/3/34/Robi_Axiata_logo.svg"
+        },
+        {
+            "name": "Banglalink",
+            "logo": "https://upload.wikimedia.org/wikipedia/commons/d/da/Banglalink_logo_%282016%29.png"
+        },
+        {
+            "name": "BRAC Bank",
+            "logo": "https://upload.wikimedia.org/wikipedia/en/c/cb/BRAC_Bank_logo.svg"
+        },
+        {
+            "name": "Walton",
+            "logo": "https://upload.wikimedia.org/wikipedia/commons/4/41/Walton-Logo.svg"
+        },
+        {
+            "name": "Samsung",
+            "logo": "https://upload.wikimedia.org/wikipedia/commons/2/24/Samsung_Logo.svg"
+        },
+        {
+            "name": "Intel",
+            "logo": "https://upload.wikimedia.org/wikipedia/commons/7/7d/Intel_logo_%282006-2020%29.svg"
+        },
+        {
+            "name": "Accenture",
+            "logo": "https://upload.wikimedia.org/wikipedia/commons/c/cd/Accenture.svg"
+        }
+    ],
+    "placementStats": {
+        "placementRate": "95%",
+        "avgSalary": "৳45K",
+        "partnersCount": "50+",
+        "studentsPlaced": "800+"
+    },
+    "updatedAt": "2026-01-16T09:16:42.683Z",
+    "updatedBy": "admin@diit.edu.bd",
+    "workshops": [
+        {
+            "date": "25",
+            "month": "January 2026",
+            "title": "Resume Building Masterclass",
+            "description": "Learn to craft a compelling resume that stands out to recruiters and ATS systems.",
+            "category": "Career Skills",
+            "time": "10:00 AM - 1:00 PM"
+        },
+        {
+            "date": "08",
+            "month": "February 2026",
+            "title": "Tech Interview Bootcamp",
+            "description": "Intensive preparation for technical interviews covering DSA, system design, and behavioral questions.",
+            "category": "Technical",
+            "time": "9:00 AM - 5:00 PM"
+        },
+        {
+            "date": "15",
+            "month": "February 2026",
+            "title": "LinkedIn Profile Optimization",
+            "description": "Maximize your professional online presence and networking opportunities on LinkedIn.",
+            "category": "Networking",
+            "time": "2:00 PM - 5:00 PM"
+        },
+        {
+            "date": "22",
+            "month": "February 2026",
+            "title": "Entrepreneurship Summit",
+            "description": "Meet successful entrepreneurs and learn how to turn your ideas into thriving businesses.",
+            "category": "Entrepreneurship",
+            "time": "10:00 AM - 4:00 PM"
+        }
+    ]
 }
