@@ -17,11 +17,16 @@ export default function NewsSection({ data, updateField, addItem, deleteItem, on
   const handleDoneEditing = () => {
     if (editingId !== null && editingIndex !== -1) {
       const item = editingItem;
-      const isEmpty = !item.title?.trim() && !item.excerpt?.trim() && !item.image?.trim();
+
+      // Strict check for empty content
+      const hasContent = item.content?.some(p => p.trim() !== "");
+      const isEmpty = !item.title?.trim() && !item.excerpt?.trim() && !item.image?.trim() && !hasContent;
 
       if (isEmpty) {
+        // Remove the item if it has no data
         deleteItem("newsEvents", editingIndex);
       } else {
+        // If it's a new valid item, strip the internal isNew flag
         if (item.isNew) {
           const { isNew, ...cleanItem } = item;
           updateField("newsEvents", editingIndex, null, cleanItem);
@@ -85,14 +90,14 @@ export default function NewsSection({ data, updateField, addItem, deleteItem, on
           <button
             onClick={onSave}
             disabled={saving}
-            className="flex items-center gap-2 px-4 py-2 bg-green-700 hover:bg-green-800 text-white rounded-xl font-medium transition-all disabled:opacity-50 text-sm shadow-md"
+            className="flex items-center gap-2 px-4 py-2 bg-green-700 hover:bg-green-800 text-white rounded-md font-medium transition-all disabled:opacity-50 text-sm cursor-pointer"
           >
             {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
             Save Changes
           </button>
           <button
             onClick={handleAdd}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium shadow-lg transition-all hover:scale-105 active:scale-95 text-sm"
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-medium cursor-pointer transition-all hover:scale-105 active:scale-95 text-sm"
           >
             <Plus className="w-4 h-4" /> Add News Item
           </button>
@@ -177,7 +182,7 @@ export default function NewsSection({ data, updateField, addItem, deleteItem, on
               {/* Modal Header */}
               <div className="sticky top-0 z-10 flex items-center justify-between p-5 border-b border-slate-100 bg-white/80 backdrop-blur-md rounded-t-3xl ">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white">
+                  <div className="w-10 h-10 rounded-md bg-blue-600 flex items-center justify-center text-white">
                     <FileText className="w-5 h-5" />
                   </div>
                   <div>
@@ -189,7 +194,7 @@ export default function NewsSection({ data, updateField, addItem, deleteItem, on
                 </div>
                 <button
                   onClick={handleDoneEditing}
-                  className="p-2 hover:bg-slate-100 rounded-full transition-colors group"
+                  className="p-2 hover:bg-slate-100 rounded-full transition-colors cursor-pointer group"
                 >
                   <X className="w-6 h-6 text-slate-400 group-hover:text-slate-600" />
                 </button>
@@ -255,7 +260,7 @@ export default function NewsSection({ data, updateField, addItem, deleteItem, on
                         <div className="space-y-2">
                           <label className="block text-[11px] font-black text-slate-400 uppercase tracking-wider">Classification</label>
                           <select
-                            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-700 focus:bg-white focus:border-blue-500 focus:outline-none transition-all outline-none h-[42px]"
+                            className="w-full bg-slate-50 border border-slate-200 rounded-md px-4 py-2.5 text-sm font-semibold text-slate-700 focus:bg-white focus:border-blue-500 focus:outline-none transition-all outline-none h-[42px]"
                             value={editingItem.category}
                             onChange={(e) => updateField("newsEvents", editingIndex, "category", e.target.value)}
                           >
@@ -375,13 +380,13 @@ export default function NewsSection({ data, updateField, addItem, deleteItem, on
               <div className="p-6 border-t border-slate-100 bg-slate-50/50 flex justify-end gap-3 rounded-b-3xl">
                 <button
                   onClick={handleDoneEditing}
-                  className="px-8 py-3 bg-white border border-slate-200 text-slate-600 rounded-2xl font-bold hover:bg-slate-50 transition-all text-sm shadow-sm"
+                  className="px-8 py-3 bg-white border border-slate-200 text-slate-600 rounded-md font-bold hover:bg-slate-50 transition-all text-sm cursor-pointer"
                 >
                   Discard Changes
                 </button>
                 <button
                   onClick={handleDoneEditing}
-                  className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-bold transition-all text-sm shadow-xl shadow-blue-600/20"
+                  className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-bold transition-all text-sm cursor-pointer"
                 >
                   Confirm & Finalize
                 </button>
