@@ -83,18 +83,18 @@ const Hero = () => {
     const slide = heroSlides[currentSlide];
 
     return (
-        <div className="relative h-[90vh] w-full overflow-hidden bg-slate-900">
-            <AnimatePresence mode="wait">
-                <motion.div
-                    key={currentSlide}
-                    initial={{ opacity: 0, scale: 1.05 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.7 }}
-                    className="absolute inset-0"
-                >
-                    {/* Background Image */}
-                    <div className="relative w-full h-full">
+        <div className="relative h-[90vh] w-full overflow-hidden">
+            {/* Background Image Container with Cross-fade */}
+            <div className="absolute inset-0">
+                <AnimatePresence initial={false}>
+                    <motion.div
+                        key={currentSlide}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 1.5, ease: "easeInOut" }}
+                        className="absolute inset-0"
+                    >
                         {slide.image && (
                             <Image
                                 src={slide.image}
@@ -104,32 +104,31 @@ const Hero = () => {
                                 priority
                             />
                         )}
-                        {/* Overlay Gradient */}
-                        <div className="absolute inset-0 bg-gradient-to-r from-slate-900/90 via-slate-900/50 to-transparent" />
-                    </div>
-                </motion.div>
-            </AnimatePresence>
+                    </motion.div>
+                </AnimatePresence>
+
+                {/* Persistent Overlay Gradient for better text readability */}
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/95 via-slate-950/40 to-transparent z-10" />
+            </div>
 
             {/* Content Container */}
-            <div className="absolute inset-0 z-10 flex items-center">
-                <div className="max-w-7xl mx-auto px-4 md:px-0 w-full">
-                    <div className="max-w-3xl pt-24">
+            <div className="absolute inset-0 z-20 flex items-end">
+                <div className="max-w-7xl mx-auto px-4 md:px-0 w-full pb-24">
+                    <div className="max-w-2xl pt-24">
                         <AnimatePresence mode="wait">
                             <motion.div
                                 key={currentSlide}
                                 initial={{ opacity: 0, y: 30 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -30 }}
-                                transition={{ duration: 0.5, delay: 0.2 }}
-                                className="space-y-4"
+                                exit={{ opacity: 0, y: -20 }}
+                                transition={{ duration: 0.8, ease: "easeOut" }}
+                                className="space-y-2"
                             >
-                        
-
                                 <h1 className="text-4xl md:text-5xl font-bold text-white leading-tight">
                                     {slide.title}
                                 </h1>
 
-                                <p className="text-lg md:text-xl text-slate-300 leading-relaxed max-w-lg">
+                                <p className="text-lg md:text-xl text-slate-200 leading-relaxed max-w-lg line-clamp-2">
                                     {slide.subtitle || slide.description}
                                 </p>
                             </motion.div>

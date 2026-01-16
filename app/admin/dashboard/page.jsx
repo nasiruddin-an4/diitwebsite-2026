@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard, Home, FileText, BookOpen, Award, MessageSquare, Users,
-  LogOut, Save, Menu, Check, X, Loader2, GraduationCap, Monitor, Banknote, Gift, Building2, ChevronDown, ChevronRight
+  LogOut, Save, Menu, Check, X, Loader2, GraduationCap, Monitor, Banknote, Gift, Building2, ChevronDown, ChevronRight, ArrowLeftToLine
 } from "lucide-react";
 
 import OverviewSection from "./components/OverviewSection";
@@ -266,7 +266,7 @@ export default function AdminDashboard() {
               onClick={() => setSidebarOpen(!sidebarOpen)}
               className="p-2 -ml-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-all"
             >
-              <Menu className="w-5 h-5" />
+              <ArrowLeftToLine className={`w-5 h-5 cursor-pointer transition-transform duration-300 ${!sidebarOpen ? "rotate-180" : ""}`} />
             </button>
             <div className="h-6 w-px bg-slate-200 mx-2 hidden sm:block"></div>
             <h1 className="text-lg font-bold text-slate-800 capitalize tracking-tight flex items-center gap-2">
@@ -274,7 +274,19 @@ export default function AdminDashboard() {
             </h1>
           </div>
 
-          <div className="flex items-center gap-4">
+          {/* Right side content */}
+          <div className="flex gap-4 items-center justify-between">
+            <div>
+              {/* View Website Button */}
+              <button
+                onClick={() => window.open("/", "_blank")}
+                className="mr-4 flex items-center gap-2 px-3 py-2 text-blue-700 rounded-md border border-blue-200 hover:bg-blue-50 cursor-pointer transition-colors text-sm font-medium"
+              >
+                <Home className="w-4 h-4" />
+                {sidebarOpen && <span>View Website</span>}
+              </button>
+            </div>
+            <div className="flex items-center gap-4">
             <AnimatePresence>
               {message.text && (
                 <motion.div
@@ -388,6 +400,7 @@ export default function AdminDashboard() {
                 )}
               </AnimatePresence>
             </div>
+          </div>
           </div>
         </header>
 

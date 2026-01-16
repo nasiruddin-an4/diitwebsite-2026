@@ -217,11 +217,13 @@ export default function HeroSection({ data, updateField, addItem, deleteItem, on
                     <p className="text-xs text-slate-500 mt-2">Displayed as the main headline on the slide</p>
                   </div>
                   <div>
-                    <InputField 
-                      label="Slide Subtitle" 
+                    <label className="block text-sm font-semibold text-slate-700 mb-3">Slide Subtitle</label>
+                    <textarea 
                       value={newSlide.subtitle} 
-                      onChange={(v) => setNewSlide(p => ({ ...p, subtitle: v }))}
+                      onChange={(e) => setNewSlide(p => ({ ...p, subtitle: e.target.value }))}
                       placeholder="e.g., Excellence in Digital Education"
+                      rows="4"
+                      className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-sm"
                     />
                     <p className="text-xs text-slate-500 mt-2">Displayed as supporting text (optional)</p>
                   </div>
@@ -253,7 +255,7 @@ export default function HeroSection({ data, updateField, addItem, deleteItem, on
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => setIsCreating(false)}
-                className="px-6 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl font-semibold transition-all text-sm"
+                className="px-6 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-md cursor-pointer font-semibold transition-all text-sm"
               >
                 Cancel
               </motion.button>
@@ -261,7 +263,7 @@ export default function HeroSection({ data, updateField, addItem, deleteItem, on
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={handleCreateSlide}
-                className="px-8 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-xl font-semibold transition-all text-sm shadow-lg shadow-blue-600/40 flex items-center gap-2"
+                className="px-8 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-md cursor-pointer font-semibold transition-all text-sm flex items-center gap-2"
               >
                 <Plus className="w-4 h-4" /> Create Slide
               </motion.button>
@@ -368,11 +370,15 @@ export default function HeroSection({ data, updateField, addItem, deleteItem, on
                 value={editingSlide.title} 
                 onChange={(v) => updateField("heroSlides", editingIndex, "title", v)}
               />
-              <InputField 
-                label="Slide Subtitle" 
-                value={editingSlide.subtitle} 
-                onChange={(v) => updateField("heroSlides", editingIndex, "subtitle", v)}
-              />
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-3">Slide Subtitle</label>
+                <textarea 
+                  value={editingSlide.subtitle} 
+                  onChange={(e) => updateField("heroSlides", editingIndex, "subtitle", e.target.value)}
+                  rows="4"
+                  className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-sm"
+                />
+              </div>
             </div>
           </div>
         </motion.div>

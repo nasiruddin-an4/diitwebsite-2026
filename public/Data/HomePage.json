@@ -273,25 +273,25 @@
     "statsCounter": [
         {
             "id": 1,
-            "value": 3500,
+            "value": 8000,
             "suffix": "+",
             "label": "Student Enrolled"
         },
         {
             "id": 2,
-            "value": 80,
+            "value": 120,
             "suffix": "+",
             "label": "Expert Faculty"
         },
         {
             "id": 3,
-            "value": 1300,
+            "value": 3000,
             "suffix": "+",
             "label": "Successful Graduates"
         },
         {
             "id": 4,
-            "value": 800,
+            "value": 2000,
             "suffix": "+",
             "label": "Students Employed"
         }
@@ -551,7 +551,7 @@
         "partnersCount": "50+",
         "studentsPlaced": "800+"
     },
-    "updatedAt": "2026-01-16T12:43:13.285Z",
+    "updatedAt": "2026-01-16T13:00:28.276Z",
     "updatedBy": "admin@diit.edu.bd",
     "workshops": [
         {
