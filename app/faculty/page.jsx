@@ -1,20 +1,47 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
-import { Search, Mail, Phone, GraduationCap, ChevronRight } from 'lucide-react';
-import { facultyData } from './facultyData';
+import { Search, Mail, Phone, GraduationCap, ChevronRight, Loader2, AlertCircle } from 'lucide-react';
+import { facultyData as defaultFacultyData } from './facultyData';
 
 const FacultyPage = () => {
     const [searchQuery, setSearchQuery] = useState('');
-    // Removed 'Administration' from tabs as per request to handle Principal separately
     const [selectedDept, setSelectedDept] = useState('All');
+    const [faculty, setFaculty] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const departments = ['All', 'CSE', 'BBA', 'THM', 'MBA'];
 
-    // separate Principal (ID 1) and others
-    const principal = facultyData.find(m => m.id === 1);
-    const otherFaculty = facultyData.filter(m => m.id !== 1);
+    useEffect(() => {
+        fetchFaculty();
+    }, []);
+
+    const fetchFaculty = async () => {
+        try {
+            setLoading(true);
+            const res = await fetch("/api/admin/academics/faculty");
+            const result = await res.json();
+
+            if (result.success && result.data.length > 0) {
+                setFaculty(result.data);
+            } else {
+                // Use default faculty if API returns empty
+                setFaculty(defaultFacultyData);
+            }
+        } catch (err) {
+            console.error("Error fetching faculty:", err);
+            // Fallback to default faculty on error
+            setFaculty(defaultFacultyData);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // separate Principal (id 1 in default data or first with appropriate title)
+    const principal = faculty.find(m => m.id === 1 || m.designation === "Principal");
+    const otherFaculty = faculty.filter(m => m.id !== 1 && m.designation !== "Principal");
 
     const filteredFaculty = otherFaculty.filter(member => {
         const matchesSearch = member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -26,6 +53,19 @@ const FacultyPage = () => {
 
     return (
         <div className="min-h-screen bg-slate-50 pb-20">
+            {/* Loading State */}
+            {loading && (
+                <div className="min-h-screen flex items-center justify-center">
+                    <div className="text-center">
+                        <Loader2 className="w-12 h-12 text-blue-600 animate-spin mx-auto mb-4" />
+                        <p className="text-slate-600 font-medium">Loading faculty...</p>
+                    </div>
+                </div>
+            )}
+
+            {/* Main Content */}
+            {!loading && (
+            <>
             {/* Hero Section */}
             <div className="bg-[#001229] pt-32 pb-24 px-4 relative overflow-hidden">
                 <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-10" />
@@ -60,7 +100,7 @@ const FacultyPage = () => {
 
                             {/* Principal Image */}
                             <div className="w-full md:w-80 shrink-0">
-                                <Link href={`/faculty/${principal.id}`} className="block relative aspect-[4/5] rounded-2xl overflow-hidden bg-slate-100 shadow-lg group-hover:shadow-2xl transition-all duration-500">
+                                <Link href={`/faculty/${principal._id || principal.id}`} className="block relative aspect-[4/5] rounded-2xl overflow-hidden bg-slate-100 shadow-lg group-hover:shadow-2xl transition-all duration-500">
                                     <img
                                         src={principal.image}
                                         alt={principal.name}
@@ -75,7 +115,7 @@ const FacultyPage = () => {
                                 <div className="inline-block px-4 py-1 rounded-full bg-brandColor/10 text-brandColor text-xs font-bold uppercase tracking-wider mb-4 border border-brandColor/20">
                                     Head of Institution
                                 </div>
-                                <Link href={`/faculty/${principal.id}`} className="block group/link">
+                                <Link href={`/faculty/${principal._id || principal.id}`} className="block group/link">
                                     <h2 className="text-3xl md:text-4xl font-bold text-slate-800 mb-2 group-hover/link:text-brandColor transition-colors">
                                         {principal.name}
                                     </h2>
@@ -90,7 +130,7 @@ const FacultyPage = () => {
                                     <a href={`mailto:${principal.email}`} className="flex items-center gap-2 px-5 py-3 rounded-xl bg-slate-50 hover:bg-white border border-slate-200 hover:border-brandColor/30 hover:shadow-lg transition-all text-slate-600 hover:text-brandColor font-medium group/btn">
                                         <Mail className="w-4 h-4 text-slate-400 group-hover/btn:text-brandColor transition-colors" /> {principal.email}
                                     </a>
-                                    <Link href={`/faculty/${principal.id}`} className="flex items-center gap-2 px-5 py-3 rounded-xl bg-brandColor text-white font-bold hover:bg-blue-800 shadow-lg shadow-blue-900/20 transition-all">
+                                    <Link href={`/faculty/${principal._id || principal.id}`} className="flex items-center gap-2 px-5 py-3 rounded-xl bg-brandColor text-white font-bold hover:bg-blue-800 shadow-lg shadow-blue-900/20 transition-all">
                                         View Full Profile <ChevronRight className="w-4 h-4" />
                                     </Link>
                                 </div>
@@ -134,14 +174,14 @@ const FacultyPage = () => {
                         {filteredFaculty.map((member) => (
                             <motion.div
                                 layout
-                                key={member.id}
+                                key={member._id || member.id}
                                 initial={{ opacity: 0, scale: 0.95 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 exit={{ opacity: 0, scale: 0.95 }}
                                 className="group bg-transparent"
                             >
                                 {/* Image Card */}
-                                <Link href={`/faculty/${member.id}`} className="block relative mb-5 overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-100 group-hover:shadow-xl group-hover:ring-brandColor/20 transition-all duration-300 aspect-[3/4]">
+                                <Link href={`/faculty/${member._id || member.id}`} className="block relative mb-5 overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-100 group-hover:shadow-xl group-hover:ring-brandColor/20 transition-all duration-300 aspect-[3/4]">
                                     <img
                                         src={member.image}
                                         alt={member.name}
@@ -159,7 +199,7 @@ const FacultyPage = () => {
 
                                 {/* Content Info */}
                                 <div className="text-center px-2">
-                                    <Link href={`/faculty/${member.id}`} className="block">
+                                    <Link href={`/faculty/${member._id || member.id}`} className="block">
                                         <h3 className="text-lg font-bold text-slate-800 mb-1 leading-tight group-hover:text-brandColor transition-colors">
                                             {member.name}
                                         </h3>
@@ -187,6 +227,8 @@ const FacultyPage = () => {
                     </div>
                 )}
             </div>
+            </>
+            )}
         </div>
     );
 };

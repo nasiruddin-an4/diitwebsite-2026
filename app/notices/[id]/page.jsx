@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import {
@@ -11,113 +11,65 @@ import {
     Printer,
     FileText,
     Pin,
-    Clock
+    Clock,
+    Loader2,
+    AlertCircle
 } from 'lucide-react';
 import { useParams } from 'next/navigation';
 
-// Mock Data (Shared source of truth would be better in real app)
-const noticesData = [
-    {
-        id: 1,
-        title: "Result Publication of Honours 1st Year Final Examination 2024",
-        date: "12 Jan, 2026",
-        category: "Exam",
-        pinned: true,
-        file: "result_h1_2024.pdf",
-        image: "/noticeImg.jpg",
-        description: `The results of the Honours 1st Year Final Examination 2024 have been published. Students can check their results online via the National University website or the DIIT student portal. 
-        
-        To access your result:
-        1. Visit www.nu.ac.bd/results
-        2. Enter your Registration Number and Exam Roll.
-        3. Submit to view the detailed grade sheet.
-        
-        Students with FAILED subjects must complete the form fill-up for the improvement examination within 15 days of this notice.`
-    },
-    {
-        id: 2,
-        title: "Class Suspension Notice: Saraswati Puja",
-        date: "10 Jan, 2026",
-        category: "General",
-        pinned: false,
-        file: null,
-        image: "/noticeImg.jpg",
-        description: `This is to inform all students and faculty members that all academic and administrative activities of the institute will remain closed on 10th January 2026 on the occasion of Saraswati Puja.
-        
-        Regular classes will resume from 11th January 2026 as per the usual schedule.
-        
-        We wish everyone a joyous celebration.`
-    },
-    {
-        id: 3,
-        title: "Schedule for Mid-Term Examination - Spring 2026",
-        date: "08 Jan, 2026",
-        category: "Academic",
-        pinned: false,
-        file: "schedule_mid_spring26.pdf",
-        image: "/noticeImg.jpg",
-        description: "The schedule for the upcoming Mid-Term Examination (Spring 2026) has been finalized. Exams will commence from March 15th, 2026. Please find the attached PDF for the detailed routine for each department."
-    },
-    {
-        id: 4,
-        title: "Scholarship Application Deadline Extended",
-        date: "05 Jan, 2026",
-        category: "Admission",
-        pinned: true,
-        file: "scholarship_notice.pdf",
-        image: "/noticeImg.jpg",
-        description: "Due to high demand, the deadline for submitting the Merit-Based Scholarship Application for the Session 2025-2026 has been extended until January 20th, 2026."
-    },
-    {
-        id: 5,
-        title: "Guest Seminar on 'Future of AI' by Google Engineer",
-        date: "02 Jan, 2026",
-        category: "Event",
-        pinned: false,
-        file: null,
-        image: "/noticeImg.jpg",
-        description: "Join us for an exciting seminar on 'The Future of AI' featuring a guest speaker from Google's Engineering team."
-    },
-    {
-        id: 6,
-        title: "Library Maintenance Notice: Closed for 2 Days",
-        date: "28 Dec, 2025",
-        category: "General",
-        pinned: false,
-        file: null,
-        image: "/noticeImg.jpg",
-        description: "The Digital Library will be closed for scheduled maintenance and catalog updates."
-    },
-    {
-        id: 7,
-        title: "Form Fill-up Notice for MBA Last Semester",
-        date: "25 Dec, 2025",
-        category: "Exam",
-        pinned: false,
-        file: "mba_form_fillup.pdf",
-        description: "Details regarding the form fill-up process for MBA final semester students."
-    },
-    {
-        id: 8,
-        title: "New Transport Route Added (Route #5 - Uttara)",
-        date: "20 Dec, 2025",
-        category: "General",
-        pinned: false,
-        file: "transport_route_5.pdf",
-        description: "We are pleased to announce a new bus route covering the Uttara sector."
-    }
-];
-
 const NoticeDetailsPage = () => {
     const params = useParams();
-    const notice = noticesData.find(n => n.id == params.id);
+    const [notice, setNotice] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    if (!notice) {
+    useEffect(() => {
+        const fetchNotice = async () => {
+            try {
+                setLoading(true);
+                const res = await fetch("/api/admin/academics/notices");
+                const result = await res.json();
+
+                if (result.success && result.data) {
+                    // Find the notice by _id
+                    const foundNotice = result.data.find(n => n._id === params.id);
+                    if (foundNotice) {
+                        setNotice(foundNotice);
+                    } else {
+                        setError("Notice not found");
+                    }
+                } else {
+                    setError("Failed to load notices");
+                }
+            } catch (err) {
+                console.error("Error fetching notice:", err);
+                setError("Failed to load notice details");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchNotice();
+    }, [params.id]);
+
+    if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-slate-50">
                 <div className="text-center">
-                    <h2 className="text-2xl font-bold text-slate-800 mb-2">Notice Not Found</h2>
-                    <Link href="/notices" className="text-brandColor hover:underline">Back to Notices</Link>
+                    <Loader2 className="w-12 h-12 text-blue-600 animate-spin mx-auto mb-4" />
+                    <p className="text-slate-600 font-medium">Loading notice...</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (error || !notice) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-slate-50">
+                <div className="text-center">
+                    <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
+                    <h2 className="text-2xl font-bold text-slate-800 mb-2">{error || "Notice Not Found"}</h2>
+                    <Link href="/notices" className="text-brandColor hover:underline font-medium">Back to Notices</Link>
                 </div>
             </div>
         );
@@ -188,14 +140,29 @@ const NoticeDetailsPage = () => {
                     {/* Actions Footer */}
                     <div className="pt-8 border-t border-slate-100 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
                         {/* Download Logic: Points to file if avail, else image */}
-                        <a
-                            href={notice.file ? `/files/${notice.file}` : (notice.image || '#')}
-                            download
-                            className="flex items-center justify-center gap-2 bg-brandColor text-white px-6 py-3.5 rounded-xl font-bold hover:bg-blue-800 transition-all active:scale-95 shadow-lg shadow-blue-900/20"
-                        >
-                            <Download className="w-5 h-5" />
-                            {notice.file ? 'Download PDF Document' : 'Download Notice Image'}
-                        </a>
+                        {(notice.pdf || notice.image) && (
+                            <button
+                                onClick={() => {
+                                    if (notice.pdf) {
+                                        // Create a link to download PDF from base64
+                                        const link = document.createElement('a');
+                                        link.href = notice.pdf;
+                                        link.download = `${notice.title}.pdf`;
+                                        link.click();
+                                    } else if (notice.image) {
+                                        // Create a link to download image from base64
+                                        const link = document.createElement('a');
+                                        link.href = notice.image;
+                                        link.download = `${notice.title}.png`;
+                                        link.click();
+                                    }
+                                }}
+                                className="flex items-center justify-center gap-2 bg-brandColor text-white px-6 py-3.5 rounded-xl font-bold hover:bg-blue-800 transition-all active:scale-95 shadow-lg shadow-blue-900/20"
+                            >
+                                <Download className="w-5 h-5" />
+                                {notice.pdf ? 'Download PDF Document' : 'Download Notice Image'}
+                            </button>
+                        )}
 
                         <div className="flex items-center justify-center gap-3">
                             <button className="p-3 rounded-full hover:bg-slate-50 text-slate-500 transition-colors border border-transparent hover:border-slate-200" title="Print">

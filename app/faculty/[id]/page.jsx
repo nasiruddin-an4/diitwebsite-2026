@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
     Mail,
@@ -22,17 +22,67 @@ import {
     Users,
     Star,
     Globe,
-    ChevronRight
+    ChevronRight,
+    Loader2,
+    AlertCircle
 } from 'lucide-react';
 import { useParams } from 'next/navigation';
-import { facultyData } from '../facultyData';
 import { motion } from 'framer-motion';
 
 const FacultyDetailsPage = () => {
     const params = useParams();
-    const member = facultyData.find(f => f.id == params.id);
+    const [member, setMember] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    if (!member) {
+    useEffect(() => {
+        const fetchFaculty = async () => {
+            try {
+                setLoading(true);
+                const res = await fetch("/api/admin/academics/faculty");
+                const result = await res.json();
+
+                if (result.success && result.data) {
+                    // Find the faculty by _id or id (handle both MongoDB ObjectId and string id)
+                    const foundMember = result.data.find(f => 
+                        String(f._id) === String(params.id) || 
+                        String(f.id) === String(params.id)
+                    );
+                    if (foundMember) {
+                        setMember(foundMember);
+                    } else {
+                        setError("Faculty member not found");
+                    }
+                } else {
+                    setError("Failed to load faculty");
+                }
+            } catch (err) {
+                console.error("Error fetching faculty:", err);
+                setError("Failed to load faculty details");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchFaculty();
+    }, [params.id]);
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+                <motion.div 
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="text-center bg-white/5 backdrop-blur-xl p-12 rounded-3xl border border-white/10"
+                >
+                    <Loader2 className="w-10 h-10 text-blue-400 animate-spin mx-auto mb-6" />
+                    <h2 className="text-xl font-bold text-white">Loading faculty...</h2>
+                </motion.div>
+            </div>
+        );
+    }
+
+    if (error || !member) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
                 <motion.div 
@@ -44,7 +94,7 @@ const FacultyDetailsPage = () => {
                         <User className="w-10 h-10 text-red-400" />
                     </div>
                     <h2 className="text-2xl font-bold text-white mb-3">Faculty Member Not Found</h2>
-                    <p className="text-slate-400 mb-6">The profile you're looking for doesn't exist or has been moved.</p>
+                    <p className="text-slate-400 mb-6">{error || "The profile you're looking for doesn't exist or has been moved."}</p>
                     <Link href="/faculty" className="inline-flex items-center gap-2 px-6 py-3 bg-brandColor text-white font-semibold rounded-full hover:bg-blue-700 transition-all shadow-lg shadow-blue-900/30">
                         <ArrowLeft className="w-4 h-4" /> Back to Faculty List
                     </Link>
@@ -227,18 +277,24 @@ const FacultyDetailsPage = () => {
                                 {/* Social Links */}
                                 <div className="px-6 pb-6">
                                     <div className="flex items-center justify-center gap-3 pt-4 border-t border-white/10">
-                                        <a href="#" className="w-10 h-10 rounded-full bg-white/5 hover:bg-gradient-to-br hover:from-blue-600 hover:to-blue-700 flex items-center justify-center text-slate-400 hover:text-white transition-all border border-white/10 hover:border-transparent hover:scale-110">
-                                            <Linkedin className="w-4 h-4" />
-                                        </a>
-                                        <a href="#" className="w-10 h-10 rounded-full bg-white/5 hover:bg-gradient-to-br hover:from-blue-500 hover:to-blue-600 flex items-center justify-center text-slate-400 hover:text-white transition-all border border-white/10 hover:border-transparent hover:scale-110">
-                                            <Facebook className="w-4 h-4" />
-                                        </a>
-                                        <a href="#" className="w-10 h-10 rounded-full bg-white/5 hover:bg-gradient-to-br hover:from-slate-700 hover:to-slate-800 flex items-center justify-center text-slate-400 hover:text-white transition-all border border-white/10 hover:border-transparent hover:scale-110">
-                                            <Twitter className="w-4 h-4" />
-                                        </a>
-                                        <a href="#" className="w-10 h-10 rounded-full bg-white/5 hover:bg-gradient-to-br hover:from-cyan-500 hover:to-teal-500 flex items-center justify-center text-slate-400 hover:text-white transition-all border border-white/10 hover:border-transparent hover:scale-110">
-                                            <Globe className="w-4 h-4" />
-                                        </a>
+                                        {member.linkedin && (
+                                            <a href={member.linkedin} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/5 hover:bg-gradient-to-br hover:from-blue-600 hover:to-blue-700 flex items-center justify-center text-slate-400 hover:text-white transition-all border border-white/10 hover:border-transparent hover:scale-110">
+                                                <Linkedin className="w-4 h-4" />
+                                            </a>
+                                        )}
+                                        {member.facebook && (
+                                            <a href={member.facebook} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/5 hover:bg-gradient-to-br hover:from-blue-500 hover:to-blue-600 flex items-center justify-center text-slate-400 hover:text-white transition-all border border-white/10 hover:border-transparent hover:scale-110">
+                                                <Facebook className="w-4 h-4" />
+                                            </a>
+                                        )}
+                                        {member.twitter && (
+                                            <a href={member.twitter} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/5 hover:bg-gradient-to-br hover:from-slate-700 hover:to-slate-800 flex items-center justify-center text-slate-400 hover:text-white transition-all border border-white/10 hover:border-transparent hover:scale-110">
+                                                <Twitter className="w-4 h-4" />
+                                            </a>
+                                        )}
+                                        {(!member.linkedin && !member.facebook && !member.twitter) && (
+                                            <p className="text-slate-500 text-sm">Social media links not available</p>
+                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -302,111 +358,138 @@ const FacultyDetailsPage = () => {
                             <motion.div variants={itemVariants}>
                                 <div className="grid md:grid-cols-2 gap-6">
                                     {/* Education */}
-                                    <div className="bg-gradient-to-b from-slate-800/60 to-slate-900/60 backdrop-blur-xl rounded-3xl p-8 border border-white/10 hover:border-purple-500/30 transition-all group">
-                                        <div className="flex items-center gap-3 mb-6">
-                                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-400 flex items-center justify-center shadow-lg shadow-purple-500/20 group-hover:scale-110 transition-transform">
-                                                <GraduationCap className="w-5 h-5 text-white" />
+                                    {member.education && (
+                                        <div className="bg-gradient-to-b from-slate-800/60 to-slate-900/60 backdrop-blur-xl rounded-3xl p-8 border border-white/10 hover:border-purple-500/30 transition-all group">
+                                            <div className="flex items-center gap-3 mb-6">
+                                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-400 flex items-center justify-center shadow-lg shadow-purple-500/20 group-hover:scale-110 transition-transform">
+                                                    <GraduationCap className="w-5 h-5 text-white" />
+                                                </div>
+                                                <h3 className="text-lg font-bold text-white">Education</h3>
                                             </div>
-                                            <h3 className="text-lg font-bold text-white">Education</h3>
-                                        </div>
-                                        
-                                        <div className="space-y-5">
-                                            <div className="relative pl-6 before:absolute before:left-0 before:top-2 before:w-2 before:h-2 before:bg-gradient-to-br before:from-purple-400 before:to-pink-400 before:rounded-full before:shadow-lg before:shadow-purple-500/50">
-                                                <p className="text-white font-semibold mb-0.5">Ph.D. in Computer Science</p>
-                                                <p className="text-slate-400 text-sm">University of Dhaka • 2020</p>
-                                            </div>
-                                            <div className="relative pl-6 before:absolute before:left-0 before:top-2 before:w-2 before:h-2 before:bg-gradient-to-br before:from-purple-400 before:to-pink-400 before:rounded-full before:shadow-lg before:shadow-purple-500/50">
-                                                <p className="text-white font-semibold mb-0.5">M.Sc. in Information Technology</p>
-                                                <p className="text-slate-400 text-sm">BUET • 2016</p>
-                                            </div>
-                                            <div className="relative pl-6 before:absolute before:left-0 before:top-2 before:w-2 before:h-2 before:bg-gradient-to-br before:from-purple-400 before:to-pink-400 before:rounded-full before:shadow-lg before:shadow-purple-500/50">
-                                                <p className="text-white font-semibold mb-0.5">B.Sc. in CSE</p>
-                                                <p className="text-slate-400 text-sm">BUET • 2014</p>
+                                            <div className="space-y-3">
+                                                <p className="text-white whitespace-pre-wrap text-sm leading-relaxed">{member.education}</p>
                                             </div>
                                         </div>
-                                    </div>
+                                    )}
 
                                     {/* Achievements */}
-                                    <div className="bg-gradient-to-b from-slate-800/60 to-slate-900/60 backdrop-blur-xl rounded-3xl p-8 border border-white/10 hover:border-amber-500/30 transition-all group">
+                                    {member.achievements && (
+                                        <div className="bg-gradient-to-b from-slate-800/60 to-slate-900/60 backdrop-blur-xl rounded-3xl p-8 border border-white/10 hover:border-amber-500/30 transition-all group">
+                                            <div className="flex items-center gap-3 mb-6">
+                                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-400 flex items-center justify-center shadow-lg shadow-amber-500/20 group-hover:scale-110 transition-transform">
+                                                    <Award className="w-5 h-5 text-white" />
+                                                </div>
+                                                <h3 className="text-lg font-bold text-white">Achievements</h3>
+                                            </div>
+                                            <div className="space-y-3">
+                                                <p className="text-white whitespace-pre-wrap text-sm leading-relaxed">{member.achievements}</p>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </motion.div>
+
+                            {/* About Section */}
+                            {member.about && (
+                                <motion.div variants={itemVariants}>
+                                    <div className="bg-gradient-to-b from-slate-800/60 to-slate-900/60 backdrop-blur-xl rounded-3xl p-8 border border-white/10">
                                         <div className="flex items-center gap-3 mb-6">
-                                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-400 flex items-center justify-center shadow-lg shadow-amber-500/20 group-hover:scale-110 transition-transform">
+                                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center shadow-lg shadow-blue-500/20">
+                                                <User className="w-5 h-5 text-white" />
+                                            </div>
+                                            <h2 className="text-xl font-bold text-white">About</h2>
+                                        </div>
+                                        <p className="text-slate-300 whitespace-pre-wrap leading-relaxed">{member.about}</p>
+                                    </div>
+                                </motion.div>
+                            )}
+
+                            {/* Years Experience */}
+                            {member.yearsExperience && (
+                                <motion.div variants={itemVariants}>
+                                    <div className="bg-gradient-to-b from-slate-800/60 to-slate-900/60 backdrop-blur-xl rounded-3xl p-8 border border-white/10">
+                                        <div className="flex items-center gap-3 mb-6">
+                                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-400 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+                                                <Calendar className="w-5 h-5 text-white" />
+                                            </div>
+                                            <h2 className="text-xl font-bold text-white">Experience</h2>
+                                        </div>
+                                        <p className="text-white text-lg font-semibold">{member.yearsExperience} years</p>
+                                    </div>
+                                </motion.div>
+                            )}
+
+                            {/* Publications */}
+                            {member.publications && (
+                                <motion.div variants={itemVariants}>
+                                    <div className="bg-gradient-to-b from-slate-800/60 to-slate-900/60 backdrop-blur-xl rounded-3xl p-8 border border-white/10">
+                                        <div className="flex items-center gap-3 mb-6">
+                                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-400 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                                                <FileText className="w-5 h-5 text-white" />
+                                            </div>
+                                            <h2 className="text-xl font-bold text-white">Publications</h2>
+                                        </div>
+                                        <p className="text-slate-300 whitespace-pre-wrap leading-relaxed">{member.publications}</p>
+                                    </div>
+                                </motion.div>
+                            )}
+
+                            {/* Awards */}
+                            {member.awards && (
+                                <motion.div variants={itemVariants}>
+                                    <div className="bg-gradient-to-b from-slate-800/60 to-slate-900/60 backdrop-blur-xl rounded-3xl p-8 border border-white/10">
+                                        <div className="flex items-center gap-3 mb-6">
+                                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-yellow-400 flex items-center justify-center shadow-lg shadow-amber-500/20">
                                                 <Award className="w-5 h-5 text-white" />
                                             </div>
-                                            <h3 className="text-lg font-bold text-white">Achievements</h3>
+                                            <h2 className="text-xl font-bold text-white">Awards & Recognition</h2>
                                         </div>
-
-                                        <div className="space-y-5">
-                                            <div className="relative pl-6 before:absolute before:left-0 before:top-2 before:w-2 before:h-2 before:bg-gradient-to-br before:from-amber-400 before:to-orange-400 before:rounded-full before:shadow-lg before:shadow-amber-500/50">
-                                                <p className="text-white font-semibold mb-0.5">Best Researcher Award</p>
-                                                <p className="text-slate-400 text-sm">DIIT Annual Summit • 2024</p>
-                                            </div>
-                                            <div className="relative pl-6 before:absolute before:left-0 before:top-2 before:w-2 before:h-2 before:bg-gradient-to-br before:from-amber-400 before:to-orange-400 before:rounded-full before:shadow-lg before:shadow-amber-500/50">
-                                                <p className="text-white font-semibold mb-0.5">Excellence in Teaching</p>
-                                                <p className="text-slate-400 text-sm">DIIT Recognition • 2023</p>
-                                            </div>
-                                            <div className="relative pl-6 before:absolute before:left-0 before:top-2 before:w-2 before:h-2 before:bg-gradient-to-br before:from-amber-400 before:to-orange-400 before:rounded-full before:shadow-lg before:shadow-amber-500/50">
-                                                <p className="text-white font-semibold mb-0.5">Published 15+ Papers</p>
-                                                <p className="text-slate-400 text-sm">IEEE & Springer Journals</p>
-                                            </div>
-                                        </div>
+                                        <p className="text-slate-300 whitespace-pre-wrap leading-relaxed">{member.awards}</p>
                                     </div>
-                                </div>
-                            </motion.div>
+                                </motion.div>
+                            )}
 
                             {/* Research Interests */}
-                            <motion.div variants={itemVariants}>
-                                <div className="bg-gradient-to-b from-slate-800/60 to-slate-900/60 backdrop-blur-xl rounded-3xl p-8 border border-white/10">
-                                    <div className="flex items-center gap-3 mb-6">
-                                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center shadow-lg shadow-cyan-500/20">
-                                            <Star className="w-5 h-5 text-white" />
+                            {member.researchInterests && (
+                                <motion.div variants={itemVariants}>
+                                    <div className="bg-gradient-to-b from-slate-800/60 to-slate-900/60 backdrop-blur-xl rounded-3xl p-8 border border-white/10">
+                                        <div className="flex items-center gap-3 mb-6">
+                                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center shadow-lg shadow-cyan-500/20">
+                                                <Star className="w-5 h-5 text-white" />
+                                            </div>
+                                            <h2 className="text-xl font-bold text-white">Research Interests</h2>
                                         </div>
-                                        <h2 className="text-xl font-bold text-white">Research Interests</h2>
-                                    </div>
 
-                                    <div className="flex flex-wrap gap-3">
-                                        {researchInterests.map((interest, index) => (
-                                            <motion.span
-                                                key={index}
-                                                whileHover={{ scale: 1.05 }}
-                                                className="px-4 py-2 rounded-full bg-gradient-to-r from-brandColor/20 to-cyan-500/20 text-cyan-300 text-sm font-medium border border-cyan-500/20 hover:border-cyan-500/40 transition-all cursor-default"
-                                            >
-                                                {interest}
-                                            </motion.span>
-                                        ))}
+                                        <div className="flex flex-wrap gap-3">
+                                            {member.researchInterests.split(',').map((interest, index) => (
+                                                <motion.span
+                                                    key={index}
+                                                    whileHover={{ scale: 1.05 }}
+                                                    className="px-4 py-2 rounded-full bg-gradient-to-r from-brandColor/20 to-cyan-500/20 text-cyan-300 text-sm font-medium border border-cyan-500/20 hover:border-cyan-500/40 transition-all cursor-default"
+                                                >
+                                                    {interest.trim()}
+                                                </motion.span>
+                                            ))}
+                                        </div>
                                     </div>
-                                </div>
-                            </motion.div>
+                                </motion.div>
+                            )}
 
                             {/* Courses Section */}
-                            <motion.div variants={itemVariants}>
-                                <div className="bg-gradient-to-b from-slate-800/60 to-slate-900/60 backdrop-blur-xl rounded-3xl p-8 border border-white/10">
-                                    <div className="flex items-center gap-3 mb-6">
-                                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-400 flex items-center justify-center shadow-lg shadow-emerald-500/20">
-                                            <BookOpen className="w-5 h-5 text-white" />
+                            {member.courses && (
+                                <motion.div variants={itemVariants}>
+                                    <div className="bg-gradient-to-b from-slate-800/60 to-slate-900/60 backdrop-blur-xl rounded-3xl p-8 border border-white/10">
+                                        <div className="flex items-center gap-3 mb-6">
+                                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-400 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+                                                <BookOpen className="w-5 h-5 text-white" />
+                                            </div>
+                                            <h2 className="text-xl font-bold text-white">Courses Taught</h2>
                                         </div>
-                                        <h2 className="text-xl font-bold text-white">Courses</h2>
-                                    </div>
 
-                                    <div className="grid gap-4">
-                                        {courses.map((course, index) => (
-                                            <motion.div
-                                                key={index}
-                                                whileHover={{ x: 5 }}
-                                                className="flex items-center gap-4 p-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 hover:border-emerald-500/30 transition-all group"
-                                            >
-                                                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-500/20 border border-emerald-500/20 flex items-center justify-center shrink-0">
-                                                    <span className="text-emerald-400 font-bold text-sm">{course.code.split('-')[1]}</span>
-                                                </div>
-                                                <div className="flex-1 min-w-0">
-                                                    <p className="text-white font-semibold mb-0.5">{course.name}</p>
-                                                    <p className="text-slate-400 text-sm">{course.code} • {course.semester}</p>
-                                                </div>
-                                                <ChevronRight className="w-5 h-5 text-slate-500 group-hover:text-emerald-400 group-hover:translate-x-1 transition-all shrink-0" />
-                                            </motion.div>
-                                        ))}
+                                        <p className="text-slate-300 whitespace-pre-wrap leading-relaxed">{member.courses}</p>
                                     </div>
-                                </div>
-                            </motion.div>
+                                </motion.div>
+                            )}
 
                         </div>
                     </div>

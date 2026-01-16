@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
     Calendar as CalendarIcon,
@@ -12,87 +12,39 @@ import {
     CalendarDays,
     Star,
     Flag,
-    CheckCircle2
+    CheckCircle2,
+    Loader2
 } from 'lucide-react';
 
 const AcademicCalendarPage = () => {
+    const [academicYear, setAcademicYear] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    // Continuous Timeline Data for Session 2025-2026
-    const academicYear = [
-        {
-            month: "January",
-            year: "2026",
-            events: [
-                { date: "05", title: "Admission Application Starts", type: "admission", desc: "Online application portal opens for Honours 1st Year." },
-                { date: "20", title: "Admission Deadline", type: "admission", desc: "Last date to submit applications and fees." },
-                { date: "25", title: "Merit List Publication", type: "result", desc: "First merit list released by National University." }
-            ]
-        },
-        {
-            month: "February",
-            year: "2026",
-            events: [
-                { date: "01", title: "Orientation Program", type: "event", desc: "Freshers' Reception & Campus Tour." },
-                { date: "03", title: "Classes Begin", type: "academic", desc: "Formal commencement of 1st Year classes." },
-                { date: "21", title: "Int'l Mother Language Day", type: "holiday", desc: "Campus closed. Flag hoisting ceremony." }
-            ]
-        },
-        {
-            month: "March",
-            year: "2026",
-            events: [
-                { date: "17", title: "Birth of Bangabandhu", type: "holiday", desc: "National Children's Day celebration." },
-                { date: "26", title: "Independence Day", type: "holiday", desc: "Observance & Campus Holiday." }
-            ]
-        },
-        {
-            month: "April",
-            year: "2026",
-            events: [
-                { date: "10-15", title: "1st In-Course Exam", type: "exam", desc: "Subject-wise internal assessment (20 Marks)." },
-                { date: "14", title: "Pohela Boishakh", type: "holiday", desc: "Bangla New Year Festival." }
-            ]
-        },
-        {
-            month: "May - June",
-            year: "2026",
-            events: [
-                { date: "01", title: "May Day", type: "holiday", desc: "Labor Day Holiday." },
-                { date: "15 Jun", title: "Eid-ul-Adha Vacation", type: "holiday", desc: "10-day campus closure." }
-            ]
-        },
-        {
-            month: "August",
-            year: "2026",
-            events: [
-                { date: "15", title: "National Mourning Day", type: "holiday", desc: "Observance and Dua Mahfil." },
-                { date: "20-25", title: "2nd In-Course Exam", type: "exam", desc: "Subject-wise internal assessment (20 Marks)." },
-            ]
-        },
-        {
-            month: "October",
-            year: "2026",
-            events: [
-                { date: "10-20", title: "Durga Puja Vacation", type: "holiday", desc: "Autumn festival break." },
-            ]
-        },
-        {
-            month: "November",
-            year: "2026",
-            events: [
-                { date: "05", title: "Test Examination", type: "exam", desc: "Pre-final preparatory examination." },
-                { date: "25", title: "Form Fill-up Starts", type: "academic", desc: "Final examination registration." }
-            ]
-        },
-        {
-            month: "December",
-            year: "2026",
-            events: [
-                { date: "16", title: "Victory Day", type: "holiday", desc: "National holiday celebration." },
-                { date: "20", title: "Final Year End Exams", type: "exam", desc: "Start of NU Final Theory Examinations." }
-            ]
+    useEffect(() => {
+        fetchCalendarData();
+    }, []);
+
+    const fetchCalendarData = async () => {
+        try {
+            setLoading(true);
+            const res = await fetch("/api/admin/academics/calendar");
+            const result = await res.json();
+
+            if (result.success && result.data.length > 0) {
+                setAcademicYear(result.data);
+            } else {
+                // Use default data if API returns empty
+                setAcademicYear(defaultData);
+            }
+        } catch (err) {
+            console.error("Error fetching calendar data:", err);
+            // Fallback to default data on error
+            setAcademicYear(defaultData);
+        } finally {
+            setLoading(false);
         }
-    ];
+    };
 
     const getIcon = (type) => {
         switch (type) {
@@ -118,6 +70,30 @@ const AcademicCalendarPage = () => {
 
     return (
         <div className="min-h-screen bg-slate-50 pb-20">
+            {/* Loading State */}
+            {loading && (
+                <div className="min-h-screen flex items-center justify-center">
+                    <div className="text-center">
+                        <Loader2 className="w-12 h-12 text-blue-600 animate-spin mx-auto mb-4" />
+                        <p className="text-slate-600 font-medium">Loading academic calendar...</p>
+                    </div>
+                </div>
+            )}
+
+            {/* Error State */}
+            {error && !loading && (
+                <div className="min-h-screen flex items-center justify-center">
+                    <div className="text-center">
+                        <AlertCircle className="w-12 h-12 text-red-600 mx-auto mb-4" />
+                        <p className="text-slate-600 font-medium">Error loading calendar</p>
+                        <p className="text-slate-500 text-sm mt-2">Using default calendar data</p>
+                    </div>
+                </div>
+            )}
+
+            {/* Main Content */}
+            {!loading && (
+            <>
             {/* Hero Section */}
             <div className="bg-[#001229] pt-32 pb-24 px-4 relative overflow-hidden">
                 <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-10" />
@@ -254,6 +230,8 @@ const AcademicCalendarPage = () => {
 
                 </div>
             </div>
+            </>
+            )}
         </div>
     );
 };

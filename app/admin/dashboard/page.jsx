@@ -20,6 +20,9 @@ import OnlineAdmissionSection from "./components/OnlineAdmissionSection";
 import TuitionFeesSection from "./components/TuitionFeesSection";
 import ScholarshipsSection from "./components/ScholarshipsSection";
 import FacilitiesSection from "./components/FacilitiesSection";
+import AcademicCalendarSection from "./components/AcademicCalendarSection";
+import NoticesSection from "./components/NoticesSection";
+import FacultySection from "./components/FacultySection";
 
 const menuItems = [
   { id: "overview", label: "Overview", icon: LayoutDashboard },
@@ -209,8 +212,8 @@ export default function AdminDashboard() {
                   }
                 }}
                 className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative overflow-hidden ${activeSection === item.id || (item.children && expandedMenu === item.id)
-                    ? "bg-slate-800 text-white"
-                    : "text-slate-400 hover:bg-slate-800 hover:text-white"
+                  ? "bg-slate-800 text-white"
+                  : "text-slate-400 hover:bg-slate-800 hover:text-white"
                   } ${activeSection === item.id && !item.children ? "bg-blue-600 shadow-md shadow-blue-900/20" : ""}`}
               >
                 {activeSection === item.id && !item.children && (
@@ -237,8 +240,8 @@ export default function AdminDashboard() {
                       key={subItem.id}
                       onClick={() => setActiveSection(subItem.id)}
                       className={`w-full flex items-center px-3 py-2 rounded-lg transition-all duration-200 text-sm ${activeSection === subItem.id
-                          ? "bg-blue-600/10 text-blue-400 font-medium"
-                          : "text-slate-500 hover:text-slate-300 hover:bg-slate-800/50"
+                        ? "bg-blue-600/10 text-blue-400 font-medium"
+                        : "text-slate-500 hover:text-slate-300 hover:bg-slate-800/50"
                         }`}
                     >
                       {subItem.label}
@@ -303,6 +306,9 @@ export default function AdminDashboard() {
             {activeSection === "overview" && <OverviewSection data={data} />}
             {activeSection === "hero" && <HeroSection data={data} updateField={updateField} addItem={addItem} deleteItem={deleteItem} onSave={saveData} saving={saving} />}
             {activeSection === "stats" && <StatsSection data={data} updateField={updateField} onSave={saveData} saving={saving} />}
+            {activeSection === "academic-calendar" && <AcademicCalendarSection />}
+            {activeSection === "diit-notices" && <NoticesSection />}
+            {activeSection === "faculty-members" && <FacultySection />}
             {activeSection === "eligibility" && <AdmissionEligibilitySection />}
             {activeSection === "online" && <OnlineAdmissionSection />}
             {activeSection === "fees" && <TuitionFeesSection />}

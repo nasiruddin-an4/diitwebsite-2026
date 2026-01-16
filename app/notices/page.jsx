@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Megaphone,
@@ -8,17 +8,22 @@ import {
     Filter,
     Calendar,
     ChevronRight,
-    Pin
+    Pin,
+    Loader2,
+    AlertCircle
 } from 'lucide-react';
 import Link from 'next/link';
-import Image from 'next/image';
 
 const NoticesPage = () => {
     const [filter, setFilter] = useState('All');
     const [searchQuery, setSearchQuery] = useState('');
     const [showMobileFilters, setShowMobileFilters] = useState(false);
+    const [notices, setNotices] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    const notices = [
+    // Default fallback data
+    const defaultNotices = [
         {
             id: 1,
             title: "Result Publication of Honours 1st Year Final Examination 2024",
@@ -91,7 +96,30 @@ const NoticesPage = () => {
         }
     ];
 
-    const categories = ['All', 'Academic', 'Exam', 'Admission', 'Event', 'General'];
+    useEffect(() => {
+        fetchNotices();
+    }, []);
+
+    const fetchNotices = async () => {
+        try {
+            setLoading(true);
+            const res = await fetch("/api/admin/academics/notices");
+            const result = await res.json();
+
+            if (result.success && result.data.length > 0) {
+                setNotices(result.data);
+            } else {
+                // Use default notices if API returns empty
+                setNotices(defaultNotices);
+            }
+        } catch (err) {
+            console.error("Error fetching notices:", err);
+            // Fallback to default notices on error
+            setNotices(defaultNotices);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const filteredNotices = notices.filter(notice => {
         const matchesCategory = filter === 'All' || notice.category === filter;
@@ -108,6 +136,17 @@ const NoticesPage = () => {
             default: return 'bg-slate-100 text-slate-700 border-slate-200';
         }
     };
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-slate-50">
+                <div className="text-center">
+                    <Loader2 className="w-12 h-12 text-blue-600 animate-spin mx-auto mb-4" />
+                    <p className="text-slate-600 font-medium">Loading notices...</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-slate-50 pb-20">
