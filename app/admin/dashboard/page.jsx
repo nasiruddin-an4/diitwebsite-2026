@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import Swal from "sweetalert2";
 import {
   LayoutDashboard, Home, FileText, BookOpen, Award, MessageSquare, Users,
   LogOut, Save, Menu, Check, X, Loader2, GraduationCap, Monitor, Banknote, Gift, Building2, ChevronDown, ChevronRight, ArrowLeftToLine
@@ -28,7 +29,7 @@ import Image from "next/image";
 const menuItems = [
   { id: "overview", label: "Overview", icon: LayoutDashboard },
   { id: "hero", label: "Hero Slides", icon: Home },
-  { id: "stats", label: "Statistics", icon: Award },
+  
   {
     id: "academics",
     label: "Academics",
@@ -44,13 +45,15 @@ const menuItems = [
   },
   { id: "eligibility", label: "Admission Eligibility", icon: GraduationCap },
   { id: "online", label: "Online Admission", icon: Monitor },
+  { id: "stats", label: "Statistics", icon: Award },
   { id: "fees", label: "Tuition Fees", icon: Banknote },
   { id: "scholarships", label: "Scholarships", icon: Gift },
   { id: "facilities", label: "Facilities", icon: Building2 },
+  { id: "partners", label: "MoU Partners", icon: Users },
   { id: "programs", label: "Programs", icon: BookOpen },
   { id: "news", label: "News & Events", icon: FileText },
   { id: "testimonials", label: "Testimonials", icon: MessageSquare },
-  { id: "partners", label: "Partners", icon: Users },
+  
 ];
 
 export default function AdminDashboard() {
@@ -141,15 +144,39 @@ export default function AdminDashboard() {
       });
 
       if (heroRes.ok && homeRes.ok) {
-        setMessage({ type: "success", text: "All changes saved successfully" });
+        Swal.fire({
+          icon: "success",
+          title: "Success!",
+          text: "All changes saved successfully",
+          toast: true,
+          position: "top-end",
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+          }
+        });
       } else {
         throw new Error("Partial save failure");
       }
-
-      setTimeout(() => setMessage({ type: "", text: "" }), 3000);
     } catch (err) {
       console.error(err);
-      setMessage({ type: "error", text: "Failed to save changes" });
+      Swal.fire({
+        icon: "error",
+        title: "Error!",
+        text: "Failed to save changes",
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.addEventListener('mouseenter', Swal.stopTimer)
+          toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+      });
     } finally {
       setSaving(false);
     }

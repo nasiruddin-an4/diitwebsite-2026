@@ -40,20 +40,20 @@ export default function StatsSection({ data, updateField, onSave, saving }) {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             whileHover={{ y: -4 }}
-            className="bg-gradient-to-br from-white to-slate-50 border border-slate-200 rounded-2xl p-6 space-y-4 shadow-md hover:shadow-lg transition-all group"
+            className="bg-gradient-to-br from-white to-slate-50 border border-slate-200 rounded-2xl p-6 space-y-4 transition-all group"
           >
             {editingId === (stat.id || index) ? (
               <>
                 <div className="space-y-4">
-                  <InputField 
-                    label="Value" 
-                    type="number" 
-                    value={stat.value} 
+                  <InputField
+                    label="Value"
+                    type="number"
+                    value={stat.value}
                     onChange={(v) => updateField("statsCounter", index, "value", parseInt(v) || 0)}
                   />
-                  <InputField 
-                    label="Label" 
-                    value={stat.label} 
+                  <InputField
+                    label="Label"
+                    value={stat.label}
                     onChange={(v) => updateField("statsCounter", index, "label", v)}
                     placeholder="e.g., Students Enrolled"
                   />

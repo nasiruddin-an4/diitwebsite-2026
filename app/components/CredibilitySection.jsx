@@ -107,7 +107,9 @@ const CredibilitySection = () => {
                                 {partners.map((partner) => (
                                     <SwiperSlide key={partner.id} className="h-auto">
                                         <Link
-                                            href={`/partners/${partner.id}`}
+                                            href={partner.website || "#"}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
                                             className="block h-full group"
                                         >
                                             <div className="flex flex-col h-full rounded-2xl transition-all duration-300">
