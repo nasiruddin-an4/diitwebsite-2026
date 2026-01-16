@@ -104,60 +104,74 @@ export default function NewsSection({ data, updateField, addItem, deleteItem, on
         </div>
       </div>
 
-      <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+          <table className="w-full text-left border-collapse table-fixed">
             <thead>
-              <tr className="border-b border-slate-200 bg-slate-50">
-                <th className="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">News Content</th>
-                <th className="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Category & Date</th>
-                <th className="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-center">Actions</th>
+              <tr className="border-b border-slate-200 bg-slate-50/50">
+                <th className="w-[45%] p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Article Details</th>
+                <th className="w-[15%] p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Type</th>
+                <th className="w-[20%] p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Date</th>
+                <th className="w-[20%] p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {newsItems.length === 0 ? (
                 <tr>
-                  <td colSpan="3" className="p-8 text-center text-slate-500 text-sm">
-                    No news items found.
+                  <td colSpan="4" className="p-12 text-center text-slate-400 text-sm italic">
+                    No news items available.
                   </td>
                 </tr>
               ) : (
                 newsItems.map((item, index) => (
-                  <tr key={item.id || index} className="group hover:bg-slate-50 transition-colors">
+                  <tr key={item.id || index} className="group hover:bg-slate-50/50 transition-colors">
                     <td className="p-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-lg bg-slate-100 border border-slate-200 overflow-hidden flex-shrink-0">
+                      <div className="flex items-center gap-4">
+                        <div className="w-14 h-14 rounded-lg bg-slate-100 border border-slate-200 overflow-hidden shrink-0 shadow-sm">
                           {item.image ? (
-                            <img src={item.image} alt="" className="w-full h-full object-cover" />
+                            <img src={item.image} alt="" className="w-full h-full object-cover transition-transform group-hover:scale-105" />
                           ) : (
-                            <div className="w-full h-full flex items-center justify-center text-slate-400">
-                              <ImageIcon className="w-5 h-5" />
+                            <div className="w-full h-full flex items-center justify-center text-slate-300">
+                              <ImageIcon className="w-6 h-6" />
                             </div>
                           )}
                         </div>
-                        <div>
-                          <p className="font-semibold text-slate-900 text-sm line-clamp-1">{item.title || "Untitled News"}</p>
-                          <p className="text-slate-500 text-xs line-clamp-1 mt-0.5">{item.excerpt || item.desc || "No description"}</p>
+                        <div className="min-w-0 flex-1">
+                          <p className="font-bold text-slate-900 text-sm truncate uppercase tracking-tight">{item.title || "Untitled Article"}</p>
+                          <p className="text-slate-500 text-xs truncate mt-1 leading-relaxed">{item.excerpt || item.desc || "No summary provided"}</p>
                         </div>
                       </div>
                     </td>
-                    <td className="p-4 whitespace-nowrap">
-                      <span className="inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-600 uppercase mb-1">{item.category}</span>
-                      <p className="text-slate-500 text-xs">{item.date || "No date"}</p>
+                    <td className="p-4 text-center">
+                      <span className={`inline-block px-3 py-1 rounded-md text-[10px] font-black uppercase tracking-wider
+                            ${item.category === 'EVENT' ? 'bg-orange-50 text-orange-600 border border-orange-100' :
+                          item.category === 'NOTICE' ? 'bg-purple-50 text-purple-600 border border-purple-100' :
+                            'bg-blue-50 text-blue-600 border border-blue-100'}`}>
+                        {item.category || 'NEWS'}
+                      </span>
+                    </td>
+                    <td className="p-4 text-center">
+                      <div className="flex flex-col items-center justify-center">
+                        <p className="text-slate-700 text-xs font-bold">{item.date?.split(',')[0] || "TBD"}</p>
+                        <p className="text-slate-400 text-[10px] font-medium mt-0.5">{item.date?.split(',')[1]?.trim() || ""}</p>
+                      </div>
                     </td>
                     <td className="p-4">
-                      <div className="flex justify-center items-center gap-2">
+                      <div className="flex justify-center items-center gap-3">
                         <button
                           onClick={() => setEditingId(item.id || item._id)}
-                          className="p-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-all border border-blue-200"
+                          className="flex items-center gap-2 p-2.5 text-blue-600 bg-white hover:bg-blue-600 hover:text-white rounded-md transition-all border border-blue-100 shadow-sm cursor-pointer"
+                          title="Edit"
                         >
-                          <Edit2 className="w-4 h-4" />
+                          <Edit2 className="w-3.5 h-3.5" />
+                          <span className="text-[10px] font-bold uppercase">Edit</span>
                         </button>
                         <button
                           onClick={() => handleDelete(item, index)}
-                          className="p-2 text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-all border border-red-200"
+                          className="p-2.5 text-red-500 bg-white hover:bg-red-500 hover:text-white rounded-md transition-all border border-red-100 shadow-sm cursor-pointer"
+                          title="Delete"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       </div>
                     </td>
