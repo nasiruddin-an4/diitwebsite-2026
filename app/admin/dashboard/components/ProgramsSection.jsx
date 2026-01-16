@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, X, BookOpen, Edit2, Trash2, Save, Loader2, Upload, Image as ImageIcon, Plus as PlusIcon } from "lucide-react";
+import { Plus, X, BookOpen, Edit2, Trash2, Save, Loader2, Upload, Image as ImageIcon, Plus as PlusIcon, Users, Briefcase, HelpCircle } from "lucide-react";
 import Swal from "sweetalert2";
 import { InputField } from "./InputField";
 
@@ -8,6 +8,15 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
   const [editingId, setEditingId] = useState(null);
   const [localSaving, setLocalSaving] = useState(false);
   const [activeTab, setActiveTab] = useState("basic");
+  const [curriculumInput, setCurriculumInput] = useState({
+    semesterName: "",
+    subjects: ""
+  });
+  const [careerInput, setCareerInput] = useState({
+    area: "",
+    description: "",
+    skills: ""
+  });
 
   const programs = data?.programsData || [];
 
@@ -34,18 +43,15 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
     eligibility: [],
     // Curriculum
     curriculum: [],
+    // Career Opportunities (per program)
+    careers: [],
     // Facilities
     facilities: [],
-    // Career Opportunities
-    careers: [],
-    // Faculty
-    faculty: [],
-    // FAQs
-    faqs: [],
     // Student Resources
     studentResources: [],
     // Alumni Stories
     alumniStories: []
+    // Note: Faculty and FAQs are auto-managed by department
   };
 
   const editingProgram = programs.find(p => (p.id || p._id) === editingId);
@@ -253,7 +259,7 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
                   { id: "details", label: "Details" },
                   { id: "head", label: "Head Message" },
                   { id: "curriculum", label: "Curriculum" },
-                  { id: "extras", label: "Career & Faculty" }
+                  { id: "extras", label: "Career" }
                 ].map(tab => (
                   <button
                     key={tab.id}
@@ -464,74 +470,272 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
 
                 {/* Curriculum Tab */}
                 {activeTab === "curriculum" && (
-                  <div className="space-y-4">
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-800">
-                      <p className="font-semibold mb-1">Curriculum Format (JSON):</p>
-                      <p className="font-mono text-xs">
-                        [{"{"}"semester": "1st Semester", "subjects": ["Subject 1", "Subject 2"]{"}"}]
-                      </p>
+                  <div className="space-y-6">
+                    {/* Curriculum List */}
+                    <div className="space-y-3">
+                      <h3 className="font-semibold text-slate-900">Program Semesters</h3>
+                      <div className="bg-slate-50 rounded-lg border border-slate-200 p-4 space-y-3 max-h-96 overflow-y-auto">
+                        {editingProgram.curriculum && editingProgram.curriculum.length > 0 ? (
+                          editingProgram.curriculum.map((item, idx) => (
+                            <div key={idx} className="bg-white border border-slate-200 rounded-lg p-4">
+                              <div className="flex justify-between items-start mb-3">
+                                <div>
+                                  <p className="font-bold text-slate-900">{item.semester}</p>
+                                  <p className="text-xs text-slate-500 mt-1">{item.subjects?.length || 0} subjects</p>
+                                </div>
+                                <button
+                                  onClick={() => {
+                                    const updated = editingProgram.curriculum.filter((_, i) => i !== idx);
+                                    handleUpdateField("curriculum", updated);
+                                  }}
+                                  className="p-2 text-red-600 hover:bg-red-50 rounded transition-colors"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </div>
+                              <div className="flex flex-wrap gap-2">
+                                {item.subjects?.map((subject, sIdx) => (
+                                  <span key={sIdx} className="inline-flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-full px-3 py-1 text-xs text-blue-700 font-medium">
+                                    {subject}
+                                    <button
+                                      onClick={() => {
+                                        const newSubjects = item.subjects.filter((_, i) => i !== sIdx);
+                                        const updated = editingProgram.curriculum.map((c, i) =>
+                                          i === idx ? { ...c, subjects: newSubjects } : c
+                                        );
+                                        handleUpdateField("curriculum", updated);
+                                      }}
+                                      className="hover:text-blue-900 ml-1"
+                                    >
+                                      <X className="w-3 h-3" />
+                                    </button>
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          ))
+                        ) : (
+                          <p className="text-center text-slate-500 text-sm py-6">No semesters added yet. Add one below.</p>
+                        )}
+                      </div>
                     </div>
-                    <InputField
-                      label="Curriculum Data (JSON)"
-                      value={JSON.stringify(editingProgram.curriculum || [], null, 2)}
-                      onChange={(v) => {
-                        try {
-                          handleUpdateField("curriculum", JSON.parse(v));
-                        } catch (e) {
-                          // Invalid JSON, allow user to continue editing
-                        }
-                      }}
-                      textarea
-                      placeholder='[{"semester": "1st Semester", "subjects": ["Subject 1", "Subject 2"]}]'
-                      rows={8}
-                    />
+
+                    {/* Add New Semester */}
+                    <div className="border-t border-slate-200 pt-4 space-y-4">
+                      <h3 className="font-semibold text-slate-900">Add New Semester</h3>
+                      <InputField
+                        label="Semester Name"
+                        value={curriculumInput.semesterName}
+                        onChange={(v) => setCurriculumInput({ ...curriculumInput, semesterName: v })}
+                        placeholder="e.g. 1st Semester, 2nd Semester..."
+                      />
+                      <InputField
+                        label="Subjects (one per line)"
+                        value={curriculumInput.subjects}
+                        onChange={(v) => setCurriculumInput({ ...curriculumInput, subjects: v })}
+                        textarea
+                        placeholder="Enter each subject on a new line&#10;e.g.&#10;Introduction to Programming&#10;Data Structures&#10;Web Development"
+                        rows={5}
+                      />
+                      <button
+                        onClick={() => {
+                          if (!curriculumInput.semesterName.trim()) {
+                            Swal.fire({ icon: "warning", title: "Required", text: "Please enter semester name", toast: true, position: "top-end", timer: 2000 });
+                            return;
+                          }
+                          const subjects = curriculumInput.subjects
+                            .split("\n")
+                            .map(s => s.trim())
+                            .filter(s => s.length > 0);
+                          
+                          if (subjects.length === 0) {
+                            Swal.fire({ icon: "warning", title: "Required", text: "Please add at least one subject", toast: true, position: "top-end", timer: 2000 });
+                            return;
+                          }
+
+                          const newSemester = {
+                            semester: curriculumInput.semesterName,
+                            subjects
+                          };
+
+                          const updated = [...(editingProgram.curriculum || []), newSemester];
+                          handleUpdateField("curriculum", updated);
+                          setCurriculumInput({ semesterName: "", subjects: "" });
+                          
+                          Swal.fire({
+                            icon: "success",
+                            title: "Added!",
+                            text: `${curriculumInput.semesterName} added successfully`,
+                            toast: true,
+                            position: "top-end",
+                            timer: 2000,
+                            showConfirmButton: false
+                          });
+                        }}
+                        className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md cursor-pointer font-bold transition-all text-sm"
+                      >
+                        <PlusIcon className="w-4 h-4" /> Add Semester
+                      </button>
+                    </div>
                   </div>
                 )}
 
                 {/* Career & Faculty Tab */}
                 {activeTab === "extras" && (
-                  <div className="space-y-6">
-                    <div className="space-y-3">
-                      <label className="block text-xs font-bold text-slate-600 uppercase">Career Opportunities (JSON)</label>
-                      <InputField
-                        value={JSON.stringify(editingProgram.careers || [], null, 2)}
-                        onChange={(v) => {
-                          try {
-                            handleUpdateField("careers", JSON.parse(v));
-                          } catch (e) {}
-                        }}
-                        textarea
-                        placeholder='[{"title": "Software Engineer", "company": "Tech Company", "description": "..."}]'
-                        rows={4}
-                      />
+                  <div className="space-y-8">
+                    {/* Career Opportunities Section */}
+                    <div className="space-y-6">
+                      <div className="border-b border-slate-200 pb-4">
+                        <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2 mb-2">
+                          <Briefcase className="w-5 h-5 text-blue-600" />
+                          Career Opportunities
+                        </h3>
+                        <p className="text-xs text-slate-500">Define career areas and paths for program graduates</p>
+                      </div>
+
+                      {/* Career List */}
+                      <div className="space-y-3">
+                        <p className="text-xs font-semibold text-slate-600 uppercase">Career Paths</p>
+                        <div className="bg-slate-50 rounded-lg border border-slate-200 p-4 space-y-3 max-h-96 overflow-y-auto">
+                          {editingProgram.careers && editingProgram.careers.length > 0 ? (
+                            editingProgram.careers.map((career, idx) => (
+                              <div key={idx} className="bg-white border border-slate-200 rounded-lg p-4 hover:shadow-sm transition-all">
+                                <div className="flex justify-between items-start mb-3">
+                                  <div className="flex-1">
+                                    <p className="font-bold text-slate-900 text-sm">{career.area}</p>
+                                    {career.description && (
+                                      <p className="text-xs text-slate-600 mt-1 line-clamp-2">{career.description}</p>
+                                    )}
+                                  </div>
+                                  <button
+                                    onClick={() => {
+                                      const updated = editingProgram.careers.filter((_, i) => i !== idx);
+                                      handleUpdateField("careers", updated);
+                                    }}
+                                    className="p-2 text-red-600 hover:bg-red-50 rounded transition-colors shrink-0 ml-2"
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                  </button>
+                                </div>
+                                {career.skills && (
+                                  <div className="flex flex-wrap gap-1">
+                                    {career.skills.split(",").map((skill, sIdx) => (
+                                      <span key={sIdx} className="inline-block px-2 py-1 bg-blue-50 text-blue-700 text-[10px] font-semibold rounded border border-blue-200">
+                                        {skill.trim()}
+                                      </span>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                            ))
+                          ) : (
+                            <p className="text-center text-slate-500 text-sm py-6">No career paths added yet. Add one below.</p>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Add New Career */}
+                      <div className="border-t border-slate-200 pt-4 space-y-4">
+                        <h4 className="font-semibold text-slate-900">Add Career Path</h4>
+                        <InputField
+                          label="Career Area"
+                          value={careerInput.area}
+                          onChange={(v) => setCareerInput({ ...careerInput, area: v })}
+                          placeholder="e.g. Software Development, Data Science, Web Development..."
+                        />
+                        <InputField
+                          label="Career Description"
+                          value={careerInput.description}
+                          onChange={(v) => setCareerInput({ ...careerInput, description: v })}
+                          textarea
+                          placeholder="What does a graduate in this area do? What are the responsibilities and opportunities?"
+                          rows={4}
+                        />
+                        <InputField
+                          label="Key Skills (comma separated)"
+                          value={careerInput.skills}
+                          onChange={(v) => setCareerInput({ ...careerInput, skills: v })}
+                          placeholder="e.g. Problem Solving, Database Design, API Development, Leadership..."
+                        />
+                        <button
+                          onClick={() => {
+                            if (!careerInput.area.trim()) {
+                              Swal.fire({ icon: "warning", title: "Required", text: "Please enter career area", toast: true, position: "top-end", timer: 2000 });
+                              return;
+                            }
+
+                            const newCareer = {
+                              area: careerInput.area,
+                              description: careerInput.description,
+                              skills: careerInput.skills
+                            };
+
+                            const updated = [...(editingProgram.careers || []), newCareer];
+                            handleUpdateField("careers", updated);
+                            setCareerInput({ area: "", description: "", skills: "" });
+                            
+                            Swal.fire({
+                              icon: "success",
+                              title: "Added!",
+                              text: `${careerInput.area} career path added successfully`,
+                              toast: true,
+                              position: "top-end",
+                              timer: 2000,
+                              showConfirmButton: false
+                            });
+                          }}
+                          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md cursor-pointer font-bold transition-all text-sm"
+                        >
+                          <PlusIcon className="w-4 h-4" /> Add Career Path
+                        </button>
+                      </div>
                     </div>
-                    <div className="space-y-3">
-                      <label className="block text-xs font-bold text-slate-600 uppercase">Faculty (JSON)</label>
-                      <InputField
-                        value={JSON.stringify(editingProgram.faculty || [], null, 2)}
-                        onChange={(v) => {
-                          try {
-                            handleUpdateField("faculty", JSON.parse(v));
-                          } catch (e) {}
-                        }}
-                        textarea
-                        placeholder='[{"name": "Dr. Name", "designation": "Professor", "image": "url", "specialization": "..."}]'
-                        rows={4}
-                      />
+
+                    {/* Divider */}
+                    <div className="relative">
+                      <div className="absolute inset-0 flex items-center">
+                        <div className="w-full border-t border-slate-200"></div>
+                      </div>
+                      <div className="relative flex justify-center">
+                        <span className="px-2 text-xs text-slate-500 bg-white">Faculty & FAQs Managed by Department</span>
+                      </div>
                     </div>
-                    <div className="space-y-3">
-                      <label className="block text-xs font-bold text-slate-600 uppercase">FAQs (JSON)</label>
-                      <InputField
-                        value={JSON.stringify(editingProgram.faqs || [], null, 2)}
-                        onChange={(v) => {
-                          try {
-                            handleUpdateField("faqs", JSON.parse(v));
-                          } catch (e) {}
-                        }}
-                        textarea
-                        placeholder='[{"question": "...?", "answer": "..."}]'
-                        rows={4}
-                      />
+
+                    {/* Info about auto-managed content */}
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
+                      <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-100 rounded-full mb-3">
+                        <BookOpen className="w-6 h-6 text-blue-600" />
+                      </div>
+                      <h3 className="font-bold text-slate-900 mb-2">Auto-Managed Content</h3>
+                      <p className="text-sm text-slate-600 mb-4">
+                        Faculty and FAQs are automatically managed by department. They are fetched dynamically based on the program category/department.
+                      </p>
+                      <p className="text-xs text-slate-500 font-medium">
+                        Go to the <strong>Faculty Page</strong> or <strong>FAQ Page</strong> to manage department-specific content.
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <a href="/admin/dashboard?tab=faculty" className="flex items-center gap-3 p-4 bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 rounded-lg hover:shadow-md transition-all cursor-pointer">
+                        <Users className="w-6 h-6 text-purple-600" />
+                        <div className="text-left">
+                          <p className="font-semibold text-slate-900 text-sm">Manage Faculty</p>
+                          <p className="text-xs text-slate-600">By Department</p>
+                        </div>
+                      </a>
+                      <a href="/admin/dashboard?tab=faq" className="flex items-center gap-3 p-4 bg-gradient-to-br from-orange-50 to-orange-100 border border-orange-200 rounded-lg hover:shadow-md transition-all cursor-pointer">
+                        <HelpCircle className="w-6 h-6 text-orange-600" />
+                        <div className="text-left">
+                          <p className="font-semibold text-slate-900 text-sm">Manage FAQs</p>
+                          <p className="text-xs text-slate-600">By Department</p>
+                        </div>
+                      </a>
+                    </div>
+
+                    <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                      <p className="text-sm text-amber-900">
+                        <strong>💡 How it works:</strong> Career Opportunities are added per program. Faculty members and FAQs are fetched automatically from the department level, ensuring all programs in the same department show the same consistent information.
+                      </p>
                     </div>
                   </div>
                 )}

@@ -39,6 +39,9 @@ const DynamicProgramPage = () => {
     const [openFaq, setOpenFaq] = useState(null);
     const [facultyIndex, setFacultyIndex] = useState(0);
     const [alumniIndex, setAlumniIndex] = useState(0);
+    const [departmentFaculty, setDepartmentFaculty] = useState([]);
+    const [departmentCareers, setDepartmentCareers] = useState([]);
+    const [departmentFaqs, setDepartmentFaqs] = useState([]);
 
     useEffect(() => {
         const fetchProgram = async () => {
@@ -55,6 +58,9 @@ const DynamicProgramPage = () => {
                 
                 if (found) {
                     setProgram(found);
+                    
+                    // Fetch department-specific data based on category
+                    fetchDepartmentData(found.category || found.department || "engineering");
                 } else {
                     setProgram(null);
                 }
@@ -69,6 +75,39 @@ const DynamicProgramPage = () => {
         fetchProgram();
     }, [id]);
 
+    const fetchDepartmentData = async (category) => {
+        try {
+            // Try to fetch department-specific data from the faculty page
+            const facultyResponse = await fetch(`/api/admin/data/FacultyData`);
+            if (facultyResponse.ok) {
+                const facultyResult = await facultyResponse.json();
+                const facultyData = facultyResult.data?.facultyData || [];
+                const filtered = facultyData.filter(f => f.department?.toLowerCase() === category.toLowerCase());
+                setDepartmentFaculty(filtered);
+            }
+
+            // Fetch career data by department
+            const careerResponse = await fetch(`/api/admin/data/CareerData`);
+            if (careerResponse.ok) {
+                const careerResult = await careerResponse.json();
+                const careerData = careerResult.data?.careerData || [];
+                const filtered = careerData.filter(c => c.department?.toLowerCase() === category.toLowerCase());
+                setDepartmentCareers(filtered);
+            }
+
+            // Fetch FAQ data by department
+            const faqResponse = await fetch(`/api/admin/data/FaqData`);
+            if (faqResponse.ok) {
+                const faqResult = await faqResponse.json();
+                const faqData = faqResult.data?.faqData || [];
+                const filtered = faqData.filter(f => f.department?.toLowerCase() === category.toLowerCase());
+                setDepartmentFaqs(filtered);
+            }
+        } catch (error) {
+            console.error("Error fetching department data:", error);
+        }
+    };
+
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
@@ -81,14 +120,6 @@ const DynamicProgramPage = () => {
         setOpenFaq(openFaq === index ? null : index);
     };
 
-    if (loading) {
-        return (
-            <div className="min-h-screen flex items-center justify-center">
-                <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
-            </div>
-        );
-    }
-
     if (!program) {
         return notFound();
     }
@@ -99,9 +130,14 @@ const DynamicProgramPage = () => {
         overview: program.overview || [],
         eligibility: program.eligibility || [],
         curriculum: program.curriculum || [],
-        careers: program.careers || [],
-        faculty: program.faculty || [],
-        faqs: program.faqs || [],
+        // Combine program-specific careers with department careers (avoid duplicates)
+        careers: [
+            ...(program.careers || []),
+            ...departmentCareers.filter(dc => !program.careers?.some(pc => pc.title === dc.title && pc.company === dc.company))
+        ],
+        // Use department-specific faculty and faqs
+        faculty: departmentFaculty.length > 0 ? departmentFaculty : [],
+        faqs: departmentFaqs.length > 0 ? departmentFaqs : [],
         stats: program.stats || [],
         facilities: program.facilities || [],
         headName: program.headName || "Program Head",
@@ -334,12 +370,22 @@ const DynamicProgramPage = () => {
                                 <div key={idx} className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md hover:border-blue-100 transition-all group">
                                     <div className="flex items-start gap-4">
                                         <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                                            {career.icon && <career.icon className="w-6 h-6" />}
+                                            <Briefcase className="w-6 h-6" />
                                         </div>
-                                        <div>
-                                            <h4 className="font-bold text-slate-900 text-lg group-hover:text-blue-600 transition-colors">{career.title}</h4>
-                                            <p className="text-slate-500 text-sm mb-2">{career.description}</p>
-                                            <p className="text-xs font-bold text-slate-400 uppercase tracking-wide">HIRING: {career.company}</p>
+                                        <div className="flex-1">
+                                            <h4 className="font-bold text-slate-900 text-lg group-hover:text-blue-600 transition-colors">{career.area}</h4>
+                                            {career.description && (
+                                                <p className="text-slate-500 text-sm mb-3">{career.description}</p>
+                                            )}
+                                            {career.skills && (
+                                                <div className="flex flex-wrap gap-2">
+                                                    {career.skills.split(",").map((skill, sIdx) => (
+                                                        <span key={sIdx} className="inline-block px-2.5 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full border border-blue-200">
+                                                            {skill.trim()}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 </div>

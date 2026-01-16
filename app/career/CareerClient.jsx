@@ -127,8 +127,11 @@ export default function CareerClient({ data }) {
                                     <div>
                                         <h3 className="text-xl font-bold text-gray-900 mb-2">{job.title}</h3>
                                         <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500">
-                                            <span className="flex items-center gap-1 bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full font-medium">
-                                                {job.department}
+                                            <span className="flex items-center gap-1 bg-blue-50 text-blue-700 px-3 py-1 rounded-full font-medium">
+                                                {job.area}
+                                            </span>
+                                            <span className="flex items-center gap-1 bg-green-50 text-green-700 px-3 py-1 rounded-full font-medium">
+                                                {job.skills}
                                             </span>
                                             <span className="flex items-center gap-1">
                                                 <Clock className="w-4 h-4" /> {job.type}

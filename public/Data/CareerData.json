@@ -33,6 +33,8 @@
         {
             "id": 1,
             "title": "Lecturer, Computer Science",
+            "area": "Computer Science",
+            "skills": "C++, Java, Python, Teaching",
             "department": "Faculty",
             "type": "Full-time",
             "location": "Dhanmondi Campus",
@@ -48,6 +50,8 @@
         {
             "id": 2,
             "title": "Assistant Professor, Business Administration",
+            "area": "Business Administration",
+            "skills": "Marketing, Finance, Leadership, Mentoring",
             "department": "Faculty",
             "type": "Full-time",
             "location": "Dhanmondi Campus",
@@ -62,6 +66,8 @@
         {
             "id": 3,
             "title": "Lab Instructor",
+            "area": "Information Technology",
+            "skills": "Hardware Troubleshooting, Networking, Software Installation",
             "department": "Academic Support",
             "type": "Full-time",
             "location": "Dhanmondi Campus",
@@ -76,6 +82,8 @@
         {
             "id": 4,
             "title": "Admission Officer",
+            "area": "Administration",
+            "skills": "Communication, Interpersonal Skills, MS Office",
             "department": "Administration",
             "type": "Full-time",
             "location": "Dhanmondi Campus",
