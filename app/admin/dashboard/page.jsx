@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard, Home, FileText, BookOpen, Award, MessageSquare, Users,
-  LogOut, Save, Menu, Check, X, Loader2, GraduationCap, Monitor, Banknote, Gift, Building2
+  LogOut, Save, Menu, Check, X, Loader2, GraduationCap, Monitor, Banknote, Gift, Building2, ChevronDown, ChevronRight
 } from "lucide-react";
 
 import OverviewSection from "./components/OverviewSection";
@@ -25,6 +25,19 @@ const menuItems = [
   { id: "overview", label: "Overview", icon: LayoutDashboard },
   { id: "hero", label: "Hero Slides", icon: Home },
   { id: "stats", label: "Statistics", icon: Award },
+  {
+    id: "academics",
+    label: "Academics",
+    icon: BookOpen,
+    children: [
+      { id: "academic-calendar", label: "Academic Calendar" },
+      { id: "diit-notices", label: "DIIT Notices" },
+      { id: "nu-notices", label: "NU Notices" },
+      { id: "faculty-members", label: "Faculty Members" },
+      { id: "administrative", label: "Administrative" },
+      { id: "alumni", label: "Alumni" },
+    ]
+  },
   { id: "eligibility", label: "Admission Eligibility", icon: GraduationCap },
   { id: "online", label: "Online Admission", icon: Monitor },
   { id: "fees", label: "Tuition Fees", icon: Banknote },
@@ -39,6 +52,7 @@ const menuItems = [
 export default function AdminDashboard() {
   const [activeSection, setActiveSection] = useState("overview");
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [expandedMenu, setExpandedMenu] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -185,22 +199,54 @@ export default function AdminDashboard() {
 
         <nav className="flex-1 p-3 space-y-1 overflow-y-auto custom-scrollbar">
           {menuItems.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => setActiveSection(item.id)}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative overflow-hidden ${activeSection === item.id
-                ? "bg-blue-600 text-white shadow-md shadow-blue-900/20"
-                : "text-slate-400 hover:bg-slate-800 hover:text-white"
-                }`}
-            >
-              {activeSection === item.id && (
-                <div
-                  className="absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full"
-                />
+            <div key={item.id}>
+              <button
+                onClick={() => {
+                  if (item.children) {
+                    setExpandedMenu(expandedMenu === item.id ? null : item.id);
+                  } else {
+                    setActiveSection(item.id);
+                  }
+                }}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative overflow-hidden ${activeSection === item.id || (item.children && expandedMenu === item.id)
+                    ? "bg-slate-800 text-white"
+                    : "text-slate-400 hover:bg-slate-800 hover:text-white"
+                  } ${activeSection === item.id && !item.children ? "bg-blue-600 shadow-md shadow-blue-900/20" : ""}`}
+              >
+                {activeSection === item.id && !item.children && (
+                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full" />
+                )}
+
+                <item.icon className={`w-4 h-4 flex-shrink-0 relative z-10 ${activeSection === item.id ? "text-white" : "text-slate-500 group-hover:text-slate-300"}`} />
+
+                {sidebarOpen && (
+                  <span className={`relative z-10 font-medium text-sm flex-1 text-left ${activeSection === item.id ? "font-semibold" : ""}`}>
+                    {item.label}
+                  </span>
+                )}
+
+                {sidebarOpen && item.children && (
+                  expandedMenu === item.id ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />
+                )}
+              </button>
+
+              {item.children && expandedMenu === item.id && sidebarOpen && (
+                <div className="mt-1 ml-4 space-y-1 border-l-2 border-slate-700 pl-2">
+                  {item.children.map((subItem) => (
+                    <button
+                      key={subItem.id}
+                      onClick={() => setActiveSection(subItem.id)}
+                      className={`w-full flex items-center px-3 py-2 rounded-lg transition-all duration-200 text-sm ${activeSection === subItem.id
+                          ? "bg-blue-600/10 text-blue-400 font-medium"
+                          : "text-slate-500 hover:text-slate-300 hover:bg-slate-800/50"
+                        }`}
+                    >
+                      {subItem.label}
+                    </button>
+                  ))}
+                </div>
               )}
-              <item.icon className={`w-4 h-4 flex-shrink-0 relative z-10 ${activeSection === item.id ? "text-white" : "text-slate-500 group-hover:text-slate-300"}`} />
-              {sidebarOpen && <span className={`relative z-10 font-medium text-sm ${activeSection === item.id ? "font-semibold" : ""}`}>{item.label}</span>}
-            </button>
+            </div>
           ))}
         </nav>
 

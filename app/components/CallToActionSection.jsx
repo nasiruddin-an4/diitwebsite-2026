@@ -30,7 +30,7 @@ const CallToActionSection = () => {
 
                         <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                             <Link
-                                href="/apply"
+                                href="/admission/online"
                                 className="group relative inline-flex items-center justify-center gap-3 px-8 py-4 bg-white text-[#002652] rounded-full font-bold text-lg transition-all duration-300 hover:shadow-[0_0_30px_rgba(255,255,255,0.4)] hover:scale-105 active:scale-95"
                             >
                                 Apply Now
