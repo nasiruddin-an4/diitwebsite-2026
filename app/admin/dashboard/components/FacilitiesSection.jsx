@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Save, Loader2, Plus, Trash2, ImageIcon } from "lucide-react";
+import Swal from "sweetalert2";
 import { InputField } from "./InputField";
 
 export default function FacilitiesSection() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploadingIndex, setUploadingIndex] = useState(null);
 
   useEffect(() => {
     fetchData();
@@ -42,10 +44,20 @@ export default function FacilitiesSection() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedData),
       });
-      alert("Changes saved successfully!");
+      Swal.fire({
+        icon: 'success',
+        title: 'Saved!',
+        text: 'Changes saved successfully',
+        timer: 1500,
+        showConfirmButton: false
+      });
     } catch (error) {
       console.error("Failed to save data", error);
-      alert("Failed to save data");
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Failed to save data',
+      });
     } finally {
       setSaving(false);
     }
@@ -64,24 +76,64 @@ export default function FacilitiesSection() {
       icon: "Monitor",
       stat: "New",
       color: "from-blue-500 to-blue-600",
-      span: "md:col-span-1"
+      span: "md:col-span-1",
+      image: ""
     }]);
   };
 
-  const removeItem = (index) => {
-    const newItems = data.filter((_, i) => i !== index);
-    setData(newItems);
+  const removeItem = async (index) => {
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: "Delete this facility item?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    });
+
+    if (result.isConfirmed) {
+      const newItems = data.filter((_, i) => i !== index);
+      setData(newItems);
+      Swal.fire('Deleted!', 'Item has been removed.', 'success');
+    }
   };
 
   const handleImageUpload = async (e, index) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    // Simulate upload or implement actual upload if API exists
-    // For now we just use a placeholder or assume upload logic similar to HeroSection
-    // But since I don't have the upload logic here, I'll alert.
-    alert("Image upload implementation required. Please manually enter URL for now.");
-    // Ideally: call /api/upload
+    setUploadingIndex(index);
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("folder", "facilities");
+
+    try {
+      const res = await fetch("/api/upload", { method: "POST", body: formData });
+      const result = await res.json();
+      if (result.success) {
+        updateItem(index, "image", result.url);
+        Swal.fire({
+          icon: 'success',
+          title: 'Uploaded!',
+          text: 'Image uploaded successfully',
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 3000
+        });
+      } else {
+        throw new Error(result.message);
+      }
+    } catch (error) {
+      console.error(error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Upload Failed',
+        text: 'Could not upload image',
+      });
+    } finally {
+      setUploadingIndex(null);
+    }
   };
 
   if (loading) return <Loader2 className="w-8 h-8 animate-spin text-blue-500 mx-auto" />;
@@ -136,7 +188,49 @@ export default function FacilitiesSection() {
               <InputField label="Gradient Color" value={item.color} onChange={(v) => updateItem(index, "color", v)} />
             </div>
 
-            <InputField label="Image URL" value={item.image || ""} onChange={(v) => updateItem(index, "image", v)} />
+            <div className="space-y-1.5 pt-2 border-t border-slate-100">
+              <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wide">Facility Image</label>
+              {uploadingIndex === index ? (
+                <div className="h-24 w-full bg-slate-50 border border-slate-200 border-dashed rounded-xl flex items-center justify-center">
+                  <Loader2 className="w-5 h-5 text-blue-600 animate-spin" />
+                </div>
+              ) : (
+                <div className="flex items-center gap-4">
+                  <div className="relative group/img flex-1">
+                    <label
+                      className="flex items-center gap-2 w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 cursor-pointer hover:bg-slate-100 transition-colors text-sm"
+                    >
+                      <ImageIcon className="w-4 h-4 text-slate-500" />
+                      <span className="truncate">{item.image ? "Change Image" : "Upload Image"}</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => handleImageUpload(e, index)}
+                        className="hidden"
+                      />
+                    </label>
+                  </div>
+                  {item.image && (
+                    <div className="h-16 w-24 rounded-lg overflow-hidden border border-slate-200 bg-slate-100 relative group/preview">
+                      <img src={item.image} alt="Preview" className="w-full h-full object-cover" />
+                      <div className="absolute inset-0 bg-black/0 group-hover/preview:bg-black/10 transition-colors" />
+                    </div>
+                  )}
+                  {!item.image && (
+                    <div className="h-16 w-24 rounded-lg overflow-hidden border border-slate-200 bg-slate-50 flex items-center justify-center text-slate-300">
+                      <ImageIcon className="w-6 h-6" />
+                    </div>
+                  )}
+                </div>
+              )}
+              {/* Fallback for manual URL entry if upload fails or external URL needed */}
+              <input
+                value={item.image || ""}
+                onChange={(e) => updateItem(index, "image", e.target.value)}
+                className="w-full text-xs text-slate-400 bg-transparent border-none focus:ring-0 p-0 mt-1"
+                placeholder="or paste image URL here"
+              />
+            </div>
           </div>
         ))}
         <button
