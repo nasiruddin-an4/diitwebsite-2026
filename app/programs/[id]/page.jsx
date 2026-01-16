@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { notFound, useParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -26,55 +26,114 @@ import {
     ChevronUp,
     Download,
     Quote,
-    Phone
+    Phone,
+    Loader2
 } from 'lucide-react';
-import { programsData } from '../programsData';
+import Image from 'next/image';
 
 const DynamicProgramPage = () => {
     const params = useParams();
     const { id } = params;
-    const program = programsData[id];
-
-    if (!program) {
-        return notFound();
-    }
-
+    const [program, setProgram] = useState(null);
+    const [loading, setLoading] = useState(true);
     const [openFaq, setOpenFaq] = useState(null);
+    const [facultyIndex, setFacultyIndex] = useState(0);
+    const [alumniIndex, setAlumniIndex] = useState(0);
+
+    useEffect(() => {
+        const fetchProgram = async () => {
+            try {
+                const response = await fetch('/api/admin/data/ProgramsData');
+                if (!response.ok) throw new Error('Failed to fetch programs');
+                const result = await response.json();
+                const programs = result.data?.programsData || result.data || [];
+                
+                // Find program by ID (supports both numeric and string IDs)
+                const found = programs.find(p => 
+                    String(p.id) === String(id) || p.shortName?.toLowerCase() === String(id).toLowerCase()
+                );
+                
+                if (found) {
+                    setProgram(found);
+                } else {
+                    setProgram(null);
+                }
+            } catch (error) {
+                console.error("Error fetching program:", error);
+                setProgram(null);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchProgram();
+    }, [id]);
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+            </div>
+        );
+    }
 
     const toggleFaq = (index) => {
         setOpenFaq(openFaq === index ? null : index);
     };
 
-    const [facultyIndex, setFacultyIndex] = useState(0);
-    const [alumniIndex, setAlumniIndex] = useState(0);
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+            </div>
+        );
+    }
 
-    const alumniList = [
-        {
-            name: "Fahim Ahmed",
-            role: "Software Engineer, Google",
-            quote: "The robust curriculum and supportive faculty at DIIT gave me the confidence to compete globally.",
-            image: "https://images.unsplash.com/photo-1542909168-82c3e7fdca5c?q=80&w=200&auto=format&fit=crop"
-        },
-        {
-            name: "Sarah Jen",
-            role: "Product Manager, Microsoft",
-            quote: "I learned leadership and strategic thinking here which are crucial for my current role.",
-            image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=200&auto=format&fit=crop"
-        },
-        {
-            name: "Rahim Uddin",
-            role: "Founder, TechBD",
-            quote: "The entrepreneurship club and mentors helped me launch my own startup right after graduation.",
-            image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop"
-        }
+    if (!program) {
+        return notFound();
+    }
+
+    // Create a safe program object with defaults for optional fields
+    const safeProgram = {
+        ...program,
+        overview: program.overview || [],
+        eligibility: program.eligibility || [],
+        curriculum: program.curriculum || [],
+        careers: program.careers || [],
+        faculty: program.faculty || [],
+        faqs: program.faqs || [],
+        stats: program.stats || [],
+        facilities: program.facilities || [],
+        headName: program.headName || "Program Head",
+        headRole: program.headRole || "Head of Department",
+        headMessage: program.headMessage || "Welcome to our program",
+        headImage: program.headImage || "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=200&auto=format&fit=crop",
+        heroImage: program.heroImage || program.image || "https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=2070&auto=format&fit=crop",
+        department: program.department || "Department"
+    };
+
+    // Key facts to display in sidebar
+    const keyFacts = [
+        { icon: GraduationCap, label: "Degree", value: safeProgram.degree || "N/A" },
+        { icon: Clock, label: "Duration", value: safeProgram.duration || "N/A" },
+        { icon: Calendar, label: "Semesters", value: safeProgram.semesters || "N/A" },
+        { icon: Code, label: "Credits", value: safeProgram.credits || "N/A" },
     ];
 
-    const keyFacts = [
-        { label: "Degree", value: program.degree, icon: Award },
-        { label: "Duration", value: program.duration, icon: Clock },
-        { label: "Affiliation", value: program.affiliation, icon: Globe },
-        { label: "Semesters", value: program.semesters, icon: Calendar },
-        { label: "Credits", value: program.credits, icon: FileText },
+    // Sample alumni data (can be replaced with dynamic data from safeProgram.alumni if available)
+    const alumniList = safeProgram.alumni || [
+        {
+            name: "John Doe",
+            role: "Software Engineer at Tech Corp",
+            image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=100&auto=format&fit=crop",
+            quote: "DIIT prepared me well for my career in technology."
+        },
+        {
+            name: "Jane Smith",
+            role: "Business Manager at Global Inc",
+            image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=100&auto=format&fit=crop",
+            quote: "The education and network I gained were invaluable."
+        },
     ];
 
     return (
@@ -95,23 +154,23 @@ const DynamicProgramPage = () => {
                         transition={{ duration: 0.6 }}
                     >
                         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 text-xs font-bold uppercase tracking-wider mb-6 border border-blue-500/30 backdrop-blur-sm">
-                            <Monitor className="w-3.5 h-3.5" /> {program.department}
+                            <Monitor className="w-3.5 h-3.5" /> {safeProgram.department}
                         </div>
                         <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-6 leading-tight">
-                            {program.title.replace('Bachelor of Business Administration', 'Bachelor of\nBusiness Admin')}
+                            {safeProgram.title.replace('Bachelor of Business Administration', 'Bachelor of\nBusiness Admin')}
                         </h1>
                         <p className="text-lg text-slate-300 max-w-xl leading-relaxed mb-8">
-                            {program.description}
+                            {safeProgram.description}
                         </p>
                         <div className="flex flex-wrap gap-4">
                             <Link
-                                href="/admissions/apply"
+                                href="/admission/online"
                                 className="px-8 py-3.5 bg-blue-600 text-white font-bold rounded-xl shadow-lg shadow-blue-600/30 hover:bg-blue-700 transition-all transform hover:-translate-y-1"
                             >
                                 Apply Now
                             </Link>
                             <Link
-                                href="/contact"
+                                href="/admissionEligibility"
                                 className="px-8 py-3.5 bg-white/10 text-white font-bold rounded-xl border border-white/20 hover:bg-white/20 transition-all backdrop-blur-sm"
                             >
                                 Admission Query
@@ -127,15 +186,15 @@ const DynamicProgramPage = () => {
                     >
                         <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-white/10 aspect-video lg:aspect-[4/3]">
                             <img
-                                src={program.heroImage}
-                                alt={program.title}
+                                src={safeProgram.heroImage}
+                                alt={safeProgram.title}
                                 className="w-full h-full object-cover"
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-[#001229] via-transparent to-transparent opacity-60" />
                         </div>
                         {/* Stats Floating Card */}
                         <div className="absolute -bottom-10 left-10 right-10 bg-white rounded-2xl shadow-xl p-6 hidden md:grid grid-cols-4 gap-4 items-center border border-slate-100 divide-x divide-slate-100">
-                            {program.stats.map((stat, idx) => (
+                            {safeProgram.stats.map((stat, idx) => (
                                 <div key={idx} className="text-center px-2">
                                     <h4 className="text-2xl font-bold text-slate-900">{stat.value}</h4>
                                     <p className="text-xs text-slate-500 font-bold uppercase tracking-wide mt-1">{stat.label}</p>
@@ -159,17 +218,21 @@ const DynamicProgramPage = () => {
                         <div className="flex flex-col sm:flex-row gap-6 relative z-10">
                             <div className="shrink-0">
                                 <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-slate-50 shadow-md">
-                                    <img src={program.headImage} alt={program.headName} className="w-full h-full object-cover" />
+                                    <Image src={safeProgram.headImage}
+                                     alt={safeProgram.headName}
+                                     width={240}
+                                     height={240}
+                                     className="w-full h-full object-cover" />
                                 </div>
                             </div>
                             <div>
                                 <h3 className="text-2xl font-bold text-slate-900 mb-2">Message from the Head</h3>
                                 <p className="text-slate-600 italic mb-4">
-                                    "{program.headMessage}"
+                                    "{safeProgram.headMessage}"
                                 </p>
                                 <div>
-                                    <p className="font-bold text-slate-900">{program.headName}</p>
-                                    <p className="text-sm text-blue-600 font-medium">{program.headRole}</p>
+                                    <p className="font-bold text-slate-900">{safeProgram.headName}</p>
+                                    <p className="text-sm text-blue-600 font-medium">{safeProgram.headRole}</p>
                                 </div>
                             </div>
                         </div>
@@ -182,7 +245,7 @@ const DynamicProgramPage = () => {
                                 <span className="w-2 h-8 bg-blue-600 rounded-full"></span> Program Overview
                             </h2>
                             <div className="prose prose-slate max-w-none text-slate-600 leading-relaxed bg-white p-8 rounded-2xl border border-slate-100 shadow-sm">
-                                {program.overview.map((para, i) => (
+                                {safeProgram.overview.map((para, i) => (
                                     <p key={i} className="mb-4 last:mb-0">{para}</p>
                                 ))}
                             </div>
@@ -194,7 +257,7 @@ const DynamicProgramPage = () => {
                                 <CheckCircle className="w-5 h-5 text-blue-600" /> Eligibility Criteria
                             </h3>
                             <div className="grid sm:grid-cols-2 gap-4">
-                                {program.eligibility.map((item, i) => (
+                                {safeProgram.eligibility.map((item, i) => (
                                     <div key={i} className="flex items-start gap-3 bg-white p-4 rounded-xl border border-blue-100">
                                         <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-2 shrink-0" />
                                         <span className="text-sm text-slate-700 font-medium">{item}</span>
@@ -219,7 +282,7 @@ const DynamicProgramPage = () => {
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-slate-100">
-                                        {program.curriculum.map((item, idx) => (
+                                        {safeProgram.curriculum.map((item, idx) => (
                                             <tr key={idx} className="hover:bg-slate-50/50 transition-colors">
                                                 <td className="p-4 font-bold text-blue-600 whitespace-nowrap align-top">{item.semester}</td>
                                                 <td className="p-4">
@@ -245,7 +308,7 @@ const DynamicProgramPage = () => {
                             <span className="w-2 h-8 bg-blue-600 rounded-full"></span> Existing Facilities
                         </h2>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                            {program.facilities.map((facility, idx) => (
+                            {safeProgram.facilities.map((facility, idx) => (
                                 <div key={idx} className="group relative rounded-2xl overflow-hidden aspect-video shadow-md cursor-pointer">
                                     <img
                                         src={facility.image}
@@ -267,7 +330,7 @@ const DynamicProgramPage = () => {
                             <span className="w-2 h-8 bg-blue-600 rounded-full"></span> Career Opportunities
                         </h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {program.careers.map((career, idx) => (
+                            {safeProgram.careers.map((career, idx) => (
                                 <div key={idx} className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md hover:border-blue-100 transition-all group">
                                     <div className="flex items-start gap-4">
                                         <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
@@ -284,63 +347,13 @@ const DynamicProgramPage = () => {
                         </div>
                     </section>
 
-                    {/* Department Faculty Carousel */}
-                    <section>
-                        <div className="flex items-center justify-between mb-6">
-                            <h2 className="text-3xl font-bold text-slate-900 flex items-center gap-3">
-                                <span className="w-2 h-8 bg-blue-600 rounded-full"></span> Our Faculty
-                            </h2>
-                            <div className="flex gap-2">
-                                <button
-                                    onClick={() => setFacultyIndex(prev => Math.max(0, prev - 1))}
-                                    disabled={facultyIndex === 0}
-                                    className="p-2 rounded-full bg-slate-100 hover:bg-blue-50 text-slate-600 hover:text-blue-600 disabled:opacity-30 transition-colors"
-                                >
-                                    <ChevronUp className="w-5 h-5 -rotate-90" />
-                                </button>
-                                <button
-                                    onClick={() => setFacultyIndex(prev => Math.min(Math.max(0, program.faculty.length - 3), prev + 1))}
-                                    disabled={facultyIndex >= Math.max(0, program.faculty.length - 3)}
-                                    className="p-2 rounded-full bg-slate-100 hover:bg-blue-50 text-slate-600 hover:text-blue-600 disabled:opacity-30 transition-colors"
-                                >
-                                    <ChevronUp className="w-5 h-5 rotate-90" />
-                                </button>
-                            </div>
-                        </div>
-
-                        <div className="overflow-hidden p-1 -m-1">
-                            <motion.div
-                                className="flex gap-6"
-                                initial={false}
-                                animate={{ x: `-${facultyIndex * (100 / 3)}%` }}
-                                transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                            >
-                                {program.faculty.map((member, idx) => (
-                                    <div key={idx} className="min-w-[100%] sm:min-w-[calc(50%-12px)] md:min-w-[calc(33.333%-16px)] bg-white rounded-2xl p-4 border border-slate-100 text-center hover:shadow-lg transition-all group">
-                                        <div className="w-24 h-24 mx-auto rounded-full overflow-hidden mb-4 border-2 border-slate-100 group-hover:border-blue-500 transition-colors">
-                                            <img src={member.image} alt={member.name} className="w-full h-full object-cover" />
-                                        </div>
-                                        <h4 className="font-bold text-slate-900 group-hover:text-blue-600 transition-colors">{member.name}</h4>
-                                        <p className="text-sm text-slate-500 font-medium mb-2">{member.designation}</p>
-                                        <span className="inline-block px-2 py-1 bg-slate-50 text-slate-600 text-[10px] font-bold uppercase tracking-wider rounded">
-                                            {member.specialization}
-                                        </span>
-                                    </div>
-                                ))}
-                            </motion.div>
-                        </div>
-                        <div className="mt-4 text-center">
-                            <Link href="/faculty" className="text-sm text-blue-600 font-bold hover:underline">View Full Faculty List</Link>
-                        </div>
-                    </section>
-
                     {/* FAQs */}
                     <section>
                         <h2 className="text-3xl font-bold text-slate-900 mb-6 flex items-center gap-3">
                             <span className="w-2 h-8 bg-blue-600 rounded-full"></span> FAQs
                         </h2>
                         <div className="space-y-3">
-                            {program.faqs.map((faq, idx) => (
+                            {safeProgram.faqs.map((faq, idx) => (
                                 <div key={idx} className="bg-white rounded-xl border border-slate-200 overflow-hidden">
                                     <button
                                         onClick={() => toggleFaq(idx)}
@@ -396,18 +409,21 @@ const DynamicProgramPage = () => {
                             <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/20 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
                             <h3 className="font-bold text-lg mb-4 relative z-10">Student Resources</h3>
                             <div className="space-y-3 relative z-10">
-                                {program.resources.map((item, i) => (
+                                {(safeProgram.resources || []).map((item, i) => (
                                     <a key={i} href="#" className="flex items-center justify-between p-3 bg-white/10 rounded-xl hover:bg-white/20 transition-colors group">
                                         <div className="flex items-center gap-3">
                                             <FileText className="w-4 h-4 text-blue-400" />
                                             <div className="text-left">
                                                 <p className="text-sm font-bold group-hover:text-blue-300 transition-colors">{item.name}</p>
-                                                <p className="text-[10px] text-slate-400">PDF • {item.size}</p>
+                                                <p className="text-[10px] text-slate-400">PDF • {item.size || "N/A"}</p>
                                             </div>
                                         </div>
                                         <Download className="w-4 h-4 text-slate-400 group-hover:text-white transition-colors" />
                                     </a>
                                 ))}
+                                {(!safeProgram.resources || safeProgram.resources.length === 0) && (
+                                    <p className="text-sm text-slate-400">No resources available yet.</p>
+                                )}
                             </div>
                         </div>
 
@@ -461,7 +477,7 @@ const DynamicProgramPage = () => {
                             <h3 className="font-bold text-xl mb-2">Ready to Apply?</h3>
                             <p className="text-blue-100 text-sm mb-6">Take the first step towards a rewarding career.</p>
                             <Link
-                                href="/admissions/apply"
+                                href="/admission/online"
                                 className="block w-full py-3 bg-white text-blue-700 font-bold rounded-xl hover:bg-blue-50 transition-colors shadow-lg"
                             >
                                 Apply Now
