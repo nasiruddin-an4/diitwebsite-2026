@@ -14,6 +14,25 @@ import {
 import Link from 'next/link';
 
 const ScholarshipsPage = () => {
+    const [data, setData] = React.useState(null);
+    const [loading, setLoading] = React.useState(true);
+
+    React.useEffect(() => {
+        const fetchScholarships = async () => {
+            try {
+                const res = await fetch('/api/admin/data/AdmissionData');
+                const result = await res.json();
+                if (result.success && result.data) {
+                    setData(result.data);
+                }
+            } catch (error) {
+                console.error("Failed to fetch scholarship data", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchScholarships();
+    }, []);
 
     const container = {
         hidden: { opacity: 0 },
@@ -30,12 +49,23 @@ const ScholarshipsPage = () => {
         show: { y: 0, opacity: 1 }
     };
 
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-brandColor"></div>
+            </div>
+        );
+    }
+
+    const { scholarships } = data || {};
+    const { merit, needBased, special } = scholarships || {};
+
     return (
         <div className="min-h-screen bg-slate-50 pb-20">
             {/* Hero Section */}
             <div className="bg-[#001229] pt-32 pb-24 px-4 relative overflow-hidden">
                 <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-10" />
-                <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-brandColor/30 to-transparent blur-3xl opacity-60" />
+                <div className="absolute top-0 right-0 w-1/2 h-full bg-linear-to-l from-brandColor/30 to-transparent blur-3xl opacity-60" />
 
                 <div className="max-w-6xl mx-auto text-center relative z-10">
                     <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }}>
@@ -43,10 +73,10 @@ const ScholarshipsPage = () => {
                             <Award className="w-4 h-4 text-brandColor" /> Financial Aid & Support
                         </div>
                         <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
-                            Scholarships & <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">Waivers</span>
+                            {scholarships?.title || "Scholarships & Waivers"}
                         </h1>
                         <p className="text-blue-100/70 text-lg max-w-2xl mx-auto leading-relaxed">
-                            We believe financial barriers should never stand in the way of potential. Explore our comprehensive scholarship programs designed to reward excellence and support those in need.
+                            {scholarships?.intro || "We believe financial barriers should never stand in the way of potential."}
                         </p>
                     </motion.div>
                 </div>
@@ -64,28 +94,20 @@ const ScholarshipsPage = () => {
                         <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                             <GraduationCap className="w-8 h-8 text-brandColor" />
                         </div>
-                        <h2 className="text-2xl font-bold text-slate-800 mb-4">Merit-Based Scholarships</h2>
+                        <h2 className="text-2xl font-bold text-slate-800 mb-4">{merit?.title || "Merit-Based Scholarships"}</h2>
                         <p className="text-slate-600 mb-6 leading-relaxed">
-                            We award academic excellence. Students with outstanding results in their HSC or equivalent examinations are eligible for significant tuition waivers.
+                            {merit?.description || "We award academic excellence based on HSC results."}
                         </p>
                         <div className="space-y-3">
-                            <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl">
-                                <span className="font-bold text-slate-800">Golden GPA 5.00</span>
-                                <div className="h-px flex-1 bg-slate-200"></div>
-                                <span className="font-bold text-brandColor">100% Waiver*</span>
-                            </div>
-                            <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl">
-                                <span className="font-bold text-slate-800">GPA 5.00</span>
-                                <div className="h-px flex-1 bg-slate-200"></div>
-                                <span className="font-bold text-brandColor">50% Waiver*</span>
-                            </div>
-                            <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl">
-                                <span className="font-bold text-slate-800">GPA 4.80 - 4.99</span>
-                                <div className="h-px flex-1 bg-slate-200"></div>
-                                <span className="font-bold text-brandColor">25% Waiver*</span>
-                            </div>
+                            {merit?.tiers?.map((tier, idx) => (
+                                <div key={idx} className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl">
+                                    <span className="font-bold text-slate-800">{tier.label}</span>
+                                    <div className="h-px flex-1 bg-slate-200"></div>
+                                    <span className="font-bold text-brandColor">{tier.waiver}</span>
+                                </div>
+                            ))}
                         </div>
-                        <p className="text-xs text-slate-400 mt-4">* Conditions apply based on semester performance.</p>
+                        <p className="text-xs text-slate-400 mt-4">{merit?.note}</p>
                     </motion.div>
 
                     {/* Need Based */}
@@ -93,17 +115,12 @@ const ScholarshipsPage = () => {
                         <div className="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                             <HeartHandshake className="w-8 h-8 text-emerald-600" />
                         </div>
-                        <h2 className="text-2xl font-bold text-slate-800 mb-4">Need-Based Waivers</h2>
+                        <h2 className="text-2xl font-bold text-slate-800 mb-4">{needBased?.title || "Need-Based Waivers"}</h2>
                         <p className="text-slate-600 mb-6 leading-relaxed">
-                            Financial constraints shouldn't stop you from achieving your dreams. We offer support for students facing financial hardship.
+                            {needBased?.description}
                         </p>
                         <ul className="space-y-4">
-                            {[
-                                "Full or partial waivers for financially disadvantaged students.",
-                                "Support for students who lose a guardian during their study.",
-                                "Flexible payment plans for semester fees.",
-                                "Work-study opportunities within the campus."
-                            ].map((text, i) => (
+                            {needBased?.benefits?.map((text, i) => (
                                 <li key={i} className="flex items-start gap-3">
                                     <div className="mt-1 bg-emerald-100 p-1 rounded-full">
                                         <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
@@ -119,22 +136,15 @@ const ScholarshipsPage = () => {
                         <div className="w-14 h-14 bg-purple-50 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                             <Zap className="w-8 h-8 text-purple-600" />
                         </div>
-                        <h2 className="text-2xl font-bold text-slate-800 mb-4">Special Categories</h2>
+                        <h2 className="text-2xl font-bold text-slate-800 mb-4">{special?.title || "Special Categories"}</h2>
                         <p className="text-slate-600 mb-6 leading-relaxed">
-                            We honor diversity and contribution to the nation by offering special waivers for specific groups of students.
+                            {special?.description}
                         </p>
                         <div className="grid grid-cols-2 gap-4">
-                            {[
-                                { label: "Freedom Fighters", val: "Quota" },
-                                { label: "Siblings/Spouse", val: "20% Off" },
-                                { label: "Tribal Students", val: "Special" },
-                                { label: "Disabled", val: "Priority" },
-                                { label: "Female Students", val: "10% Off" },
-                                { label: "Corporate", val: "Partner" },
-                            ].map((tag, i) => (
+                            {special?.categories?.map((tag, i) => (
                                 <div key={i} className="bg-slate-50 p-4 rounded-xl border border-slate-100 text-center">
                                     <h4 className="font-bold text-slate-800 text-sm">{tag.label}</h4>
-                                    <span className="text-xs text-purple-600 font-bold uppercase tracking-wider">{tag.val}</span>
+                                    <span className="text-xs text-purple-600 font-bold uppercase tracking-wider">{tag.value}</span>
                                 </div>
                             ))}
                         </div>

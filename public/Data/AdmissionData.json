@@ -288,24 +288,67 @@
     },
     "scholarships": {
         "title": "Scholarships & Waivers",
-        "items": [
-            {
-                "title": "Merit Scholarship",
-                "criteria": "GPA 5.00 in HSC",
-                "waiver": "100% Tuition Waiver"
-            },
-            {
-                "title": "Sibling Validation",
-                "criteria": "Two siblings studying together",
-                "waiver": "20% Tuition Waiver"
-            },
-            {
-                "title": "Freedom Fighter Quota",
-                "criteria": "Children of Freedom Fighters",
-                "waiver": "100% Tuition Waiver"
-            }
-        ]
+        "intro": "We believe financial barriers should never stand in the way of potential. Explore our comprehensive scholarship programs designed to reward excellence and support those in need.",
+        "merit": {
+            "title": "Merit-Based Scholarships",
+            "description": "We award academic excellence. Students with outstanding results in their HSC or equivalent examinations are eligible for significant tuition waivers.",
+            "tiers": [
+                {
+                    "label": "Golden GPA 5.00",
+                    "waiver": "100% Waiver*"
+                },
+                {
+                    "label": "GPA 5.00",
+                    "waiver": "Up to 50% Waiver*"
+                },
+                {
+                    "label": "GPA 4.80 - 4.99",
+                    "waiver": "Up to 20% Waiver*"
+                }
+            ],
+            "note": "* Conditions apply based on semester performance."
+        },
+        "needBased": {
+            "title": "Need-Based Waivers",
+            "description": "Financial constraints shouldn't stop you from achieving your dreams. We offer support for students facing financial hardship.",
+            "benefits": [
+                "Full or partial waivers for financially disadvantaged students.",
+                "Support for students who lose a guardian during their study.",
+                "Flexible payment plans for semester fees.",
+                "Work-study opportunities within the campus."
+            ]
+        },
+        "special": {
+            "title": "Special Categories",
+            "description": "We honor diversity and contribution to the nation by offering special waivers for specific groups of students.",
+            "categories": [
+                {
+                    "label": "Freedom Fighters",
+                    "value": "Quota"
+                },
+                {
+                    "label": "Siblings/Spouse",
+                    "value": "20% Off"
+                },
+                {
+                    "label": "Tribal Students",
+                    "value": "Special"
+                },
+                {
+                    "label": "Disabled",
+                    "value": "Priority"
+                },
+                {
+                    "label": "Female Students",
+                    "value": "10% Off"
+                },
+                {
+                    "label": "Corporate",
+                    "value": "Partner"
+                }
+            ]
+        }
     },
-    "updatedAt": "2026-01-16T10:16:48.558Z",
-    "updatedBy": "system_auto_seed"
+    "updatedAt": "2026-01-16T10:32:15.355Z",
+    "updatedBy": "admin@diit.edu.bd"
 }

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Save, Loader2, Plus, Trash2, X } from "lucide-react";
+import Swal from "sweetalert2";
 import { InputField } from "./InputField";
 
 export default function TuitionFeesSection() {
@@ -49,18 +50,43 @@ export default function TuitionFeesSection() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedData),
       });
-      alert("Changes saved successfully!");
+      Swal.fire({
+        icon: 'success',
+        title: 'Saved!',
+        text: 'Changes saved successfully',
+        timer: 1500,
+        showConfirmButton: false
+      });
     } catch (error) {
       console.error("Failed to save data", error);
-      alert("Failed to save data");
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Failed to save data',
+      });
     } finally {
       setSaving(false);
     }
   };
 
-  const addProgram = () => {
-    const name = prompt("Enter new program abbreviation (e.g., PHARM):");
-    if (name && !data[name]) {
+  const addProgram = async () => {
+    const { value: name } = await Swal.fire({
+      title: 'New Program',
+      input: 'text',
+      inputLabel: 'Enter program abbreviation (e.g., PHARM)',
+      inputPlaceholder: 'Program Name...',
+      showCancelButton: true,
+      inputValidator: (value) => {
+        if (!value) {
+          return 'You need to write something!'
+        }
+        if (data[value]) {
+          return 'Program already exists!'
+        }
+      }
+    });
+
+    if (name) {
       setData({
         ...data,
         [name]: []
@@ -69,12 +95,27 @@ export default function TuitionFeesSection() {
     }
   };
 
-  const removeProgram = (key) => {
-    if (confirm(`Are you sure you want to delete ${key} and all its tables?`)) {
+  const removeProgram = async (key) => {
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: `Delete ${key} and all its tables?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!'
+    });
+
+    if (result.isConfirmed) {
       const newData = { ...data };
       delete newData[key];
       setData(newData);
       if (activeTab === key) setActiveTab(Object.keys(newData)[0] || "");
+      Swal.fire(
+        'Deleted!',
+        'The program has been deleted.',
+        'success'
+      );
     }
   };
 
@@ -99,11 +140,22 @@ export default function TuitionFeesSection() {
     setData(newData);
   };
 
-  const removeTable = (tableIndex) => {
-    if (confirm("Delete this table?")) {
+  const removeTable = async (tableIndex) => {
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: "Delete this entire fee table?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!'
+    });
+
+    if (result.isConfirmed) {
       const newData = { ...data };
       newData[activeTab] = newData[activeTab].filter((_, i) => i !== tableIndex);
       setData(newData);
+      Swal.fire('Deleted!', 'The table has been deleted.', 'success');
     }
   };
 
@@ -134,8 +186,17 @@ export default function TuitionFeesSection() {
     setData(newData);
   };
 
-  const removeColumn = (tableIndex, colIndex) => {
-    if (confirm("Delete this column?")) {
+  const removeColumn = async (tableIndex, colIndex) => {
+    const result = await Swal.fire({
+      title: 'Remove Column?',
+      text: "This will delete this column and all its data.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      confirmButtonText: 'Yes, remove it!'
+    });
+
+    if (result.isConfirmed) {
       const newData = { ...data };
       const tables = [...newData[activeTab]];
       tables[tableIndex].headers.splice(colIndex, 1);
@@ -191,8 +252,8 @@ export default function TuitionFeesSection() {
             key={prog}
             onClick={() => setActiveTab(prog)}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors relative group ${activeTab === prog
-                ? "bg-blue-600 text-white shadow-md shadow-blue-500/20"
-                : "bg-white text-slate-600 hover:bg-slate-50 border border-slate-200"
+              ? "bg-blue-600 text-white shadow-md shadow-blue-500/20"
+              : "bg-white text-slate-600 hover:bg-slate-50 border border-slate-200"
               }`}
           >
             {prog}
