@@ -64,7 +64,18 @@ export default function AdmissionEligibilitySection() {
   };
 
   if (loading) return <Loader2 className="w-8 h-8 animate-spin text-blue-500 mx-auto" />;
-  if (!data) return <div>No data found</div>;
+  if (!data) return (
+    <div className="p-8 text-center bg-slate-50 rounded-2xl border border-dashed border-slate-300 mt-4">
+      <p className="text-slate-500 mb-4 font-medium">No admission eligibility data found.</p>
+      <p className="text-sm text-slate-400 mb-6">The initial data might not be loaded yet.</p>
+      <button
+        onClick={fetchData}
+        className="px-4 py-2 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition-colors flex items-center gap-2 mx-auto"
+      >
+        <Loader2 className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} /> Try Loading Again
+      </button>
+    </div>
+  );
 
   return (
     <div className="space-y-6">

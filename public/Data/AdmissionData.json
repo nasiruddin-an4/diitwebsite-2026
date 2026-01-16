@@ -1,80 +1,311 @@
 {
-  "eligibility": {
-    "hsc": {
-      "title": "HSC & Equivalent",
-      "ssc_years": "2021 / 2022 / 2023",
-      "ssc_gpa_business_arts": 2.0,
-      "ssc_gpa_science": 2.5,
-      "hsc_years": "2023 - 2025",
-      "hsc_gpa_business_arts": 2.0,
-      "hsc_gpa_science": 2.5,
-      "combined_gpa_business_arts": 4.5,
-      "combined_gpa_science": 4.75
+    "eligibility": {
+        "hsc": {
+            "title": "HSC & Equivalent",
+            "ssc_years": "2021 / 2022 / 2023",
+            "ssc_gpa_business_arts": 2,
+            "ssc_gpa_science": 2.5,
+            "hsc_years": "2023 - 2025",
+            "hsc_gpa_business_arts": 2,
+            "hsc_gpa_science": 2.5,
+            "combined_gpa_business_arts": 4.5,
+            "combined_gpa_science": 4.75
+        },
+        "diploma": {
+            "title": "Diploma Holders",
+            "ssc_years": "2019 / 2020 / 2021",
+            "ssc_gpa": 2.5,
+            "diploma_years": "2023 / 2024 / 2025",
+            "diploma_gpa": 2,
+            "combined_gpa": 4.75
+        }
     },
-    "diploma": {
-      "title": "Diploma Holders",
-      "ssc_years": "2019 / 2020 / 2021",
-      "ssc_gpa": 2.5,
-      "diploma_years": "2023 / 2024 / 2025",
-      "diploma_gpa": 2.0,
-      "combined_gpa": 4.75
-    }
-  },
-  "online": {
-    "title": "Online Admission",
-    "steps": [
-      {
-        "title": "Step 1",
-        "description": "Fill out the online application form."
-      },
-      {
-        "title": "Step 2",
-        "description": "Pay the application fee."
-      }
-    ],
-    "applyLink": "https://admission.diit.edu.bd"
-  },
-  "fees": {
-    "title": "Tuition Fees Structure",
-    "programs": [
-      {
-        "name": "B.Sc. in CSE",
-        "total_credit": 144,
-        "cost_per_credit": 2500,
-        "total_cost": 450000
-      },
-      {
-        "name": "BBA",
-        "total_credit": 126,
-        "cost_per_credit": 2200,
-        "total_cost": 380000
-      },
-      {
-        "name": "BTHM",
-        "total_credit": 130,
-        "cost_per_credit": 2000,
-        "total_cost": 350000
-      }
-    ]
-  },
-  "scholarships": {
-    "title": "Scholarships & Waivers",
-    "items": [
-      {
-        "title": "Merit Scholarship",
-        "criteria": "GPA 5.00 in HSC",
-        "waiver": "100% Tuition Waiver"
-      },
-      {
-        "title": "Sibling Validation",
-        "criteria": "Two siblings studying together",
-        "waiver": "20% Tuition Waiver"
-      },
-      {
-        "title": "Freedom Fighter Quota",
-        "criteria": "Children of Freedom Fighters",
-        "waiver": "100% Tuition Waiver"
-      }
-    ]
-  }
+    "fees": {
+        "CSE": [
+            {
+                "type": "undergrad",
+                "title": "Computer Science & Engineering (CSE)",
+                "headers": [
+                    "GPA (HSC)",
+                    "Admission Fees",
+                    "Before Mid-Term",
+                    "Before Internal-Final",
+                    "Total Sem Fees",
+                    "Tuition Fees",
+                    "Grand Total"
+                ],
+                "rows": [
+                    [
+                        "5.00 (Golden)",
+                        "15,000",
+                        "5,000",
+                        "5,000",
+                        "10,000",
+                        "N/A",
+                        "95,000"
+                    ],
+                    [
+                        "5.00",
+                        "15,000",
+                        "8,000",
+                        "8,000",
+                        "16,000",
+                        "1,500 * 48",
+                        "215,000"
+                    ],
+                    [
+                        "4.00 - 4.99",
+                        "15,000",
+                        "8,000",
+                        "8,000",
+                        "16,000",
+                        "2,500 * 48",
+                        "263,000"
+                    ],
+                    [
+                        "2.50 - 3.99",
+                        "15,000",
+                        "8,000",
+                        "8,000",
+                        "16,000",
+                        "2,900 * 48",
+                        "282,000"
+                    ]
+                ]
+            },
+            {
+                "type": "undergrad",
+                "title": "CSE for Diploma Students",
+                "headers": [
+                    "Diploma GPA",
+                    "Admission Fees",
+                    "Before Mid-Term",
+                    "Before Internal-Final",
+                    "Total Sem Fees",
+                    "Tuition Fees",
+                    "Grand Total"
+                ],
+                "rows": [
+                    [
+                        "4.00",
+                        "10,000",
+                        "4,375",
+                        "4,375",
+                        "8,750",
+                        "N/A",
+                        "80,000"
+                    ],
+                    [
+                        "3.50 - 3.99",
+                        "10,000",
+                        "7,500",
+                        "7,500",
+                        "15,000",
+                        "N/A",
+                        "130,000"
+                    ],
+                    [
+                        "3.00 - 3.49",
+                        "10,000",
+                        "7,500",
+                        "7,500",
+                        "15,000",
+                        "400 * 48",
+                        "149,200"
+                    ],
+                    [
+                        "2.50 - 2.99",
+                        "10,000",
+                        "7,500",
+                        "7,500",
+                        "15,000",
+                        "800 * 48",
+                        "168,400"
+                    ]
+                ]
+            }
+        ],
+        "BTHM": [
+            {
+                "type": "undergrad",
+                "title": "Bachelor of Tourism & Hospitality Management (BTHM)",
+                "headers": [
+                    "GPA (HSC)",
+                    "Admission Fees",
+                    "Before Mid-Term",
+                    "Before Internal-Final",
+                    "Total Sem Fees",
+                    "Tuition Fees (Per Credit)",
+                    "Grand Total"
+                ],
+                "rows": [
+                    [
+                        "5.00 (Golden)",
+                        "15,000",
+                        "4,000",
+                        "4,000",
+                        "8,000",
+                        "N/A",
+                        "79,000"
+                    ],
+                    [
+                        "5.00",
+                        "15,000",
+                        "7,500",
+                        "7,500",
+                        "15,000",
+                        "1,000 * 48",
+                        "183,000"
+                    ],
+                    [
+                        "4.00 - 4.99",
+                        "15,000",
+                        "7,500",
+                        "7,500",
+                        "15,000",
+                        "1,700 * 48",
+                        "216,600"
+                    ],
+                    [
+                        "2.50 - 3.99",
+                        "15,000",
+                        "7,500",
+                        "7,500",
+                        "15,000",
+                        "1,900 * 48",
+                        "226,200"
+                    ]
+                ]
+            }
+        ],
+        "MBA": [
+            {
+                "type": "postgrad",
+                "title": "Cost Structure of MBA Program",
+                "headers": [
+                    "Particulars",
+                    "Amount (BDT)"
+                ],
+                "rows": [
+                    [
+                        "Admission Fees",
+                        "10,000"
+                    ],
+                    [
+                        "Development Fees",
+                        "4,000"
+                    ],
+                    [
+                        "Semester Fees (12,000 * 2)",
+                        "24,000"
+                    ],
+                    [
+                        "Tuition Fees (2,500 * 12)",
+                        "30,000"
+                    ],
+                    [
+                        "Total",
+                        "68,000"
+                    ]
+                ]
+            }
+        ],
+        "MTHM": [
+            {
+                "type": "postgrad",
+                "title": "Cost Structure of MTHM Program",
+                "headers": [
+                    "Particulars",
+                    "Amount (BDT)"
+                ],
+                "rows": [
+                    [
+                        "Admission Fees",
+                        "10,000"
+                    ],
+                    [
+                        "Development Fees",
+                        "4,000"
+                    ],
+                    [
+                        "Semester Fees (12,000 * 2)",
+                        "24,000"
+                    ],
+                    [
+                        "Tuition Fees (2,500 * 12)",
+                        "30,000"
+                    ],
+                    [
+                        "Total",
+                        "68,000"
+                    ]
+                ]
+            }
+        ],
+        "BBA": [
+            {
+                "type": "undergrad",
+                "title": "New Fee Structure",
+                "headers": [
+                    "Item",
+                    "Cost",
+                    "Total",
+                    "New Col",
+                    "New Col"
+                ],
+                "rows": [
+                    [
+                        "Admission",
+                        "1000",
+                        "1000",
+                        "",
+                        ""
+                    ],
+                    [
+                        "",
+                        "",
+                        "",
+                        "",
+                        ""
+                    ]
+                ]
+            }
+        ]
+    },
+    "online": {
+        "title": "Online Admission",
+        "steps": [
+            {
+                "title": "Step 1",
+                "description": "Fill out the online application form."
+            },
+            {
+                "title": "Step 2",
+                "description": "Pay the application fee."
+            }
+        ],
+        "applyLink": "https://admission.diit.edu.bd"
+    },
+    "scholarships": {
+        "title": "Scholarships & Waivers",
+        "items": [
+            {
+                "title": "Merit Scholarship",
+                "criteria": "GPA 5.00 in HSC",
+                "waiver": "100% Tuition Waiver"
+            },
+            {
+                "title": "Sibling Validation",
+                "criteria": "Two siblings studying together",
+                "waiver": "20% Tuition Waiver"
+            },
+            {
+                "title": "Freedom Fighter Quota",
+                "criteria": "Children of Freedom Fighters",
+                "waiver": "100% Tuition Waiver"
+            }
+        ]
+    },
+    "updatedAt": "2026-01-16T10:16:48.558Z",
+    "updatedBy": "system_auto_seed"
 }
