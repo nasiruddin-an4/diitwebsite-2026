@@ -1,5 +1,4 @@
-import fs from 'fs';
-import path from 'path';
+import { getData } from '@/lib/data-service';
 import CareerClient from './CareerClient';
 
 export const metadata = {
@@ -8,9 +7,7 @@ export const metadata = {
 };
 
 async function getCareerData() {
-    const filePath = path.join(process.cwd(), 'public', 'Data', 'CareerData.json');
-    const fileContents = fs.readFileSync(filePath, 'utf8');
-    return JSON.parse(fileContents);
+    return await getData('CareerData');
 }
 
 export default async function CareerPage() {

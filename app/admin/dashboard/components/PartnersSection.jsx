@@ -68,21 +68,21 @@ export default function PartnersSection({ data, updateField, addItem, deleteItem
           <button
             onClick={onSave}
             disabled={saving}
-            className="flex items-center gap-2 px-4 py-2 bg-green-700 hover:bg-green-800 text-white rounded-xl font-medium transition-all disabled:opacity-50 text-sm shadow-md"
+            className="flex items-center gap-2 px-4 py-2 bg-green-700 hover:bg-green-800 text-white rounded-md cursor-pointer font-medium transition-all disabled:opacity-50 text-sm"
           >
             {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
             Save Changes
           </button>
           <button
             onClick={handleAdd}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium shadow-lg transition-all hover:scale-105 active:scale-95 text-sm"
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md cursor-pointer font-medium transition-all hover:scale-105 active:scale-95 text-sm"
           >
             <Plus className="w-4 h-4" /> Add Partner
           </button>
         </div>
       </div>
 
-      <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
@@ -104,7 +104,7 @@ export default function PartnersSection({ data, updateField, addItem, deleteItem
                   <tr key={partner.id || index} className="group hover:bg-slate-50 transition-colors">
                     <td className="p-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-lg bg-white border border-slate-200 flex items-center justify-center overflow-hidden flex-shrink-0 p-1.5">
+                        <div className="w-12 h-12 rounded-lg bg-white border border-slate-200 flex items-center justify-center overflow-hidden shrink-0 p-1.5">
                           {partner.logo ? (
                             <img src={partner.logo} alt="" className="w-full h-full object-contain" />
                           ) : (
@@ -131,13 +131,13 @@ export default function PartnersSection({ data, updateField, addItem, deleteItem
                       <div className="flex justify-center items-center gap-2">
                         <button
                           onClick={() => setEditingId(partner.id || partner._id)}
-                          className="p-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-all border border-blue-200"
+                          className="p-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-md cursor-pointer transition-all border border-blue-200"
                         >
                           <Edit2 className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => handleDelete(partner, index)}
-                          className="p-2 text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-all border border-red-200"
+                          className="p-2 text-red-600 bg-red-50 hover:bg-red-100 rounded-md cursor-pointer transition-all border border-red-200"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -159,14 +159,14 @@ export default function PartnersSection({ data, updateField, addItem, deleteItem
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="bg-white border border-slate-200 rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden"
+              className="bg-white border border-slate-200 rounded-xl w-full max-w-2xl shadow-xl overflow-hidden"
             >
               <div className="flex items-center justify-between p-4 border-b border-slate-100 bg-slate-50/50">
                 <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
                   <Users className="w-5 h-5 text-blue-600" />
                   {editingPartner.isNew ? "Add New Partner" : "Edit Partner"}
                 </h3>
-                <button onClick={handleDoneEditing} className="p-2 hover:bg-slate-200 rounded-full transition-colors">
+                <button onClick={handleDoneEditing} className="p-2 hover:bg-slate-200 rounded-full transition-colors cursor-pointer">
                   <X className="w-5 h-5 text-slate-500" />
                 </button>
               </div>
@@ -183,7 +183,7 @@ export default function PartnersSection({ data, updateField, addItem, deleteItem
                 <div className="space-y-3">
                   <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider">Partner Logo</label>
                   <div className="flex gap-4">
-                    <div className="w-24 h-24 rounded-xl bg-slate-100 border-2 border-slate-200 flex items-center justify-center overflow-hidden p-2 flex-shrink-0">
+                    <div className="w-24 h-24 rounded-md bg-slate-100 border-2 border-slate-200 flex items-center justify-center overflow-hidden p-2 shrink-0">
                       {editingPartner.logo ? (
                         <img src={editingPartner.logo} alt="Logo" className="w-full h-full object-contain" />
                       ) : (
@@ -191,7 +191,7 @@ export default function PartnersSection({ data, updateField, addItem, deleteItem
                       )}
                     </div>
                     <div className="flex-1 space-y-3">
-                      <label className="flex items-center justify-center h-24 border-2 border-dashed border-blue-200 rounded-xl cursor-pointer bg-blue-50/30 hover:bg-blue-50 transition-colors group">
+                      <label className="flex items-center justify-center h-24 border-2 border-dashed border-blue-200 rounded-md cursor-pointer bg-blue-50/30 hover:bg-blue-50 transition-colors group">
                         <div className="text-center">
                           <Upload className="w-6 h-6 text-blue-500 mx-auto mb-1 group-hover:scale-110 transition-transform" />
                           <p className="text-xs font-bold text-blue-700">Upload Logo</p>
@@ -227,8 +227,8 @@ export default function PartnersSection({ data, updateField, addItem, deleteItem
               </div>
 
               <div className="p-4 border-t border-slate-100 bg-slate-50/50 flex justify-end gap-3">
-                <button onClick={handleDoneEditing} className="px-6 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl font-bold transition-all text-sm">Cancel</button>
-                <button onClick={handleDoneEditing} className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold transition-all text-sm shadow-lg shadow-blue-600/20">Save & Close</button>
+                <button onClick={handleDoneEditing} className="px-6 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-md cursor-pointer font-bold transition-all text-sm">Cancel</button>
+                <button onClick={handleDoneEditing} className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md cursor-pointer font-bold transition-all text-sm">Save & Close</button>
               </div>
             </motion.div>
           </div>

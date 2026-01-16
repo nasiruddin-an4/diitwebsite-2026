@@ -9,12 +9,13 @@ import "swiper/css";
 import "swiper/css/effect-fade";
 import HomePageData from "@/public/Data/HomePage.json";
 
-const NewsEventsSection = () => {
+const NewsEventsSection = ({ data }) => {
     const [newsData, setNewsData] = useState([]);
     const [activeIndex, setActiveIndex] = useState(0);
 
     useEffect(() => {
-        const rawData = HomePageData.newsEvents || [];
+        const newsEventsData = data || HomePageData.newsEvents;
+        const rawData = (newsEventsData?.news || newsEventsData) || [];
 
         // Helper to parse date strings into Date objects
         const parseDate = (dateStr) => {
@@ -102,7 +103,7 @@ const NewsEventsSection = () => {
                     </div>
                     <Link
                         href="/news"
-                        className="group inline-flex items-center gap-2 bg-white border border-slate-200 text-slate-700 px-6 py-3 rounded-2xl font-bold hover:bg-brandColor hover:text-white hover:border-brandColor transition-all duration-500 shadow-sm"
+                        className="group inline-flex items-center gap-2 bg-white border border-slate-200 text-slate-700 px-6 py-3 rounded-xl font-bold hover:bg-brandColor hover:text-white hover:border-brandColor transition-all duration-500 shadow-sm cursor-pointer"
                     >
                         Explore All
                         <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -136,7 +137,7 @@ const NewsEventsSection = () => {
                                             <img
                                                 src={news.image}
                                                 alt={news.title}
-                                                className="w-full h-full object-cover transition-transform duration-[2000ms] group-hover:scale-110"
+                                                className="w-full h-full object-cover transition-transform duration-2000 group-hover:scale-110"
                                             />
                                             {/* Advanced Gradient Overlay */}
                                             <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent opacity-90" />
@@ -196,7 +197,7 @@ const NewsEventsSection = () => {
                                 className="group flex items-center bg-white rounded-xl p-5 border border-slate-100 hover:border-brandColor/30 hover:shadow-md hover:-translate-y-1 transition-all duration-500"
                             >
                                 {/* Date Box */}
-                                <div className="flex-shrink-0 w-20 h-20 bg-slate-50 rounded-2xl flex flex-col items-center justify-center border border-slate-100 group-hover:bg-brandColor group-hover:border-brandColor transition-all duration-500">
+                                <div className="shrink-0 w-20 h-20 bg-slate-50 rounded-xl flex flex-col items-center justify-center border border-slate-100 group-hover:bg-brandColor group-hover:border-brandColor transition-all duration-500">
                                     <span className="text-2xl font-black leading-none text-slate-800 group-hover:text-white transition-colors duration-500">
                                         {news.day}
                                     </span>
@@ -221,7 +222,7 @@ const NewsEventsSection = () => {
                                 </div>
 
                                 {/* Link Arrow */}
-                                <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl bg-slate-50 text-slate-400 group-hover:bg-brandColor group-hover:text-white transition-all duration-500">
+                                <div className="shrink-0 w-10 h-10 flex items-center justify-center rounded-xl bg-slate-50 text-slate-400 group-hover:bg-brandColor group-hover:text-white transition-all duration-500">
                                     <ArrowRight className="w-5 h-5" />
                                 </div>
                             </Link>

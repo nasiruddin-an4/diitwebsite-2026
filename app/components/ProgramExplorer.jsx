@@ -3,21 +3,40 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import homePageData from "@/public/Data/HomePage.json";
 
-const ProgramExplorer = () => {
-    const [activeCategory, setActiveCategory] = useState("all");
+const ProgramExplorer = ({ data }) => {
     const [programs, setPrograms] = useState([]);
+    const [activeCategory, setActiveCategory] = useState("all");
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const loadedPrograms = homePageData.programsData || [];
-        setPrograms(loadedPrograms);
-    }, []);
+        if (data && Array.isArray(data)) {
+            setPrograms(data);
+            setLoading(false);
+        } else {
+            // Fetch from API if data not provided
+            const fetchPrograms = async () => {
+                try {
+                    const response = await fetch('/api/admin/data/ProgramsData');
+                    if (!response.ok) throw new Error('Failed to fetch programs');
+                    const result = await response.json();
+                    setPrograms(result.data?.programsData || result.data || []);
+                } catch (error) {
+                    console.error("Error fetching programs:", error);
+                } finally {
+                    setLoading(false);
+                }
+            };
+            fetchPrograms();
+        }
+    }, [data]);
 
     const filteredPrograms =
         activeCategory === "all"
-            ? programs
-            : programs.filter((program) => program?.category === activeCategory);
+            ? programs.sort((a, b) => (a.serial || 0) - (b.serial || 0))
+            : programs
+                .filter((program) => program?.category === activeCategory)
+                .sort((a, b) => (a.serial || 0) - (b.serial || 0));
 
     return (
         <section className="py-20 bg-white">
@@ -35,7 +54,7 @@ const ProgramExplorer = () => {
 
                     <Link
                         href="/programs"
-                        className="group inline-flex items-center gap-2 border border-blue-900 px-6 py-3 rounded-lg font-medium text-blue-900 transition-all duration-300 hover:bg-gradient-to-r hover:from-blue-800 hover:to-black hover:text-white hover:shadow-lg"
+                        className="group inline-flex items-center gap-2 border border-blue-900 px-6 py-3 rounded-lg font-medium text-blue-900 transition-all duration-300 hover:bg-linear-to-r hover:from-blue-800 hover:to-black hover:text-white hover:shadow-lg"
                     >
                         View All Programs
                         <svg
@@ -58,7 +77,11 @@ const ProgramExplorer = () => {
 
                 {/* Programs Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {filteredPrograms.length > 0 ? (
+                    {loading ? (
+                        <p className="text-center text-gray-500 col-span-3 py-10">
+                            Loading programs...
+                        </p>
+                    ) : filteredPrograms.length > 0 ? (
                         filteredPrograms.map((program) => (
                             <Link
                                 key={program?.id}
@@ -92,9 +115,13 @@ const ProgramExplorer = () => {
                                     {/* Action Buttons */}
                                     <div className="flex items-center justify-between pt-4 border-t border-gray-100">
                                         <span
-                                            className="group/link flex items-center gap-2 text-blue-900 font-bold text-md hover:text-blue-600 transition-all duration-300"
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                window.location.href = `/programs/${program?.id}`;
+                                            }}
+                                            className="group/link flex items-center gap-2 text-blue-900 font-bold text-md hover:text-blue-600 transition-all duration-300 cursor-pointer"
                                         >
-                                            Learn More
+                                            Explore More
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
                                                 width="16"
@@ -117,7 +144,7 @@ const ProgramExplorer = () => {
                         ))
                     ) : (
                         <p className="text-center text-gray-500 col-span-3 py-10">
-                            Loading programs...
+                            No programs found.
                         </p>
                     )}
                 </div>

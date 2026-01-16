@@ -1,5 +1,4 @@
-import fs from 'fs';
-import path from 'path';
+import { getData } from '@/lib/data-service';
 import FaqClient from './FaqClient';
 
 export const metadata = {
@@ -8,9 +7,7 @@ export const metadata = {
 };
 
 async function getFaqData() {
-    const filePath = path.join(process.cwd(), 'public', 'Data', 'FaqData.json');
-    const fileContents = fs.readFileSync(filePath, 'utf8');
-    return JSON.parse(fileContents);
+    return await getData('FaqData');
 }
 
 export default async function FaqPage() {

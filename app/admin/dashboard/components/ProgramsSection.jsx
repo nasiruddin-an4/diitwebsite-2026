@@ -1,39 +1,60 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, X, BookOpen, Edit2, Trash2, Save, Loader2, Upload, Image as ImageIcon } from "lucide-react";
+import { Plus, X, BookOpen, Edit2, Trash2, Save, Loader2, Upload, Image as ImageIcon, Plus as PlusIcon } from "lucide-react";
 import Swal from "sweetalert2";
 import { InputField } from "./InputField";
 
-export default function ProgramsSection({ data, updateField, addItem, deleteItem, onSave, saving }) {
+export default function ProgramsSection({ data, updateField, onSave, saving }) {
   const [editingId, setEditingId] = useState(null);
-  const template = { id: "", title: "", category: "learning", duration: "4 Years", degree: "", description: "", image: "" };
-
-  const handleAdd = () => {
-    const newId = Date.now();
-    addItem("programsData", { ...template, id: newId, isNew: true });
-    setEditingId(newId);
-  };
-
-  const handleDoneEditing = () => {
-    if (editingId !== null && editingIndex !== -1) {
-      const item = editingProgram;
-      const isEmpty = !item.title?.trim() && !item.description?.trim() && !item.image?.trim();
-
-      if (isEmpty) {
-        deleteItem("programsData", editingIndex);
-      } else {
-        if (item.isNew) {
-          const { isNew, ...cleanItem } = item;
-          updateField("programsData", editingIndex, null, cleanItem);
-        }
-      }
-    }
-    setEditingId(null);
-  };
+  const [localSaving, setLocalSaving] = useState(false);
 
   const programs = data?.programsData || [];
+
+  const template = { 
+    id: Date.now(), 
+    serial: programs.length + 1,
+    title: "", 
+    category: "engineering", 
+    duration: "4 Years", 
+    degree: "B.Sc.", 
+    description: "", 
+    image: "",
+    // Quick Facts
+    affiliation: "National University",
+    semesters: "8 Semesters",
+    credits: "148 Credits",
+    // Head Message
+    headName: "",
+    headRole: "",
+    headImage: "",
+    headMessage: "",
+    // Program Details
+    overview: [],
+    eligibility: [],
+    // Curriculum
+    curriculum: [],
+    // Facilities
+    facilities: [],
+    // Career Opportunities
+    careers: [],
+    // Faculty
+    faculty: [],
+    // FAQs
+    faqs: [],
+    // Student Resources
+    studentResources: [],
+    // Alumni Stories
+    alumniStories: []
+  };
+
   const editingProgram = programs.find(p => (p.id || p._id) === editingId);
   const editingIndex = programs.findIndex(p => (p.id || p._id) === editingId);
+
+  const handleAdd = () => {
+    const newProgram = { ...template, id: Date.now() };
+    updateField("programsData", null, null, [...programs, newProgram]);
+    setEditingId(newProgram.id);
+  };
 
   const handleDelete = (item, index) => {
     Swal.fire({
@@ -52,41 +73,79 @@ export default function ProgramsSection({ data, updateField, addItem, deleteItem
       }
     }).then((result) => {
       if (result.isConfirmed) {
-        deleteItem("programsData", index);
+        const updatedPrograms = programs.filter((_, i) => i !== index);
+        updateField("programsData", null, null, updatedPrograms);
+        
+        Swal.fire({
+          icon: "success",
+          title: "Deleted!",
+          text: "Program has been deleted.",
+          toast: true,
+          position: "top-end",
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true,
+        });
       }
     });
   };
 
+  const handleSaveAll = async () => {
+    setLocalSaving(true);
+    try {
+      await onSave();
+    } catch (error) {
+      console.error("Error saving programs:", error);
+    } finally {
+      setLocalSaving(false);
+    }
+  };
+
+  const handleUpdateField = (field, value) => {
+    updateField("programsData", editingIndex, field, value);
+  };
+
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+      {/* Header */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6"
+      >
         <div>
-          <h2 className="text-xl font-bold text-slate-900">Academic Programs</h2>
-          <p className="text-slate-500 text-sm mt-1">Manage degrees, durations and program details</p>
+          <h2 className="text-3xl font-bold text-slate-900">Academic Programs</h2>
+          <p className="text-slate-600 text-sm mt-1">Manage degrees, durations and program details</p>
         </div>
         <div className="flex items-center gap-3">
           <button
-            onClick={onSave}
-            disabled={saving}
-            className="flex items-center gap-2 px-4 py-2 bg-green-700 hover:bg-green-800 text-white rounded-xl font-medium transition-all disabled:opacity-50 text-sm shadow-md"
-          >
-            {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-            Save Changes
-          </button>
-          <button
             onClick={handleAdd}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium shadow-lg transition-all hover:scale-105 active:scale-95 text-sm"
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md cursor-pointer font-medium transition-all hover:scale-105 active:scale-95 text-sm"
           >
             <Plus className="w-4 h-4" /> Add Program
           </button>
+          <button
+            onClick={handleSaveAll}
+            disabled={localSaving || saving}
+            className="flex items-center gap-2 px-4 py-2 bg-green-700 hover:bg-green-800 text-white rounded-md cursor-pointer font-medium transition-all disabled:opacity-50 text-sm"
+          >
+            {localSaving || saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+            Save All Changes
+          </button>
         </div>
-      </div>
+      </motion.div>
 
-      <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+      {/* Programs Table */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-white border border-slate-200 rounded-xl overflow-hidden"
+      >
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="border-b border-slate-200 bg-slate-50">
+                <th className="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider w-12">#</th>
                 <th className="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Program</th>
                 <th className="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Degree & Duration</th>
                 <th className="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-center">Actions</th>
@@ -95,59 +154,72 @@ export default function ProgramsSection({ data, updateField, addItem, deleteItem
             <tbody className="divide-y divide-slate-100">
               {programs.length === 0 ? (
                 <tr>
-                  <td colSpan="3" className="p-8 text-center text-slate-500 text-sm">
-                    No programs found.
+                  <td colSpan="4" className="p-8 text-center text-slate-500 text-sm">
+                    No programs found. Click "Add Program" to create one.
                   </td>
                 </tr>
               ) : (
-                programs.map((item, index) => (
-                  <tr key={item.id || index} className="group hover:bg-slate-50 transition-colors">
-                    <td className="p-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-lg bg-slate-100 border border-slate-200 overflow-hidden flex-shrink-0">
-                          {item.image ? (
-                            <img src={item.image} alt="" className="w-full h-full object-cover" />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center text-slate-400">
-                              <BookOpen className="w-5 h-5" />
-                            </div>
-                          )}
+                <AnimatePresence mode="popLayout">
+                  {programs.map((item, index) => (
+                    <motion.tr
+                      key={item.id || index}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="group hover:bg-slate-50 transition-colors"
+                    >
+                      <td className="p-4 text-center">
+                        <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-700 font-bold text-sm">
+                          {item.serial || index + 1}
+                        </span>
+                      </td>
+                      <td className="p-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 rounded-lg bg-slate-100 border border-slate-200 overflow-hidden shrink-0">
+                            {item.image ? (
+                              <img src={item.image} alt="" className="w-full h-full object-cover" />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center text-slate-400">
+                                <BookOpen className="w-5 h-5" />
+                              </div>
+                            )}
+                          </div>
+                          <div>
+                            <p className="font-semibold text-slate-900 text-sm">{item.title || "Untitled Program"}</p>
+                            <p className="text-slate-500 text-xs line-clamp-1 mt-0.5">{item.category || "General"}</p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="font-semibold text-slate-900 text-sm">{item.title || "Untitled Program"}</p>
-                          <p className="text-slate-500 text-xs line-clamp-1 mt-0.5">{item.category || "General"}</p>
+                      </td>
+                      <td className="p-4">
+                        <div className="text-sm">
+                          <p className="font-medium text-slate-700">{item.degree || "N/A"}</p>
+                          <p className="text-xs text-slate-500">{item.duration || "N/A"}</p>
                         </div>
-                      </div>
-                    </td>
-                    <td className="p-4">
-                      <div className="text-sm">
-                        <p className="font-medium text-slate-700">{item.degree || "N/A"}</p>
-                        <p className="text-xs text-slate-500">{item.duration || "N/A"}</p>
-                      </div>
-                    </td>
-                    <td className="p-4">
-                      <div className="flex justify-center items-center gap-2">
-                        <button
-                          onClick={() => setEditingId(item.id || item._id)}
-                          className="p-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-all border border-blue-200"
-                        >
-                          <Edit2 className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(item, index)}
-                          className="p-2 text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-all border border-red-200"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
+                      </td>
+                      <td className="p-4">
+                        <div className="flex justify-center items-center gap-2">
+                          <button
+                            onClick={() => setEditingId(item.id || item._id)}
+                            className="p-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-all border border-blue-200"
+                          >
+                            <Edit2 className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(item, index)}
+                            className="p-2 text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-all border border-red-200"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </motion.tr>
+                  ))}
+                </AnimatePresence>
               )}
             </tbody>
           </table>
         </div>
-      </div>
+      </motion.div>
 
       {/* Edit Modal */}
       <AnimatePresence>
@@ -157,17 +229,17 @@ export default function ProgramsSection({ data, updateField, addItem, deleteItem
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="bg-white border border-slate-200 rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden"
+              className="bg-white border border-slate-200 rounded-xl w-full max-w-2xl shadow-xl overflow-hidden"
             >
               {/* Modal Header */}
               <div className="flex items-center justify-between p-4 border-b border-slate-100 bg-slate-50/50">
                 <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
                   <BookOpen className="w-5 h-5 text-blue-600" />
-                  {editingProgram.isNew ? "Add New Program" : "Edit Program"}
+                  Edit Program
                 </h3>
                 <button
-                  onClick={handleDoneEditing}
-                  className="p-2 hover:bg-slate-200 rounded-full transition-colors"
+                  onClick={() => setEditingId(null)}
+                  className="p-2 hover:bg-slate-200 rounded-full transition-colors cursor-pointer"
                 >
                   <X className="w-5 h-5 text-slate-500" />
                 </button>
@@ -177,27 +249,34 @@ export default function ProgramsSection({ data, updateField, addItem, deleteItem
               <div className="p-6 space-y-6 max-h-[70vh] overflow-y-auto custom-scrollbar">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <InputField
+                    label="Display Order (Serial)"
+                    type="number"
+                    value={editingProgram.serial || ""}
+                    onChange={(v) => handleUpdateField("serial", parseInt(v) || 0)}
+                    placeholder="e.g. 1, 2, 3..."
+                  />
+                  <InputField
                     label="Program Title"
                     value={editingProgram.title}
-                    onChange={(v) => updateField("programsData", editingIndex, "title", v)}
-                    placeholder="e.g. Computer Science..."
+                    onChange={(v) => handleUpdateField("title", v)}
+                    placeholder="e.g. Computer Science Engineering..."
                   />
                   <InputField
                     label="Category"
                     value={editingProgram.category}
-                    onChange={(v) => updateField("programsData", editingIndex, "category", v)}
+                    onChange={(v) => handleUpdateField("category", v)}
                     placeholder="e.g. engineering, business..."
                   />
                   <InputField
                     label="Degree Name"
                     value={editingProgram.degree}
-                    onChange={(v) => updateField("programsData", editingIndex, "degree", v)}
+                    onChange={(v) => handleUpdateField("degree", v)}
                     placeholder="e.g. B.Sc. in CSE"
                   />
                   <InputField
                     label="Duration"
                     value={editingProgram.duration}
-                    onChange={(v) => updateField("programsData", editingIndex, "duration", v)}
+                    onChange={(v) => handleUpdateField("duration", v)}
                     placeholder="e.g. 4 Years"
                   />
                 </div>
@@ -206,7 +285,7 @@ export default function ProgramsSection({ data, updateField, addItem, deleteItem
                 <div className="space-y-3">
                   <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider">Program Image</label>
                   <div className="flex flex-col sm:flex-row gap-4">
-                    <div className="w-full sm:w-40 h-40 rounded-xl bg-slate-100 border-2 border-slate-200 flex items-center justify-center overflow-hidden">
+                    <div className="w-full sm:w-40 h-40 rounded-md bg-slate-100 border-2 border-slate-200 flex items-center justify-center overflow-hidden shrink-0">
                       {editingProgram.image ? (
                         <img src={editingProgram.image} alt="Preview" className="w-full h-full object-cover" />
                       ) : (
@@ -214,7 +293,7 @@ export default function ProgramsSection({ data, updateField, addItem, deleteItem
                       )}
                     </div>
                     <div className="flex-1 space-y-3">
-                      <label className="flex items-center justify-center h-40 border-2 border-dashed border-blue-200 rounded-xl cursor-pointer bg-blue-50/30 hover:bg-blue-50 transition-all group">
+                      <label className="flex items-center justify-center h-40 border-2 border-dashed border-blue-200 rounded-md cursor-pointer bg-blue-50/30 hover:bg-blue-50 transition-all group">
                         <div className="text-center p-4">
                           <Upload className="w-8 h-8 text-blue-500 mx-auto mb-2 group-hover:scale-110 transition-transform" />
                           <p className="text-sm font-semibold text-blue-700">Click to upload image</p>
@@ -227,11 +306,18 @@ export default function ProgramsSection({ data, updateField, addItem, deleteItem
                             const file = e.target.files?.[0];
                             if (file) {
                               if (file.size > 5 * 1024 * 1024) {
-                                Swal.fire({ icon: "error", title: "Too large", text: "Image size must be less than 5MB", toast: true, position: "top-end", timer: 3000 });
+                                Swal.fire({ 
+                                  icon: "error", 
+                                  title: "Too large", 
+                                  text: "Image size must be less than 5MB", 
+                                  toast: true, 
+                                  position: "top-end", 
+                                  timer: 3000 
+                                });
                                 return;
                               }
                               const reader = new FileReader();
-                              reader.onload = (ev) => updateField("programsData", editingIndex, "image", ev.target.result);
+                              reader.onload = (ev) => handleUpdateField("image", ev.target.result);
                               reader.readAsDataURL(file);
                             }
                           }}
@@ -240,7 +326,7 @@ export default function ProgramsSection({ data, updateField, addItem, deleteItem
                       </label>
                       {editingProgram.image && (
                         <button
-                          onClick={() => updateField("programsData", editingIndex, "image", "")}
+                          onClick={() => handleUpdateField("image", "")}
                           className="text-xs text-red-600 font-bold hover:underline"
                         >
                           Remove Image
@@ -253,23 +339,24 @@ export default function ProgramsSection({ data, updateField, addItem, deleteItem
                 <InputField
                   label="Description"
                   value={editingProgram.description}
-                  onChange={(v) => updateField("programsData", editingIndex, "description", v)}
+                  onChange={(v) => handleUpdateField("description", v)}
                   textarea
                   placeholder="Tell more about the program..."
+                  rows={5}
                 />
               </div>
 
               {/* Modal Footer */}
               <div className="p-4 border-t border-slate-100 bg-slate-50/50 flex justify-end gap-3">
                 <button
-                  onClick={handleDoneEditing}
-                  className="px-6 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl font-bold transition-all text-sm"
+                  onClick={() => setEditingId(null)}
+                  className="px-6 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-md cursor-pointer font-bold transition-all text-sm"
                 >
                   Cancel
                 </button>
                 <button
-                  onClick={handleDoneEditing}
-                  className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold transition-all text-sm shadow-lg shadow-blue-600/20"
+                  onClick={() => setEditingId(null)}
+                  className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md cursor-pointer font-bold transition-all text-sm"
                 >
                   Save & Close
                 </button>

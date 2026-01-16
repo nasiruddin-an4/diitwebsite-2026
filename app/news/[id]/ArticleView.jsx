@@ -1,6 +1,6 @@
 "use client";
 
-import React, { use } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
@@ -18,7 +18,6 @@ import {
     Tag,
     User
 } from "lucide-react";
-import HomePageData from "@/public/Data/HomePage.json";
 
 const fadeIn = {
     hidden: { opacity: 0, y: 20 },
@@ -35,8 +34,52 @@ const staggerContainer = {
     }
 };
 
-export default function ArticleView({ newsId }) {
-    const newsItem = HomePageData.newsEvents.find((n) => n.id === newsId);
+export default function ArticleView({ newsId, initialData }) {
+    const [newsItem, setNewsItem] = useState(initialData);
+    const [recentNews, setRecentNews] = useState([]);
+    const [categories, setCategories] = useState([]);
+    const [isLoading, setIsLoading] = useState(!initialData);
+
+    useEffect(() => {
+        const fetchAllNews = async () => {
+            try {
+                const response = await fetch('/api/admin/data/HomePage');
+                const result = await response.json();
+                if (result.success && result.data.newsEvents) {
+                    const allNews = result.data.newsEvents;
+                    if (!newsItem) {
+                        const item = allNews.find(n => n.id === newsId);
+                        setNewsItem(item);
+                    }
+
+                    // Get recent news for sidebar
+                    const recent = allNews
+                        .filter(n => n.id !== newsId)
+                        .sort((a, b) => b.id - a.id)
+                        .slice(0, 4);
+                    setRecentNews(recent);
+
+                    // Get Categories (Unique)
+                    const cats = [...new Set(allNews.map(n => n.category))];
+                    setCategories(cats);
+                }
+            } catch (error) {
+                console.error("Failed to fetch news for article view:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchAllNews();
+    }, [newsId]);
+
+    if (isLoading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-white">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brandColor"></div>
+            </div>
+        );
+    }
 
     if (!newsItem) {
         return (
@@ -48,15 +91,6 @@ export default function ArticleView({ newsId }) {
             </div>
         );
     }
-
-    // Get recent news for sidebar
-    const recentNews = HomePageData.newsEvents
-        .filter(n => n.id !== newsId)
-        .sort((a, b) => b.id - a.id)
-        .slice(0, 4);
-
-    // Get Categories (Unique)
-    const categories = [...new Set(HomePageData.newsEvents.map(n => n.category))];
 
     return (
         <div className="min-h-screen bg-white font-sans text-gray-900 pb-20">
@@ -229,7 +263,7 @@ export default function ArticleView({ newsId }) {
                             <div className="space-y-6">
                                 {recentNews.map((news) => (
                                     <Link href={`/news/${news.id}`} key={news.id} className="group flex items-start gap-4">
-                                        <div className="w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden relative">
+                                        <div className="w-20 h-20 shrink-0 rounded-lg overflow-hidden relative">
                                             <img src={news.image} alt={news.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                                         </div>
                                         <div>

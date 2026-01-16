@@ -1,5 +1,4 @@
-import fs from 'fs';
-import path from 'path';
+import { getData } from '@/lib/data-service';
 import ActivitiesClient from './ActivitiesClient';
 
 export const metadata = {
@@ -8,9 +7,7 @@ export const metadata = {
 };
 
 async function getActivities() {
-    const filePath = path.join(process.cwd(), 'public', 'Data', 'CampusActivities.json');
-    const fileContents = fs.readFileSync(filePath, 'utf8');
-    return JSON.parse(fileContents);
+    return await getData('CampusActivities');
 }
 
 export default async function CampusActivitiesPage() {

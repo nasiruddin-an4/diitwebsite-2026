@@ -14,26 +14,11 @@ import "swiper/css";
 import "swiper/css/navigation";
 import HomePageData from "@/public/Data/HomePage.json";
 
-const CredibilitySection = () => {
+const CredibilitySection = ({ data }) => {
     const [currentBenefitIndex, setCurrentBenefitIndex] = useState(0);
-    const [partners, setPartners] = useState([]);
-    const [collaborationTypes, setCollaborationTypes] = useState([]);
-    const [collaborationBenefits, setCollaborationBenefits] = useState([]);
-
-    useEffect(() => {
-        const loadedPartners = HomePageData.internationalPartners || [];
-        setPartners(loadedPartners);
-    }, []);
-
-    useEffect(() => {
-        const loadedCollaborationTypes = HomePageData.collaborationTypes || [];
-        setCollaborationTypes(loadedCollaborationTypes);
-    }, []);
-
-    useEffect(() => {
-        const loadedBenefits = HomePageData.collaborationBenefits || [];
-        setCollaborationBenefits(loadedBenefits);
-    }, []);
+    const partners = data?.internationalPartners || HomePageData.internationalPartners || [];
+    const collaborationTypes = data?.collaborationTypes || HomePageData.collaborationTypes || [];
+    const collaborationBenefits = data?.collaborationBenefits || HomePageData.collaborationBenefits || [];
 
     useEffect(() => {
         if (collaborationBenefits.length === 0) return;

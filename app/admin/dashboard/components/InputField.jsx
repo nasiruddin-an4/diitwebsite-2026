@@ -1,7 +1,7 @@
 import React from "react";
 
 export function InputField({ label, value, onChange, type = "text", textarea = false, placeholder = "" }) {
-  const baseClass = "w-full px-3 py-2 bg-white border border-slate-200 rounded-md text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm shadow-sm transition-shadow";
+  const baseClass = "w-full px-3 py-2 bg-white border border-slate-200 rounded-md text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm transition-shadow";
 
   return (
     <div>

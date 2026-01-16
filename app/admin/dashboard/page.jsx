@@ -95,31 +95,37 @@ export default function AdminDashboard() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      // specific fetch for hero slides
+      // Fetch hero slides
       const heroRes = await fetch("/api/admin/hero");
       const heroResult = await heroRes.json();
 
-      // keeping existing fetch for other data types
+      // Fetch homepage data
       const homeRes = await fetch("/api/admin/homepage");
       const homeResult = await homeRes.json();
 
+      // Fetch programs data
+      const programsRes = await fetch("/api/admin/data/ProgramsData");
+      const programsResult = await programsRes.json();
+
       const newHeroSlides = heroResult.success ? heroResult.data : [];
       const homeData = homeResult.success ? homeResult.data : {};
+      const programsData = programsResult.success ? programsResult.data?.programsData || programsResult.data || [] : [];
 
       setData({
-        ...defaultData, // Ensure all keys exist
+        ...defaultData,
         ...homeData,
-        heroSlides: newHeroSlides
+        heroSlides: newHeroSlides,
+        programsData: programsData
       });
 
-      if (!heroResult.success || !homeResult.success) {
+      if (!heroResult.success || !homeResult.success || !programsResult.success) {
         setMessage({ type: "error", text: "Some data failed to load. Using defaults." });
       }
 
     } catch (err) {
       console.error(err);
       setMessage({ type: "error", text: "Failed to load data" });
-      setData(defaultData); // Fallback to defaults
+      setData(defaultData);
     } finally {
       setLoading(false);
     }
@@ -136,6 +142,7 @@ export default function AdminDashboard() {
 
       const bodyContent = { ...data };
       delete bodyContent.heroSlides; // Don't send hero slides to homepage endpoint
+      delete bodyContent.programsData; // Don't send programs to homepage endpoint
 
       const homeRes = await fetch("/api/admin/homepage", {
         method: "POST",
@@ -143,7 +150,14 @@ export default function AdminDashboard() {
         body: JSON.stringify(bodyContent),
       });
 
-      if (heroRes.ok && homeRes.ok) {
+      // Save programs data separately
+      const programsRes = await fetch("/api/admin/data/ProgramsData", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ programsData: data.programsData || [] }),
+      });
+
+      if (heroRes.ok && homeRes.ok && programsRes.ok) {
         Swal.fire({
           icon: "success",
           title: "Success!",
@@ -189,8 +203,19 @@ export default function AdminDashboard() {
 
   const updateField = (section, index, field, value) => {
     const newData = { ...data };
-    if (index !== null) newData[section][index][field] = value;
-    else newData[section][field] = value;
+    if (index !== null && field !== null) {
+      // Update specific field in array
+      newData[section][index][field] = value;
+    } else if (index === null && field === null) {
+      // Replace entire array (used for add/delete operations)
+      newData[section] = value;
+    } else if (index !== null) {
+      // Update entire object at index
+      newData[section][index] = value;
+    } else {
+      // Update single field
+      newData[section][field] = value;
+    }
     setData(newData);
   };
 

@@ -1,18 +1,40 @@
-"use client";
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { ArrowRight, Calendar, Clock, Filter } from "lucide-react";
-import HomePageData from "@/public/Data/HomePage.json";
+import { ArrowRight, Calendar, Clock, Filter, Loader2 } from "lucide-react";
 
 export default function NewsPage() {
     const [filter, setFilter] = useState("ALL"); // ALL, NEWS, EVENT
-    const allNews = HomePageData.newsEvents || [];
+    const [allNews, setAllNews] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
 
-    const filteredNews = allNews.filter((item) => {
-        if (filter === "ALL") return true;
-        return item.category === filter;
-    });
+    useEffect(() => {
+        const fetchNews = async () => {
+            try {
+                const response = await fetch('/api/admin/data/HomePage');
+                const result = await response.json();
+                if (result.success) {
+                    setAllNews(result.data.newsEvents || []);
+                }
+            } catch (error) {
+                console.error("Failed to fetch news:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchNews();
+    }, []);
+
+    if (isLoading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-slate-50">
+                <div className="flex flex-col items-center gap-4">
+                    <Loader2 className="w-10 h-10 text-brandColor animate-spin" />
+                    <p className="text-gray-500 font-medium">Loading news and events...</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-slate-50">
@@ -40,8 +62,8 @@ export default function NewsPage() {
                             key={type}
                             onClick={() => setFilter(type)}
                             className={`px-6 py-2 rounded-full text-sm font-semibold transition-all duration-300 ${filter === type
-                                    ? "bg-brandColor text-white shadow-lg shadow-brandColor/30"
-                                    : "bg-white text-gray-600 hover:bg-gray-100 border border-gray-200"
+                                ? "bg-brandColor text-white shadow-lg shadow-brandColor/30"
+                                : "bg-white text-gray-600 hover:bg-gray-100 border border-gray-200"
                                 }`}
                         >
                             {type === "ALL" ? "All Updates" : type === "NEWS" ? "Latest News" : "Upcoming Events"}
@@ -69,8 +91,8 @@ export default function NewsPage() {
                                 <div className="absolute top-4 left-4">
                                     <span
                                         className={`text-xs font-bold px-3 py-1 rounded-lg uppercase tracking-wider ${item.category === "NEWS"
-                                                ? "bg-blue-600 text-white"
-                                                : "bg-yellow-500 text-black"
+                                            ? "bg-blue-600 text-white"
+                                            : "bg-yellow-500 text-black"
                                             }`}
                                     >
                                         {item.category}
@@ -79,7 +101,7 @@ export default function NewsPage() {
                             </div>
 
                             {/* Content */}
-                            <div className="p-6 flex flex-col flex-grow">
+                            <div className="p-6 flex flex-col grow">
                                 {/* Meta Info */}
                                 <div className="flex items-center gap-4 text-xs text-gray-500 mb-4">
                                     <div className="flex items-center gap-1.5">

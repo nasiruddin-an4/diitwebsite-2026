@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 import clientPromise from "@/lib/mongodb";
 import { ObjectId } from "mongodb";
-import { promises as fs } from "fs";
-import path from "path";
 
 // Helper to ensure data directory exists and get file path
 const getDataFilePath = async () => {
@@ -29,33 +27,11 @@ export async function GET() {
 
     return NextResponse.json({ success: true, data: slides });
   } catch (error) {
-    console.warn("MongoDB fetch failed, falling back to local file:", error);
-
-    // Fallback to local JSON file
-    try {
-      const filePath = await getDataFilePath();
-      try {
-        const fileContent = await fs.readFile(filePath, "utf8");
-        const slides = JSON.parse(fileContent);
-        return NextResponse.json({
-          success: true,
-          data: slides,
-          source: "local",
-        });
-      } catch (fileError) {
-        // File doesn't exist or empty, return empty array
-        return NextResponse.json({
-          success: true,
-          data: [],
-          source: "local_empty",
-        });
-      }
-    } catch (fsError) {
-      return NextResponse.json(
-        { success: false, message: "Failed to fetch slides completely" },
-        { status: 500 }
-      );
-    }
+    console.error("Error fetching hero slides:", error);
+    return NextResponse.json(
+      { success: false, message: "Failed to fetch slides" },
+      { status: 500 }
+    );
   }
 }
 

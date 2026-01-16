@@ -1,10 +1,8 @@
 import { NextResponse } from "next/server";
 import clientPromise from "@/lib/mongodb";
 import { getAuthUser } from "@/lib/auth";
-import fs from "fs/promises";
-import path from "path";
 
-// Get all data from MongoDB (falls back to JSON file if not in DB)
+// Get all data from MongoDB
 export async function GET() {
   try {
     const client = await clientPromise;
@@ -14,19 +12,13 @@ export async function GET() {
     let data = await collection.findOne({ _id: "homepage" });
 
     if (!data) {
-      // If no data in MongoDB, load from JSON file
-      const filePath = path.join(
-        process.cwd(),
-        "public",
-        "Data",
-        "HomePage.json"
+      return NextResponse.json(
+        { success: true, data: {} }
       );
-      const fileContent = await fs.readFile(filePath, "utf-8");
-      data = JSON.parse(fileContent);
-    } else {
-      // Remove MongoDB _id field
-      delete data._id;
     }
+
+    // Remove MongoDB _id field
+    delete data._id;
 
     return NextResponse.json({ success: true, data });
   } catch (error) {
@@ -61,15 +53,6 @@ export async function POST(request) {
       { $set: { ...data, updatedAt: new Date(), updatedBy: user.email } },
       { upsert: true }
     );
-
-    // Also update the local JSON file for frontend
-    const filePath = path.join(
-      process.cwd(),
-      "public",
-      "Data",
-      "HomePage.json"
-    );
-    await fs.writeFile(filePath, JSON.stringify(data, null, 4), "utf-8");
 
     return NextResponse.json({
       success: true,

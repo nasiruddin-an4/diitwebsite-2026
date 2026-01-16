@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 import clientPromise from "@/lib/mongodb";
 import { getAuthUser } from "@/lib/auth";
-import fs from "fs/promises";
-import path from "path";
 
 // Get career data
 export async function GET() {
@@ -14,17 +12,12 @@ export async function GET() {
     let data = await collection.findOne({ _id: "career" });
 
     if (!data) {
-      const filePath = path.join(
-        process.cwd(),
-        "public",
-        "Data",
-        "CareerData.json"
+      return NextResponse.json(
+        { success: true, data: {} }
       );
-      const fileContent = await fs.readFile(filePath, "utf-8");
-      data = JSON.parse(fileContent);
-    } else {
-      delete data._id;
     }
+
+    delete data._id;
 
     return NextResponse.json({ success: true, data });
   } catch (error) {
@@ -58,14 +51,6 @@ export async function POST(request) {
       { $set: { ...data, updatedAt: new Date(), updatedBy: user.email } },
       { upsert: true }
     );
-
-    const filePath = path.join(
-      process.cwd(),
-      "public",
-      "Data",
-      "CareerData.json"
-    );
-    await fs.writeFile(filePath, JSON.stringify(data, null, 4), "utf-8");
 
     return NextResponse.json({
       success: true,

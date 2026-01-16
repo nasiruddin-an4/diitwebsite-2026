@@ -11,7 +11,7 @@ import {
     ChevronDown,
     ArrowRight
 } from "lucide-react";
-import homePageData from "@/public/Data/HomePage.json";
+import navigationData from "@/public/Data/NavigationData.json";
 import Image from "next/image";
 
 const Header = () => {
@@ -23,8 +23,22 @@ const Header = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const searchInputRef = useRef(null);
     const pathname = usePathname();
+    const [navigationItems, setNavigationItems] = useState(navigationData.navigationItems || []);
 
-    const { navigationItems } = homePageData;
+    useEffect(() => {
+        const fetchNavData = async () => {
+            try {
+                const response = await fetch('/api/admin/data/NavigationData');
+                const result = await response.json();
+                if (result.success && result.data.navigationItems) {
+                    setNavigationItems(result.data.navigationItems);
+                }
+            } catch (error) {
+                console.warn("Header fetching failed, using default navigation items", error);
+            }
+        };
+        fetchNavData();
+    }, []);
 
     useEffect(() => {
         const handleScroll = () => {

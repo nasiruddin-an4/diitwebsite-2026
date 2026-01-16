@@ -191,10 +191,10 @@ export default function NewsSection({ data, updateField, addItem, deleteItem, on
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="bg-white border border-slate-200 rounded-3xl w-full max-w-4xl shadow-2xl my-auto"
+              className="bg-white border border-slate-200 rounded-xl w-full max-w-4xl shadow-xl my-auto"
             >
               {/* Modal Header */}
-              <div className="sticky top-0 z-10 flex items-center justify-between p-5 border-b border-slate-100 bg-white/80 backdrop-blur-md rounded-t-3xl ">
+              <div className="sticky top-0 z-10 flex items-center justify-between p-5 border-b border-slate-100 bg-white/80 backdrop-blur-md rounded-t-xl ">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-md bg-blue-600 flex items-center justify-center text-white">
                     <FileText className="w-5 h-5" />
@@ -223,7 +223,7 @@ export default function NewsSection({ data, updateField, addItem, deleteItem, on
                     <div className="space-y-4">
                       <label className="block text-[11px] font-black text-slate-400 uppercase tracking-[2px]">Cover Imagery</label>
                       <div className="relative group">
-                        <div className="aspect-[4/5] rounded-2xl bg-slate-100 border-2 border-slate-200 flex items-center justify-center overflow-hidden transition-all group-hover:border-blue-300">
+                        <div className="aspect-[4/5] rounded-xl bg-slate-100 border-2 border-slate-200 flex items-center justify-center overflow-hidden transition-all group-hover:border-blue-300">
                           {editingItem.image ? (
                             <img src={editingItem.image} alt="Preview" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
                           ) : (
@@ -233,7 +233,7 @@ export default function NewsSection({ data, updateField, addItem, deleteItem, on
                             </div>
                           )}
                         </div>
-                        <label className="absolute inset-0 cursor-pointer flex items-center justify-center opacity-0 group-hover:opacity-100 bg-blue-600/10 backdrop-blur-[2px] transition-all rounded-2xl">
+                        <label className="absolute inset-0 cursor-pointer flex items-center justify-center opacity-0 group-hover:opacity-100 bg-blue-600/10 backdrop-blur-[2px] transition-all rounded-xl">
                           <input
                             type="file"
                             accept="image/*"
@@ -251,7 +251,7 @@ export default function NewsSection({ data, updateField, addItem, deleteItem, on
                             }}
                             className="hidden"
                           />
-                          <div className="bg-white px-4 py-2 rounded-lg shadow-xl font-bold text-sm text-blue-600 flex items-center gap-2">
+                          <div className="bg-white px-4 py-2 rounded-md shadow-lg font-bold text-sm text-blue-600 flex items-center gap-2">
                             <Upload className="w-4 h-4" /> Change Cover
                           </div>
                         </label>

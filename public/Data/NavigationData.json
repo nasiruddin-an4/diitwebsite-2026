@@ -1,0 +1,119 @@
+{
+  "navigationItems": [
+    {
+      "name": "Admissions",
+      "dropdown": [
+        {
+          "name": "Admission Eligibility",
+          "path": "/admissionEligibility"
+        },
+        {
+          "name": "Online Admission",
+          "path": "/admission/online"
+        },
+        {
+          "name": "Tuition Fees",
+          "path": "/admission/fees"
+        },
+        {
+          "name": "Scholarships & Waivers",
+          "path": "/admission/scholarships"
+        },
+        {
+          "name": "Facilities",
+          "path": "/campus/facilities"
+        }
+      ]
+    },
+    {
+      "name": "Academics",
+      "dropdown": [
+        {
+          "name": "Academic Calendar",
+          "path": "/academics/calendar"
+        },
+        {
+          "name": "DIIT Notices",
+          "path": "/notices"
+        },
+        {
+          "name": "NU Notices",
+          "path": "https://www.nu.ac.bd/recent-news-notice.php",
+          "target": "_blank",
+          "external": true
+        },
+        {
+          "name": "Faculty Members",
+          "path": "/faculty"
+        },
+        {
+          "name": "Administrative",
+          "path": "/administrative"
+        },
+        {
+          "name": "Alumni",
+          "path": "/alumni"
+        }
+      ]
+    },
+    {
+      "name": "Programs",
+      "dropdown": [
+        {
+          "name": "B.Sc. in Computer Science and Engineering",
+          "path": "/programs/cse"
+        },
+        {
+          "name": "Bachelor of Business Administration (BBA)",
+          "path": "/programs/bba"
+        },
+        {
+          "name": "BBA in Tourism and Hospitality Management",
+          "path": "/programs/bthm"
+        },
+        {
+          "name": "Master of Business Administration (MBA)",
+          "path": "/programs/mba"
+        },
+        {
+          "name": "MBA in Tourism and Hospitality Management",
+          "path": "/programs/mthm"
+        }
+      ]
+    },
+    {
+      "name": "News & Events",
+      "dropdown": [
+        {
+          "name": "News & Events",
+          "path": "/news"
+        },
+        {
+          "name": "Campus Activities",
+          "path": "/campus-activities"
+        }
+      ]
+    },
+    {
+      "name": "About",
+      "dropdown": [
+        {
+          "name": "About Us",
+          "path": "/about"
+        },
+        {
+          "name": "FAQ",
+          "path": "/faq"
+        },
+        {
+          "name": "Career",
+          "path": "/career"
+        },
+        {
+          "name": "Contact",
+          "path": "/contact"
+        }
+      ]
+    }
+  ]
+}

@@ -13,6 +13,7 @@ import {
     ChevronRight,
     ExternalLink
 } from "lucide-react";
+import Image from "next/image";
 
 const quickLinks = [
     { label: "About DIIT", href: "/about" },
@@ -55,12 +56,10 @@ export default function Footer() {
                     <div className="lg:col-span-4 space-y-8">
                         <div>
                             <Link href="/" className="inline-block">
-                                <span className="text-4xl font-bold bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-400 bg-clip-text text-transparent">
-                                    DIIT
-                                </span>
+                                <Image src="/diitWhiteLogo.png" alt="DIIT Logo" width={100} height={100} />
                             </Link>
                             <p className="mt-4 text-gray-400 text-sm leading-relaxed max-w-sm">
-                                Dhaka International Institute of Technology is a premier institution dedicated to fostering innovation,
+                                Daffodil Institute of IT (DIIT) is a premier institution dedicated to fostering innovation,
                                 excellence, and leadership in technology and engineering education.
                             </p>
                         </div>

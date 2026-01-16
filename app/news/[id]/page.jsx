@@ -1,11 +1,12 @@
 import React from "react";
 import { notFound } from "next/navigation";
-import HomePageData from "@/public/Data/HomePage.json";
+import { getData } from "@/lib/data-service";
 import ArticleView from "./ArticleView";
 
 export async function generateMetadata({ params }) {
     const { id } = await params;
-    const newsItem = HomePageData.newsEvents.find((n) => n.id === parseInt(id));
+    const homeData = await getData("HomePage");
+    const newsItem = homeData?.newsEvents?.find((n) => n.id === parseInt(id));
 
     if (!newsItem) {
         return {
@@ -22,11 +23,12 @@ export async function generateMetadata({ params }) {
 export default async function NewsDetailsPage({ params }) {
     const { id } = await params;
     const newsId = parseInt(id);
-    const newsItem = HomePageData.newsEvents.find((n) => n.id === newsId);
+    const homeData = await getData("HomePage");
+    const newsItem = homeData?.newsEvents?.find((n) => n.id === newsId);
 
     if (!newsItem) {
         notFound();
     }
 
-    return <ArticleView newsId={newsId} />;
+    return <ArticleView newsId={newsId} initialData={newsItem} />;
 }

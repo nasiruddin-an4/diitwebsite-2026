@@ -1,102 +1,32 @@
 import { NextResponse } from "next/server";
 import clientPromise from "@/lib/mongodb";
 import { getAuthUser } from "@/lib/auth";
-import fs from "fs/promises";
-import path from "path";
+import { getData } from "@/lib/data-service";
 
 // Configuration mapping files to specific MongoDB collections/IDs
 const DB_MAPPING = {
   AdmissionData: { collectionName: "admissionPage", docId: "admission" },
   CampusData: { collectionName: "campusPage", docId: "facilities" },
+  AcademicsData: { collectionName: "academicsPage", docId: "academics" },
+  CampusActivities: { collectionName: "campusActivities", docId: "activities" },
+  CareerData: { collectionName: "careerPage", docId: "career" },
+  FaqData: { collectionName: "faqPage", docId: "faq" },
+  HomePage: { collectionName: "homepage_data", docId: "homepage" },
+  NavigationData: { collectionName: "navigationPage", docId: "navigation" },
+  ProgramsData: { collectionName: "programsPage", docId: "programs" },
 };
 
 export async function GET(request, context) {
   const { params } = context;
   const { filename } = await params;
 
-  // Security: Allow only specific files
-  if (!DB_MAPPING[filename]) {
-    return NextResponse.json(
-      { success: false, message: "Invalid file access" },
-      { status: 403 }
-    );
-  }
+  const data = await getData(filename);
 
-  const { collectionName, docId } = DB_MAPPING[filename];
-  // ... inside GET function
-  const { searchParams } = new URL(request.url);
-  const forceUpdate = searchParams.get("force") === "true";
-
-  let data = null;
-  let sourcedFromDB = false;
-
-  // 1. Try fetching from MongoDB
-  try {
-    const client = await clientPromise;
-    const db = client.db("diit_admin");
-    const collection = db.collection(collectionName);
-
-    if (forceUpdate) {
-      console.log(
-        `[API] Force update requested for ${filename}. Ignoring DB data.`
-      );
-    } else {
-      const dbData = await collection.findOne({ _id: docId });
-      if (dbData) {
-        delete dbData._id;
-        data = dbData;
-        sourcedFromDB = true;
-      }
-    }
-  } catch (error) {
-    // ...
-  }
-
-  // 2. If no data from DB (or forced), try local JSON file
   if (!data) {
-    try {
-      const filePath = path.join(
-        process.cwd(),
-        "public",
-        "Data",
-        `${filename}.json`
-      );
-
-      const fileContent = await fs.readFile(filePath, "utf-8");
-      data = JSON.parse(fileContent);
-
-      // 3. AUTO-SEED DATABASE
-      // Update logic: If forced or empty, save to DB.
-      if (data && (!sourcedFromDB || forceUpdate)) {
-        try {
-          const client = await clientPromise;
-          const db = client.db("diit_admin");
-          const collection = db.collection(collectionName);
-          await collection.updateOne(
-            { _id: docId },
-            {
-              $set: {
-                ...data,
-                updatedAt: new Date(),
-                updatedBy: "system_auto_seed",
-              },
-            },
-            { upsert: true }
-          );
-          console.log(
-            `[API] Auto-seeded ${collectionName} collection with data from ${filename}.json`
-          );
-        } catch (seedError) {
-          console.warn(
-            `[API] Failed to seed ${filename} to MongoDB:`,
-            seedError.message
-          );
-        }
-      }
-    } catch (err) {
-      console.error(`[API] File read failed for ${filename}:`, err.message);
-      data = {};
-    }
+    return NextResponse.json(
+      { success: false, message: "Invalid file access or data not found" },
+      { status: 404 }
+    );
   }
 
   return NextResponse.json({ success: true, data });
@@ -127,39 +57,22 @@ export async function POST(request, context) {
     const data = await request.json();
 
     // 1. Persist to MongoDB specific collection
-    try {
-      const client = await clientPromise;
-      const db = client.db("diit_admin");
-      const collection = db.collection(collectionName);
+    const client = await clientPromise;
+    const db = client.db("diit_admin");
+    const collection = db.collection(collectionName);
 
-      await collection.updateOne(
-        { _id: docId },
-        { $set: { ...data, updatedAt: new Date(), updatedBy: user.email } },
-        { upsert: true }
-      );
-    } catch (dbError) {
-      console.error(`[API] DB Update failed for ${filename}:`, dbError.message);
-    }
+    await collection.updateOne(
+      { _id: docId },
+      { $set: { ...data, updatedAt: new Date(), updatedBy: user.email } },
+      { upsert: true }
+    );
 
-    // 2. Update local JSON file (Backup/Source of Truth for initial load)
-    try {
-      const filePath = path.join(
-        process.cwd(),
-        "public",
-        "Data",
-        `${filename}.json`
-      );
-      await fs.writeFile(filePath, JSON.stringify(data, null, 4), "utf-8");
-    } catch (fileError) {
-      console.error(
-        `[API] File write failed for ${filename}:`,
-        fileError.message
-      );
-    }
+    // REMOVED: Local JSON file writing as requested by user.
+    // We now rely on MongoDB as the primary source of truth.
 
     return NextResponse.json({
       success: true,
-      message: "Data updated successfully",
+      message: "Data updated successfully in database",
     });
   } catch (error) {
     console.error(`Error updating ${filename}:`, error);

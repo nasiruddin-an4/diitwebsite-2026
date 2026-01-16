@@ -20,16 +20,6 @@ const AdmissionEligibilityPage = () => {
     const [data, setData] = React.useState(null);
 
     React.useEffect(() => {
-        fetch('/public/Data/AdmissionData.json') // In production this should be an API call or imported json, but public folder is accessible
-        // actually better to filter through API if we want consistent "live" data or just import it 
-        // Since we are using an API for admin, let's use the API for frontend too to get latest DB state if using mongo
-        // But for public read, reading the JSON file directly or via a public API is best.
-        // Let's use a simple fetch to the generated JSON file in public folder for performance
-        // Time to time invalidation might be an issue, but for this stack it's fine.
-        // Actually, let's just use the same API endpoint 'GET /api/admin/data/AdmissionData' but we need to make sure it's public? 
-        // The API I created checks for filename matching constant, but doesn't check auth for GET. 
-        // Wait, I should check my API.
-
         const loadData = async () => {
             try {
                 // We'll fetch from the API to get the latest (including MongoDB if used)
@@ -39,7 +29,7 @@ const AdmissionEligibilityPage = () => {
                     setData(result.data.eligibility);
                 }
             } catch (e) {
-                console.error(e);
+                console.error("Failed to load admission data:", e);
             }
         }
         loadData();

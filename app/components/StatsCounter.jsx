@@ -1,14 +1,32 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import StatsData from "@/public/Data/HomePage.json";
 
-const StatsCounter = () => {
+const StatsCounter = ({ data }) => {
     const [isVisible, setIsVisible] = useState(false);
     const [animatedStats, setAnimatedStats] = useState({});
+    const [statsData, setStatsData] = useState(data || []);
     const sectionRef = useRef(null);
 
-    const statsData = StatsData.statsCounter;
+    // Fetch stats from database if not provided
+    useEffect(() => {
+        if (!data || data.length === 0) {
+            const fetchStats = async () => {
+                try {
+                    const res = await fetch("/api/admin/homepage");
+                    const result = await res.json();
+                    if (result.success && result.data?.statsCounter) {
+                        setStatsData(result.data.statsCounter);
+                    }
+                } catch (error) {
+                    console.error("Failed to fetch stats:", error);
+                }
+            };
+            fetchStats();
+        } else {
+            setStatsData(data);
+        }
+    }, [data]);
 
     useEffect(() => {
         const observer = new IntersectionObserver(

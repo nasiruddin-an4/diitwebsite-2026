@@ -99,7 +99,7 @@ export default function HeroSection({ data, updateField, addItem, deleteItem, on
         <div className="space-y-3">
           <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider">Slide Background</label>
           <div className="flex flex-col sm:flex-row gap-4">
-            <div className="w-full sm:w-60 h-32 rounded-xl bg-slate-100 border-2 border-slate-200 flex items-center justify-center overflow-hidden">
+            <div className="w-full sm:w-60 h-32 rounded-md bg-slate-100 border-2 border-slate-200 flex items-center justify-center overflow-hidden">
               {slide.image ? (
                 <img src={slide.image} alt="Preview" className="w-full h-full object-cover" />
               ) : (
@@ -107,7 +107,7 @@ export default function HeroSection({ data, updateField, addItem, deleteItem, on
               )}
             </div>
             <div className="flex-1">
-              <label className="flex items-center justify-center h-32 border-2 border-dashed border-blue-200 rounded-xl cursor-pointer bg-blue-50/30 hover:bg-blue-50 transition-all group">
+              <label className="flex items-center justify-center h-32 border-2 border-dashed border-blue-200 rounded-md cursor-pointer bg-blue-50/30 hover:bg-blue-50 transition-all group">
                 <div className="text-center">
                   <Upload className="w-6 h-6 text-blue-500 mx-auto mb-1 group-hover:scale-110" />
                   <p className="text-xs font-bold text-blue-700">Upload Image</p>
@@ -133,14 +133,14 @@ export default function HeroSection({ data, updateField, addItem, deleteItem, on
           <button
             onClick={onSave}
             disabled={saving}
-            className="flex items-center gap-2 px-6 py-2 bg-green-700 hover:bg-green-800 text-white rounded-xl font-medium transition-all disabled:opacity-50 text-sm shadow-md"
+            className="flex items-center gap-2 px-6 py-2 bg-green-700 hover:bg-green-800 text-white rounded-md cursor-pointer font-medium transition-all disabled:opacity-50 text-sm"
           >
             {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
             Save Changes
           </button>
           <button
             onClick={() => setIsCreating(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium shadow-lg transition-all hover:scale-105"
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md cursor-pointer font-medium transition-all"
           >
             <Plus className="w-4 h-4" /> New Slide
           </button>
@@ -148,14 +148,14 @@ export default function HeroSection({ data, updateField, addItem, deleteItem, on
       </div>
 
       {slides.length === 0 ? (
-        <div className="bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl p-12 text-center">
+        <div className="bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl p-12 text-center">
           <Home className="w-12 h-12 text-slate-300 mx-auto mb-4" />
           <h3 className="font-bold text-slate-900">No slides found</h3>
           <p className="text-sm text-slate-500 mb-6">Create your first slide to start your homepage carousel.</p>
-          <button onClick={() => setIsCreating(true)} className="px-6 py-2 bg-blue-600 text-white rounded-lg font-bold">Add Slide</button>
+          <button onClick={() => setIsCreating(true)} className="px-6 py-2 bg-blue-600 text-white rounded-md cursor-pointer font-bold">Add Slide</button>
         </div>
       ) : (
-        <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
           <table className="w-full text-left">
             <thead>
               <tr className="bg-slate-50 border-b border-slate-200">
@@ -168,7 +168,7 @@ export default function HeroSection({ data, updateField, addItem, deleteItem, on
               {slides.map((slide, index) => (
                 <tr key={slide.id || index} className="group hover:bg-slate-50">
                   <td className="p-4">
-                    <div className="w-24 h-14 rounded-lg overflow-hidden border border-slate-200 shadow-sm relative bg-slate-100">
+                    <div className="w-24 h-14 rounded-md overflow-hidden border border-slate-200 relative bg-slate-100">
                       {slide.image && <img src={slide.image} alt="" className="w-full h-full object-cover" />}
                     </div>
                   </td>
@@ -178,8 +178,8 @@ export default function HeroSection({ data, updateField, addItem, deleteItem, on
                   </td>
                   <td className="p-4">
                     <div className="flex justify-center gap-2">
-                      <button onClick={() => setEditingId(slide.id || slide._id)} className="p-2 text-blue-600 bg-blue-50 border border-blue-100 rounded-lg hover:bg-blue-100"><Edit2 className="w-4 h-4" /></button>
-                      <button onClick={() => handleDelete(slide, index)} className="p-2 text-red-600 bg-red-50 border border-red-100 rounded-lg hover:bg-red-100"><Trash2 className="w-4 h-4" /></button>
+                      <button onClick={() => setEditingId(slide.id || slide._id)} className="p-2 text-blue-600 bg-blue-50 border border-blue-100 rounded-md cursor-pointer hover:bg-blue-100"><Edit2 className="w-4 h-4" /></button>
+                      <button onClick={() => handleDelete(slide, index)} className="p-2 text-red-600 bg-red-50 border border-red-100 rounded-md cursor-pointer hover:bg-red-100"><Trash2 className="w-4 h-4" /></button>
                     </div>
                   </td>
                 </tr>
@@ -197,14 +197,14 @@ export default function HeroSection({ data, updateField, addItem, deleteItem, on
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="bg-white border border-slate-200 rounded-2xl w-full max-w-3xl shadow-2xl overflow-hidden"
+              className="bg-white border border-slate-200 rounded-xl w-full max-w-3xl shadow-xl overflow-hidden"
             >
               <div className="flex items-center justify-between p-4 border-b border-slate-100 bg-slate-50/50">
                 <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
                   <Home className="w-5 h-5 text-blue-600" />
                   {isCreating ? "Create New Slide" : "Edit Slide"}
                 </h3>
-                <button onClick={() => { setIsCreating(false); setEditingId(null); }} className="p-2 hover:bg-slate-200 rounded-full transition-colors">
+                <button onClick={() => { setIsCreating(false); setEditingId(null); }} className="p-2 hover:bg-slate-200 rounded-full transition-colors cursor-pointer">
                   <X className="w-5 h-5 text-slate-500" />
                 </button>
               </div>
@@ -218,8 +218,8 @@ export default function HeroSection({ data, updateField, addItem, deleteItem, on
               </div>
 
               <div className="p-4 border-t border-slate-100 bg-slate-50/50 flex justify-end gap-3">
-                <button onClick={() => { setIsCreating(false); setEditingId(null); }} className="px-6 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl font-bold text-sm">Cancel</button>
-                <button onClick={() => { if (isCreating) handleCreateSlide(); else setEditingId(null); }} className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-sm shadow-lg shadow-blue-600/20">
+                <button onClick={() => { setIsCreating(false); setEditingId(null); }} className="px-6 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-md cursor-pointer font-bold text-sm">Cancel</button>
+                <button onClick={() => { if (isCreating) handleCreateSlide(); else setEditingId(null); }} className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md cursor-pointer font-bold text-sm">
                   {isCreating ? "Create Slide" : "Save & Close"}
                 </button>
               </div>
