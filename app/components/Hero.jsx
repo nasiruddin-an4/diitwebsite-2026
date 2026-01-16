@@ -123,17 +123,7 @@ const Hero = () => {
                                 transition={{ duration: 0.5, delay: 0.2 }}
                                 className="space-y-4"
                             >
-                                {/* Badge/Tag line */}
-                                <motion.div
-                                    initial={{ opacity: 0, x: -20 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: 0.3 }}
-                                    className="inline-block px-4 py-1.5 rounded-full bg-blue-500/20 border border-blue-400/30 backdrop-blur-sm"
-                                >
-                                    <span className="text-blue-300 text-sm font-semibold tracking-wide uppercase">
-                                        Welcome to DIIT
-                                    </span>
-                                </motion.div>
+                        
 
                                 <h1 className="text-4xl md:text-5xl font-bold text-white leading-tight">
                                     {slide.title}
@@ -142,37 +132,6 @@ const Hero = () => {
                                 <p className="text-lg md:text-xl text-slate-300 leading-relaxed max-w-lg">
                                     {slide.subtitle || slide.description}
                                 </p>
-
-                                <div className="pt-4 flex flex-wrap gap-4">
-                                    {/* Primary Button */}
-                                    {(slide.primaryButtonLink || slide.buttonLink) && (
-                                        <Link href={slide.primaryButtonLink || slide.buttonLink || "/"} passHref>
-                                            <motion.button
-                                                whileHover={{ scale: 1.05 }}
-                                                whileTap={{ scale: 0.95 }}
-                                                className="px-8 py-4 bg-blue-600 hover:bg-blue-700 cursor-pointer text-white text-base font-semibold rounded-xl shadow-lg shadow-blue-500/30 transition-all flex items-center group"
-                                            >
-                                                {slide.primaryButtonText || slide.buttonText || "Learn More"}
-                                                <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                                                </svg>
-                                            </motion.button>
-                                        </Link>
-                                    )}
-
-                                    {/* Secondary Button */}
-                                    {slide.secondaryButtonText && (
-                                        <Link href={slide.secondaryButtonLink || "/ contact"} passHref>
-                                            <motion.button
-                                                whileHover={{ scale: 1.05 }}
-                                                whileTap={{ scale: 0.95 }}
-                                                className="px-8 py-4 bg-white/10 hover:bg-white/20 border border-white/20 cursor-pointer text-white text-base font-semibold rounded-xl backdrop-blur-sm transition-all flex items-center"
-                                            >
-                                                {slide.secondaryButtonText}
-                                            </motion.button>
-                                        </Link>
-                                    )}
-                                </div>
                             </motion.div>
                         </AnimatePresence>
                     </div>

@@ -23,6 +23,7 @@ import FacilitiesSection from "./components/FacilitiesSection";
 import AcademicCalendarSection from "./components/AcademicCalendarSection";
 import NoticesSection from "./components/NoticesSection";
 import FacultySection from "./components/FacultySection";
+import Image from "next/image";
 
 const menuItems = [
   { id: "overview", label: "Overview", icon: LayoutDashboard },
@@ -58,6 +59,8 @@ export default function AdminDashboard() {
   const [expandedMenu, setExpandedMenu] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const [adminInfo, setAdminInfo] = useState({ name: "Admin User", email: "admin@diit.edu.bd", image: null });
 
   // Default empty state
   const defaultData = {
@@ -252,13 +255,6 @@ export default function AdminDashboard() {
             </div>
           ))}
         </nav>
-
-        <div className="p-4 border-t border-slate-800">
-          <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all group font-medium text-sm">
-            <LogOut className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-            {sidebarOpen && <span>Logout</span>}
-          </button>
-        </div>
       </aside>
 
       {/* Main Content Wrapper */}
@@ -296,7 +292,102 @@ export default function AdminDashboard() {
               )}
             </AnimatePresence>
 
-            {/* Global Save Removed - Per section save implemented */}
+            {/* Admin Profile Dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => setProfileOpen(!profileOpen)}
+                className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 transition-all group"
+              >
+                {adminInfo.image ? (
+                  <Image
+                    src={adminInfo.image}
+                    alt={adminInfo.name}
+                    className="w-8 h-8 rounded-full object-cover border-2 border-blue-600"
+                  />
+                ) : (
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold text-sm border-2 border-blue-600">
+                    {adminInfo.name.charAt(0).toUpperCase()}
+                  </div>
+                )}
+                <div className="hidden sm:block text-left">
+                  <p className="text-sm font-semibold text-slate-900">{adminInfo.name}</p>
+                  <p className="text-xs text-slate-500">{adminInfo.email}</p>
+                </div>
+                <ChevronDown className={`w-4 h-4 text-slate-600 transition-transform duration-200 ${profileOpen ? "rotate-180" : ""}`} />
+              </button>
+
+              {/* Profile Dropdown Menu */}
+              <AnimatePresence>
+                {profileOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                    transition={{ duration: 0.15 }}
+                    className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden z-50"
+                  >
+                    {/* Profile Info */}
+                    <div className="p-4 border-b border-slate-100 bg-gradient-to-br from-slate-50 to-slate-100">
+                      <div className="flex items-center gap-3">
+                        {adminInfo.image ? (
+                          <Image
+                            src={adminInfo.image}
+                            alt={adminInfo.name}
+                            className="w-10 h-10 rounded-full object-cover border-2 border-blue-600"
+                          />
+                        ) : (
+                          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold border-2 border-blue-600">
+                            {adminInfo.name.charAt(0).toUpperCase()}
+                          </div>
+                        )}
+                        <div>
+                          <p className="font-semibold text-slate-900">{adminInfo.name}</p>
+                          <p className="text-xs text-slate-600">{adminInfo.email}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Menu Items */}
+                    <div className="p-2 space-y-1">
+                      <button
+                        onClick={() => {
+                          setProfileOpen(false);
+                          // Add settings functionality later
+                        }}
+                        className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-slate-700 hover:bg-slate-100 transition-colors text-sm font-medium"
+                      >
+                        <Users className="w-4 h-4 text-slate-500" />
+                        Profile Settings
+                      </button>
+                      <button
+                        onClick={() => {
+                          setProfileOpen(false);
+                          // Add activity log functionality later
+                        }}
+                        className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-slate-700 hover:bg-slate-100 transition-colors text-sm font-medium"
+                      >
+                        <Monitor className="w-4 h-4 text-slate-500" />
+                        Activity Log
+                      </button>
+                    </div>
+
+                    {/* Logout Button */}
+                    <div className="p-2 border-t border-slate-100">
+                      <button
+                        onClick={() => {
+                          setProfileOpen(false);
+                          handleLogout();
+                        }}
+                        className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-red-600 hover:bg-red-50 transition-colors font-medium text-sm group"
+                      >
+                        <LogOut className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+                        Logout
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
         </header>
 
