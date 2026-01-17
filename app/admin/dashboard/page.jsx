@@ -37,7 +37,6 @@ const menuItems = [
     children: [
       { id: "academic-calendar", label: "Academic Calendar" },
       { id: "diit-notices", label: "DIIT Notices" },
-      { id: "nu-notices", label: "NU Notices" },
       { id: "faculty-members", label: "Faculty Members" },
       { id: "administrative", label: "Administrative" },
       { id: "alumni", label: "Alumni" },

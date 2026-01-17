@@ -14,6 +14,7 @@ import {
   Pin,
   FileText,
 } from "lucide-react";
+import FileUpload from "@/app/components/FileUpload";
 
 const categoryOptions = [
   { value: "Academic", label: "Academic" },
@@ -181,11 +182,10 @@ export default function NoticesSection() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className={`flex items-center gap-2 p-4 rounded-lg ${
-              message.type === "success"
-                ? "bg-green-50 text-green-700 border border-green-200"
-                : "bg-red-50 text-red-700 border border-red-200"
-            }`}
+            className={`flex items-center gap-2 p-4 rounded-lg ${message.type === "success"
+              ? "bg-green-50 text-green-700 border border-green-200"
+              : "bg-red-50 text-red-700 border border-red-200"
+              }`}
           >
             {message.type === "success" ? (
               <Check className="w-5 h-5" />
@@ -246,11 +246,10 @@ export default function NoticesSection() {
                       Date
                     </label>
                     <input
-                      type="text"
+                      type="date"
                       value={formData.date}
                       onChange={(e) => handleFieldChange("date", e.target.value)}
                       className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder="12 Jan, 2026"
                     />
                   </div>
                   <div>
@@ -300,39 +299,87 @@ export default function NoticesSection() {
                   />
                 </div>
 
-                {/* Image URL */}
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Image URL
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.image || ""}
-                    onChange={(e) => handleFieldChange("image", e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="https://example.com/image.jpg"
-                  />
-                  {formData.image && (
-                    <img
-                      src={formData.image}
-                      alt="Preview"
-                      className="mt-2 max-h-40 rounded-lg"
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Image Upload */}
+                  <div>
+                    <FileUpload
+                      label="Upload Notice Image (Max 1MB)"
+                      folder="diit_notices"
+                      acceptedFileTypes="image/*"
+                      maxSizeInMB={1}
+                      onUploadSuccess={(result) => handleFieldChange("image", result.secure_url)}
                     />
-                  )}
-                </div>
+                    {formData.image && (
+                      <div className="mt-2 relative group w-fit">
+                        <img
+                          src={formData.image}
+                          alt="Preview"
+                          className="h-20 rounded-lg shadow-sm"
+                        />
+                        <button
+                          onClick={() => handleFieldChange("image", "")}
+                          className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 shadow-md hover:bg-red-600 transition-colors"
+                        >
+                          <X size={12} />
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                  <div className="hidden">
+                    <label className="block text-sm font-medium text-slate-700 mb-2 invisible h-0 w-0 overflow-hidden">
+                      Image URL
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.image || ""}
+                      onChange={(e) => handleFieldChange("image", e.target.value)}
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 hidden"
+                    />
+                    {formData.image && (
+                      <img
+                        src={formData.image}
+                        alt="Preview"
+                        className="mt-2 max-h-40 rounded-lg"
+                      />
+                    )}
+                  </div>
 
-                {/* PDF URL */}
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
-                    PDF URL
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.pdf || ""}
-                    onChange={(e) => handleFieldChange("pdf", e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="https://example.com/document.pdf"
-                  />
+                  {/* PDF Upload */}
+                  <div>
+                    <FileUpload
+                      label="Upload PDF Document (Max 2MB)"
+                      folder="diit_notices_pdfs"
+                      acceptedFileTypes="application/pdf"
+                      maxSizeInMB={2}
+                      onUploadSuccess={(result) => handleFieldChange("pdf", result.secure_url)}
+                    />
+                    {formData.pdf && (
+                      <div className="mt-2 flex items-center gap-2 p-2 bg-slate-50 border border-slate-200 rounded-lg w-fit">
+                        <FileText className="w-5 h-5 text-red-500" />
+                        <span className="text-sm font-medium text-slate-700 max-w-[200px] truncate">{formData.pdf}</span>
+                        <button
+                          onClick={() => handleFieldChange("pdf", "")}
+                          className="p-1 hover:bg-slate-200 rounded-full transition-colors"
+                        >
+                          <X size={14} className="text-slate-500" />
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* PDF URL Hidden Input */}
+                  <div className="hidden">
+                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                      PDF URL
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.pdf || ""}
+                      onChange={(e) => handleFieldChange("pdf", e.target.value)}
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="https://example.com/document.pdf"
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -381,9 +428,8 @@ export default function NoticesSection() {
               animate={{ opacity: 1, y: 0 }}
               className="bg-white border border-slate-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow"
             >
-              <div className={`px-6 py-4 border-b border-slate-200 flex items-center justify-between ${
-                notice.pinned ? "bg-amber-50" : "bg-slate-50"
-              }`}>
+              <div className={`px-6 py-4 border-b border-slate-200 flex items-center justify-between ${notice.pinned ? "bg-amber-50" : "bg-slate-50"
+                }`}>
                 <div className="flex items-center gap-4">
                   {notice.image && (
                     <img
@@ -401,17 +447,16 @@ export default function NoticesSection() {
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-xs font-medium text-slate-500">{notice.date}</span>
-                      <span className={`text-xs font-bold px-2 py-1 rounded-full ${
-                        notice.category === "Exam"
-                          ? "bg-red-100 text-red-700"
-                          : notice.category === "Academic"
-                            ? "bg-blue-100 text-blue-700"
-                            : notice.category === "Admission"
-                              ? "bg-emerald-100 text-emerald-700"
-                              : notice.category === "Event"
-                                ? "bg-purple-100 text-purple-700"
-                                : "bg-slate-100 text-slate-700"
-                      }`}>
+                      <span className={`text-xs font-bold px-2 py-1 rounded-full ${notice.category === "Exam"
+                        ? "bg-red-100 text-red-700"
+                        : notice.category === "Academic"
+                          ? "bg-blue-100 text-blue-700"
+                          : notice.category === "Admission"
+                            ? "bg-emerald-100 text-emerald-700"
+                            : notice.category === "Event"
+                              ? "bg-purple-100 text-purple-700"
+                              : "bg-slate-100 text-slate-700"
+                        }`}>
                         {notice.category}
                       </span>
                     </div>
@@ -438,6 +483,6 @@ export default function NoticesSection() {
           ))
         )}
       </div>
-    </div>
+    </div >
   );
 }

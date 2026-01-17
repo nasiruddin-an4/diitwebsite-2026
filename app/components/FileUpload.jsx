@@ -14,7 +14,8 @@ const FileUpload = ({
     onUploadSuccess,
     folder = "diit_uploads",
     acceptedFileTypes = "image/*,application/pdf",
-    label = "Upload File"
+    label = "Upload File",
+    maxSizeInMB = 5
 }) => {
     const [file, setFile] = useState(null);
     const [isUploading, setIsUploading] = useState(false);
@@ -24,6 +25,15 @@ const FileUpload = ({
     const handleFileChange = (e) => {
         const selectedFile = e.target.files[0];
         if (selectedFile) {
+            if (selectedFile.size > maxSizeInMB * 1024 * 1024) {
+                Swal.fire({
+                    icon: "error",
+                    title: "File too large",
+                    text: `File size exceeds ${maxSizeInMB}MB limit.`,
+                });
+                e.target.value = ""; // Reset input
+                return;
+            }
             setFile(selectedFile);
         }
     };

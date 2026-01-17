@@ -65,7 +65,7 @@ export default function Footer() {
                         </div>
 
                         {/* Affiliation Badge */}
-                        <div className="inline-flex items-center gap-3 bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10 hover:border-blue-500/30 transition-colors">
+                        {/* <div className="inline-flex items-center gap-3 bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10 hover:border-blue-500/30 transition-colors">
                             <div className="flex-shrink-0 w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center">
                                 <span className="text-xl">🎓</span>
                             </div>
@@ -73,7 +73,7 @@ export default function Footer() {
                                 <p className="text-[10px] uppercase tracking-wider text-gray-400 font-semibold mb-0.5">Affiliated With</p>
                                 <p className="text-sm font-bold text-white">National University</p>
                             </div>
-                        </div>
+                        </div> */}
 
                         {/* Social Links */}
                         <div className="flex items-center gap-3">
@@ -174,7 +174,7 @@ export default function Footer() {
                 <div className="max-w-7xl mx-auto px-6 md:px-0 py-6">
                     <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                         <p className="text-gray-600 text-sm text-center md:text-left">
-                            © {new Date().getFullYear()} Dhaka International Institute of Technology. All rights reserved.
+                            © {new Date().getFullYear()} Daffodil Institute of IT (DIIT). All rights reserved.
                         </p>
                         <div className="flex flex-wrap justify-center gap-6 md:gap-8">
                             <Link href="/privacy" className="text-gray-500 hover:text-blue-400 text-sm transition-colors">

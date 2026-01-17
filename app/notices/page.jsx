@@ -14,7 +14,28 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 
+const momentDate = (dateStr) => {
+    if (!dateStr) return { day: '??', month: '???' };
+    const d = new Date(dateStr);
+    if (!isNaN(d.getTime())) {
+        return {
+            day: d.getDate(),
+            month: d.toLocaleString('default', { month: 'short' })
+        };
+    }
+    const parts = dateStr.split(' ');
+    if (parts.length >= 2) {
+        return {
+            day: parts[0],
+            month: parts[1].replace(',', '')
+        };
+    }
+    return { day: '??', month: '???' };
+};
+
+
 const NoticesPage = () => {
+    const categories = ['All', 'Academic', 'Exam', 'Admission', 'Event', 'General'];
     const [filter, setFilter] = useState('All');
     const [searchQuery, setSearchQuery] = useState('');
     const [showMobileFilters, setShowMobileFilters] = useState(false);
@@ -217,8 +238,8 @@ const NoticesPage = () => {
                                                     key={cat}
                                                     onClick={() => { setFilter(cat); setShowMobileFilters(false); }}
                                                     className={`px-4 py-2 rounded-lg text-sm font-bold transition-all border ${filter === cat
-                                                            ? 'bg-brandColor text-white border-brandColor shadow-md shadow-blue-900/20'
-                                                            : 'bg-slate-50 text-slate-500 border-slate-100 hover:bg-slate-100'
+                                                        ? 'bg-brandColor text-white border-brandColor shadow-md shadow-blue-900/20'
+                                                        : 'bg-slate-50 text-slate-500 border-slate-100 hover:bg-slate-100'
                                                         }`}
                                                 >
                                                     {cat}
@@ -248,8 +269,12 @@ const NoticesPage = () => {
                                                 </div>
                                             ) : (
                                                 <div className="hidden sm:flex flex-col items-center justify-center w-24 h-24 bg-slate-50 rounded-xl border border-slate-100 shrink-0 group-hover:bg-blue-50 group-hover:border-blue-100 transition-colors">
-                                                    <span className="text-2xl font-bold text-slate-700 group-hover:text-blue-600">{notice.date.split(' ')[0]}</span>
-                                                    <span className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">{notice.date.split(' ')[1].replace(',', '')}</span>
+                                                    <span className="text-2xl font-bold text-slate-700 group-hover:text-blue-600">
+                                                        {momentDate(notice.date).day}
+                                                    </span>
+                                                    <span className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">
+                                                        {momentDate(notice.date).month}
+                                                    </span>
                                                 </div>
                                             )}
 
@@ -324,8 +349,8 @@ const NoticesPage = () => {
                                         key={cat}
                                         onClick={() => setFilter(cat)}
                                         className={`w-full text-left px-4 py-3 rounded-xl text-sm font-bold flex justify-between items-center transition-all ${filter === cat
-                                                ? 'bg-brandColor text-white shadow-md shadow-blue-900/20'
-                                                : 'bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-slate-700'
+                                            ? 'bg-brandColor text-white shadow-md shadow-blue-900/20'
+                                            : 'bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-slate-700'
                                             }`}
                                     >
                                         {cat}

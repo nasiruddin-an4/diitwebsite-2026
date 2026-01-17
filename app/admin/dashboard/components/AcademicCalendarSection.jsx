@@ -207,7 +207,7 @@ export default function AcademicCalendarSection() {
         </div>
         <button
           onClick={handleAddNew}
-          className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+          className="flex items-center gap-2 px-4 cursor-pointer py-2.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-medium"
         >
           <Plus className="w-4 h-4" /> Add Month
         </button>
@@ -256,7 +256,7 @@ export default function AcademicCalendarSection() {
                 </h3>
                 <button
                   onClick={handleCancel}
-                  className="p-1 hover:bg-slate-100 rounded-lg transition-colors"
+                  className="p-1 hover:bg-slate-100 rounded-md cursor-pointer transition-colors"
                 >
                   <X className="w-6 h-6 text-slate-500" />
                 </button>
@@ -272,7 +272,7 @@ export default function AcademicCalendarSection() {
                     <select
                       value={formData.month}
                       onChange={(e) => handleMonthChange("month", e.target.value)}
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                       {monthOptions.map((month) => (
                         <option key={month} value={month}>
@@ -289,7 +289,7 @@ export default function AcademicCalendarSection() {
                       type="text"
                       value={formData.year}
                       onChange={(e) => handleMonthChange("year", e.target.value)}
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
                 </div>
@@ -300,7 +300,7 @@ export default function AcademicCalendarSection() {
                     <h4 className="text-sm font-semibold text-slate-800">Events</h4>
                     <button
                       onClick={addEventToMonth}
-                      className="text-sm px-3 py-1 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors"
+                      className="text-sm px-3 py-1 bg-slate-100 text-slate-700 rounded-md hover:bg-slate-200 transition-colors cursor-pointer"
                     >
                       + Add Event
                     </button>
@@ -309,7 +309,7 @@ export default function AcademicCalendarSection() {
                   {formData.events.map((event, idx) => (
                     <div
                       key={idx}
-                      className="p-4 border border-slate-200 rounded-lg space-y-3 bg-slate-50"
+                      className="p-4 border border-slate-200 rounded-md space-y-3 bg-slate-50"
                     >
                       <div className="flex items-center justify-between">
                         <span className="text-sm font-medium text-slate-600">
@@ -318,7 +318,7 @@ export default function AcademicCalendarSection() {
                         {formData.events.length > 1 && (
                           <button
                             onClick={() => removeEventFromMonth(idx)}
-                            className="p-1 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                            className="p-1 text-red-500 hover:bg-red-50 rounded-md cursor-pointer transition-colors"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -331,12 +331,25 @@ export default function AcademicCalendarSection() {
                             Date
                           </label>
                           <input
-                            type="text"
-                            placeholder="01 or 10-15"
-                            value={event.date}
-                            onChange={(e) =>
-                              handleEventChange(idx, "date", e.target.value)
-                            }
+                            type="date"
+                            value={(function () {
+                              if (!event.date || event.date.includes("-")) return "";
+                              const monthIdx = monthOptions.indexOf(formData.month);
+                              if (monthIdx === -1) return "";
+                              const y = formData.year;
+                              const m = (monthIdx + 1).toString().padStart(2, '0');
+                              const d = event.date.padStart(2, '0');
+                              return `${y}-${m}-${d}`;
+                            })()}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              if (val) {
+                                const day = val.split('-')[2];
+                                handleEventChange(idx, "date", day);
+                              } else {
+                                handleEventChange(idx, "date", "");
+                              }
+                            }}
                             className="w-full px-2 py-2 border border-slate-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                           />
                         </div>
@@ -398,14 +411,14 @@ export default function AcademicCalendarSection() {
               <div className="bg-slate-50 border-t border-slate-200 px-6 py-4 flex gap-3 justify-end">
                 <button
                   onClick={handleCancel}
-                  className="px-4 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors font-medium"
+                  className="px-4 py-2 border border-slate-300 text-slate-700 rounded-md hover:bg-slate-50 transition-colors font-medium cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleSave}
                   disabled={saving}
-                  className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium disabled:opacity-50"
+                  className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-medium disabled:opacity-50 cursor-pointer"
                 >
                   {saving ? (
                     <>
@@ -484,19 +497,18 @@ export default function AcademicCalendarSection() {
                         </p>
                         <div className="mt-2">
                           <span
-                            className={`inline-block text-xs font-bold px-2.5 py-1 rounded-full capitalize ${
-                              event.type === "admission"
-                                ? "bg-emerald-100 text-emerald-700"
-                                : event.type === "academic"
-                                  ? "bg-blue-100 text-blue-700"
-                                  : event.type === "exam"
-                                    ? "bg-rose-100 text-rose-700"
-                                    : event.type === "holiday"
-                                      ? "bg-amber-100 text-amber-700"
-                                      : event.type === "result"
-                                        ? "bg-purple-100 text-purple-700"
-                                        : "bg-indigo-100 text-indigo-700"
-                            }`}
+                            className={`inline-block text-xs font-bold px-2.5 py-1 rounded-full capitalize ${event.type === "admission"
+                              ? "bg-emerald-100 text-emerald-700"
+                              : event.type === "academic"
+                                ? "bg-blue-100 text-blue-700"
+                                : event.type === "exam"
+                                  ? "bg-rose-100 text-rose-700"
+                                  : event.type === "holiday"
+                                    ? "bg-amber-100 text-amber-700"
+                                    : event.type === "result"
+                                      ? "bg-purple-100 text-purple-700"
+                                      : "bg-indigo-100 text-indigo-700"
+                              }`}
                           >
                             {event.type}
                           </span>
