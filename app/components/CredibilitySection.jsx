@@ -17,8 +17,13 @@ import HomePageData from "@/public/Data/HomePage.json";
 const CredibilitySection = ({ data }) => {
     const [currentBenefitIndex, setCurrentBenefitIndex] = useState(0);
     const partners = data?.internationalPartners || HomePageData.internationalPartners || [];
-    const collaborationTypes = data?.collaborationTypes || HomePageData.collaborationTypes || [];
     const collaborationBenefits = data?.collaborationBenefits || HomePageData.collaborationBenefits || [];
+
+    // Derive types dynamically from partners
+    const uniqueTypes = [...new Set(partners.map(p => p.type).filter(Boolean))];
+    const collaborationTypes = uniqueTypes.length > 0
+        ? uniqueTypes.map(type => ({ title: type }))
+        : (data?.collaborationTypes || HomePageData.collaborationTypes || []);
 
     useEffect(() => {
         if (collaborationBenefits.length === 0) return;

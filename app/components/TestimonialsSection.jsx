@@ -2,17 +2,23 @@
 
 import React, { useState, useEffect } from "react";
 
-const TestimonialsSection = () => {
-    const [testimonials, setTestimonials] = useState({ students: [], guardians: [] });
-    const [loading, setLoading] = useState(true);
+const TestimonialsSection = ({ testimonials: initialData }) => {
+    const [testimonials, setTestimonials] = useState(initialData || []);
+    const [loading, setLoading] = useState(!initialData);
 
     useEffect(() => {
+        if (initialData) {
+            setLoading(false);
+            setTestimonials(initialData);
+            return;
+        }
+
         const fetchData = async () => {
             try {
                 const response = await fetch('/api/admin/testimonials');
                 const result = await response.json();
-                if (result.success && result.data.testimonials) {
-                    setTestimonials(result.data.testimonials);
+                if (result.success) {
+                    setTestimonials(result.data || []);
                 }
             } catch (error) {
                 console.error("Failed to fetch testimonials:", error);
@@ -21,7 +27,7 @@ const TestimonialsSection = () => {
             }
         };
         fetchData();
-    }, []);
+    }, [initialData]);
 
     if (loading) {
         return (
@@ -33,11 +39,10 @@ const TestimonialsSection = () => {
         );
     }
 
-    // Combine all testimonials
-    const allTestimonials = [
-        ...(testimonials.students || []),
-        ...(testimonials.guardians || [])
-    ];
+    // Handle both flat array and legacy object structure
+    const allTestimonials = Array.isArray(testimonials)
+        ? testimonials
+        : [...(testimonials.students || []), ...(testimonials.guardians || [])];
 
     const midPoint = Math.ceil(allTestimonials.length / 2);
     const column1 = allTestimonials.slice(0, midPoint);
@@ -49,7 +54,7 @@ const TestimonialsSection = () => {
     const TestimonialCard = ({ testimonial, isHorizontal = false }) => (
         <div className={`bg-white rounded-xl p-6 border border-gray-100 ${isHorizontal ? "w-[300px] shrink-0 mr-5" : "mb-5"
             }`}>
-            <p className="text-gray-700 text-sm leading-relaxed mb-5">
+            <p className="text-gray-700 text-sm leading-relaxed mb-5 line-clamp-6">
                 {testimonial.text}
             </p>
             <div className="flex items-center gap-3">
@@ -70,8 +75,13 @@ const TestimonialsSection = () => {
                     <h5 className="font-semibold text-brandColor text-sm">
                         {testimonial.name}
                     </h5>
-                    <p className="text-gray-500 text-xs">
-                        {testimonial.program || testimonial.role}
+                    {testimonial.designation && (
+                        <p className="text-slate-700 text-xs font-medium leading-normal">
+                            {testimonial.designation}
+                        </p>
+                    )}
+                    <p className="text-gray-500 text-[11px] leading-tight mt-0.5">
+                        {[testimonial.program, testimonial.batch].filter(Boolean).join(" • ")}
                     </p>
                 </div>
             </div>
@@ -83,7 +93,6 @@ const TestimonialsSection = () => {
             <div className="max-w-7xl mx-auto px-6 md:px-0">
                 <div className="flex flex-col lg:flex-row gap-12 lg:gap-20 items-center lg:items-start">
                     {/* Left Side - Title */}
-                    {/* Mobile: Text Centered, Desktop: Text Left */}
                     <div className="lg:w-[350px] shrink-0 text-center lg:text-left lg:sticky lg:top-20">
                         <h2 className="font-bold text-3xl md:text-4xl lg:text-5xl text-gray-900 mb-6 leading-tight">
                             See Our
@@ -95,7 +104,7 @@ const TestimonialsSection = () => {
                         </p>
                     </div>
 
-                    {/* Right Side - Marquee Columns - Centered Content */}
+                    {/* Right Side - Marquee Columns */}
                     <div className="flex-1 w-full">
                         {allTestimonials.length > 0 ? (
                             <>

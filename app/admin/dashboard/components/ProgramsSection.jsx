@@ -182,7 +182,7 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
                     >
                       <td className="p-4 text-center">
                         <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-700 font-bold text-sm">
-                          {item.serial || index + 1}
+                          {index + 1}
                         </span>
                       </td>
                       <td className="p-4">

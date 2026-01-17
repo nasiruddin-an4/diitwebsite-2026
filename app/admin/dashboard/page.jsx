@@ -107,15 +107,28 @@ export default function AdminDashboard() {
       const programsRes = await fetch("/api/admin/data/ProgramsData");
       const programsResult = await programsRes.json();
 
+      // Fetch partners data
+      const partnersRes = await fetch("/api/admin/partners");
+      const partnersResult = await partnersRes.json();
+
       const newHeroSlides = heroResult.success ? heroResult.data : [];
       const homeData = homeResult.success ? homeResult.data : {};
       const programsData = programsResult.success ? programsResult.data?.programsData || programsResult.data || [] : [];
+      const partnersData = partnersResult.success ? partnersResult.data : { partners: [], benefits: [] };
+
+      // Fetch testimonials data
+      const testimonialsRes = await fetch("/api/admin/testimonials");
+      const testimonialsResult = await testimonialsRes.json();
+      const testimonialsData = testimonialsResult.success ? testimonialsResult.data : [];
 
       setData({
         ...defaultData,
         ...homeData,
         heroSlides: newHeroSlides,
-        programsData: programsData
+        programsData: programsData,
+        internationalPartners: partnersData.partners || [],
+        collaborationBenefits: partnersData.benefits || [],
+        testimonials: testimonialsData || []
       });
 
       if (!heroResult.success || !homeResult.success || !programsResult.success) {
@@ -144,6 +157,9 @@ export default function AdminDashboard() {
       const bodyContent = { ...data };
       delete bodyContent.heroSlides; // Don't send hero slides to homepage endpoint
       delete bodyContent.programsData; // Don't send programs to homepage endpoint
+      delete bodyContent.internationalPartners; // Managed via dedicated API
+      delete bodyContent.collaborationBenefits; // Managed via dedicated API
+      delete bodyContent.testimonials; // Managed via dedicated API
 
       const homeRes = await fetch("/api/admin/homepage", {
         method: "POST",

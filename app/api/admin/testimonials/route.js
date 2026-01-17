@@ -1,158 +1,115 @@
 import { NextResponse } from "next/server";
 import clientPromise from "@/lib/mongodb";
 import { getAuthUser } from "@/lib/auth";
+import { ObjectId } from "mongodb";
 
-// Get all testimonials from MongoDB
 export async function GET() {
   try {
     const client = await clientPromise;
     const db = client.db("diit_admin");
-    const collection = db.collection("testimonials");
-
-    const testimonials = await collection.findOne({ _id: "testimonials" });
-
-    if (!testimonials) {
-      return NextResponse.json({
-        success: true,
-        data: {
-          testimonials: {
-            students: [],
-            guardians: [],
-          },
-        },
-      });
-    }
-
-    // Remove MongoDB _id field
-    delete testimonials._id;
-
-    return NextResponse.json({
-      success: true,
-      data: {
-        testimonials: testimonials.data || { students: [], guardians: [] },
-      },
-    });
+    const data = await db.collection("testimonials").find({}).sort({ createdAt: -1 }).toArray();
+    return NextResponse.json({ success: true, data });
   } catch (error) {
-    console.error("Error fetching testimonials:", error);
-    return NextResponse.json(
-      { success: false, message: "Failed to fetch testimonials" },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, message: error.message }, { status: 500 });
   }
 }
 
-// Update testimonials data
 export async function POST(request) {
   try {
     const user = await getAuthUser();
     if (!user) {
-      return NextResponse.json(
-        { success: false, message: "Unauthorized" },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
     }
 
     const body = await request.json();
-    const testimonialData = body.testimonials || body.data || body;
+    const { action, item, id } = body;
 
     const client = await clientPromise;
     const db = client.db("diit_admin");
     const collection = db.collection("testimonials");
 
-    // Upsert the testimonials data
-    await collection.updateOne(
-      { _id: "testimonials" },
-      {
-        $set: {
-          data: testimonialData,
-          updatedAt: new Date(),
-          updatedBy: user.email,
-        },
-      },
-      { upsert: true }
-    );
+    if (action === "create") {
+      const newItem = {
+        ...item,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        updatedBy: user.email
+      };
 
-    return NextResponse.json({
-      success: true,
-      message: "Testimonials updated successfully",
-      data: {
-        testimonials: testimonialData,
-      },
-    });
-  } catch (error) {
-    console.error("Error updating testimonials:", error);
-    return NextResponse.json(
-      { success: false, message: "Failed to update testimonials" },
-      { status: 500 }
-    );
-  }
-}
+      // Remove temp id
+      if (newItem.id === "new" || !newItem.id) delete newItem.id;
+      if (newItem._id) delete newItem._id; // Ensure no _id is passed for creation
 
-// Delete a specific testimonial
-export async function DELETE(request) {
-  try {
-    const user = await getAuthUser();
-    if (!user) {
-      return NextResponse.json(
-        { success: false, message: "Unauthorized" },
-        { status: 401 }
-      );
-    }
-
-    const { searchParams } = new URL(request.url);
-    const category = searchParams.get("category"); // 'students' or 'guardians'
-    const index = parseInt(searchParams.get("index"));
-
-    if (!category || index === undefined) {
-      return NextResponse.json(
-        { success: false, message: "Missing category or index parameter" },
-        { status: 400 }
-      );
-    }
-
-    const client = await clientPromise;
-    const db = client.db("diit_admin");
-    const collection = db.collection("testimonials");
-
-    const testimonials = await collection.findOne({ _id: "testimonials" });
-
-    if (!testimonials) {
-      return NextResponse.json(
-        { success: false, message: "No testimonials found" },
-        { status: 404 }
-      );
-    }
-
-    const data = testimonials.data;
-    if (data[category] && data[category][index]) {
-      data[category].splice(index, 1);
-
-      await collection.updateOne(
-        { _id: "testimonials" },
-        {
-          $set: {
-            data,
-            updatedAt: new Date(),
-            updatedBy: user.email,
-          },
-        }
-      );
+      const result = await collection.insertOne(newItem);
 
       return NextResponse.json({
         success: true,
-        message: "Testimonial deleted successfully",
+        message: "Testimonial created",
+        item: { ...newItem, _id: result.insertedId }
       });
     }
 
-    return NextResponse.json(
-      { success: false, message: "Testimonial not found" },
-      { status: 404 }
-    );
+    else if (action === "update") {
+      const targetId = item._id || item.id || id;
+      if (!targetId) return NextResponse.json({ success: false, message: "ID missing" }, { status: 400 });
+
+      const { _id, id: pid, ...updateData } = item;
+
+      let query = {};
+      if (ObjectId.isValid(targetId)) {
+        query = { _id: new ObjectId(targetId) };
+      } else {
+        query = { id: targetId };
+      }
+
+      await collection.updateOne(
+        query,
+        {
+          $set: {
+            ...updateData,
+            updatedAt: new Date(),
+            updatedBy: user.email
+          }
+        }
+      );
+
+      return NextResponse.json({ success: true, message: "Testimonial updated" });
+    }
+
+    return NextResponse.json({ success: false, message: "Invalid action" }, { status: 400 });
+
   } catch (error) {
-    console.error("Error deleting testimonial:", error);
-    return NextResponse.json(
-      { success: false, message: "Failed to delete testimonial" },
-      { status: 500 }
-    );
+    console.error("Testimonials API Error:", error);
+    return NextResponse.json({ success: false, message: error.message }, { status: 500 });
+  }
+}
+
+export async function DELETE(request) {
+  try {
+    const user = await getAuthUser();
+    if (!user) return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
+
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get("id");
+
+    if (!id) return NextResponse.json({ success: false, message: "ID required" }, { status: 400 });
+
+    const client = await clientPromise;
+    const db = client.db("diit_admin");
+    const collection = db.collection("testimonials");
+
+    let query = {};
+    if (ObjectId.isValid(id)) {
+      query = { _id: new ObjectId(id) };
+    } else {
+      query = { id: id };
+    }
+
+    await collection.deleteOne(query);
+
+    return NextResponse.json({ success: true, message: "Testimonial deleted" });
+
+  } catch (error) {
+    return NextResponse.json({ success: false, message: error.message }, { status: 500 });
   }
 }
