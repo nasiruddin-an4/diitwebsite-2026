@@ -1,15 +1,53 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
     User, Mail, Phone, Calendar, MapPin,
     BookOpen, Award, CheckCircle2,
     Send, HelpCircle, AlertCircle,
-    Camera
+    Camera, Loader2, X
 } from 'lucide-react';
+import Swal from 'sweetalert2';
+import { uploadFile } from '@/lib/upload-utils';
+
 
 const OnlineAdmissionForm = () => {
+    const [photoUrl, setPhotoUrl] = useState("");
+    const [isUploading, setIsUploading] = useState(false);
+
+    const handlePhotoUpload = async (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        // Validation
+        if (!file.type.startsWith('image/')) {
+            Swal.fire({ icon: 'error', title: 'Invalid File', text: 'Please upload an image file.' });
+            return;
+        }
+
+        if (file.size > 2 * 1024 * 1024) {
+            Swal.fire({ icon: 'error', title: 'File Too Large', text: 'Photo must be less than 2MB.' });
+            return;
+        }
+
+        setIsUploading(true);
+        try {
+            const result = await uploadFile(file, "admissions");
+            if (result.success) {
+                setPhotoUrl(result.url);
+                Swal.fire({ icon: 'success', title: 'Photo Uploaded', text: 'Your photo has been uploaded successfully.', toast: true, position: 'top-end', timer: 3000 });
+            } else {
+                throw new Error(result.message);
+            }
+        } catch (error) {
+            console.error("Admission photo upload error:", error);
+            Swal.fire({ icon: 'error', title: 'Upload Failed', text: error.message || 'Could not upload photo' });
+        } finally {
+            setIsUploading(false);
+        }
+    };
+
 
     const SectionHeader = ({ icon: Icon, title }) => (
         <div className="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100 text-brandColor">
@@ -106,15 +144,49 @@ const OnlineAdmissionForm = () => {
                                 <div className="grid md:grid-cols-12 gap-8 mb-6">
                                     {/* Photo Upload Area */}
                                     <div className="md:col-span-4">
-                                        <div className="h-full min-h-[220px] bg-slate-50 rounded-2xl border-2 border-dashed border-slate-300 flex flex-col items-center justify-center p-6 text-center hover:border-brandColor hover:bg-blue-50/50 transition-all cursor-pointer group relative">
-                                            <div className="w-16 h-16 bg-white rounded-full shadow-sm border border-slate-100 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                                                <Camera className="w-8 h-8 text-slate-400 group-hover:text-brandColor" />
-                                            </div>
-                                            <span className="text-sm font-bold text-slate-600 group-hover:text-brandColor">Upload Photo</span>
-                                            <span className="text-xs text-slate-400 mt-2">Max 2MB (JPG/PNG)</span>
-                                            <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" accept="image/*" />
+                                        <div className={`h-full min-h-[220px] bg-slate-50 rounded-2xl border-2 border-dashed ${photoUrl ? 'border-brandColor' : 'border-slate-300'} flex flex-col items-center justify-center p-6 text-center hover:border-brandColor hover:bg-blue-50/50 transition-all cursor-pointer group relative overflow-hidden`}>
+                                            {isUploading ? (
+                                                <div className="flex flex-col items-center gap-3">
+                                                    <Loader2 className="w-10 h-10 text-brandColor animate-spin" />
+                                                    <span className="text-sm font-bold text-brandColor">Uploading...</span>
+                                                </div>
+                                            ) : photoUrl ? (
+                                                <div className="relative w-full h-full group/image">
+                                                    <img src={photoUrl} alt="Applicant" className="w-full h-full object-contain rounded-xl" />
+                                                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/image:opacity-100 transition-opacity flex flex-col items-center justify-center text-white">
+                                                        <Camera className="w-10 h-10 mb-2" />
+                                                        <span className="text-xs font-bold uppercase tracking-wider">Change Photo</span>
+                                                    </div>
+                                                    <button
+                                                        type="button"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            setPhotoUrl("");
+                                                        }}
+                                                        className="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full shadow-lg hover:bg-red-600 transition-colors z-20"
+                                                    >
+                                                        <X className="w-4 h-4" />
+                                                    </button>
+                                                </div>
+                                            ) : (
+                                                <>
+                                                    <div className="w-16 h-16 bg-white rounded-full shadow-sm border border-slate-100 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                                        <Camera className="w-8 h-8 text-slate-400 group-hover:text-brandColor" />
+                                                    </div>
+                                                    <span className="text-sm font-bold text-slate-600 group-hover:text-brandColor">Upload Photo</span>
+                                                    <span className="text-xs text-slate-400 mt-2">Max 2MB (JPG/PNG)</span>
+                                                </>
+                                            )}
+                                            <input
+                                                type="file"
+                                                className="absolute inset-0 opacity-0 cursor-pointer"
+                                                accept="image/*"
+                                                onChange={handlePhotoUpload}
+                                                disabled={isUploading}
+                                            />
                                         </div>
                                     </div>
+
 
                                     {/* Personal Fields */}
                                     <div className="md:col-span-8 grid gap-6">

@@ -1,15 +1,12 @@
 import { NextResponse } from "next/server";
 import clientPromise from "@/lib/mongodb";
 import { ObjectId } from "mongodb";
+import fs from "fs/promises";
+import path from "path";
 
 // Helper to ensure data directory exists and get file path
 const getDataFilePath = async () => {
-  const dataDir = path.join(process.cwd(), "data");
-  try {
-    await fs.access(dataDir);
-  } catch {
-    await fs.mkdir(dataDir, { recursive: true });
-  }
+  const dataDir = path.join(process.cwd(), "public", "Data");
   return path.join(dataDir, "hero_slides.json");
 };
 
@@ -25,13 +22,26 @@ export async function GET() {
       .sort({ order: 1, _id: -1 })
       .toArray();
 
+    if (!slides || slides.length === 0) {
+      // Fallback to JSON if DB is empty
+      const filePath = await getDataFilePath();
+      const fileContent = await fs.readFile(filePath, "utf-8");
+      return NextResponse.json({ success: true, data: JSON.parse(fileContent) });
+    }
+
     return NextResponse.json({ success: true, data: slides });
   } catch (error) {
-    console.error("Error fetching hero slides:", error);
-    return NextResponse.json(
-      { success: false, message: "Failed to fetch slides" },
-      { status: 500 }
-    );
+    console.warn("MongoDB fetch failed for hero slides, falling back to JSON:", error.message);
+    try {
+      const filePath = await getDataFilePath();
+      const fileContent = await fs.readFile(filePath, "utf-8");
+      return NextResponse.json({ success: true, data: JSON.parse(fileContent) });
+    } catch (fsError) {
+      return NextResponse.json(
+        { success: false, message: "Failed to fetch slides even from fallback" },
+        { status: 500 }
+      );
+    }
   }
 }
 

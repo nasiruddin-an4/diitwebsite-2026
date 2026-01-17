@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import {
@@ -13,66 +13,60 @@ import {
     CheckCircle,
     ArrowRight,
     GraduationCap,
-    Lightbulb
+    Loader2
 } from 'lucide-react';
 
 const ProgramsOverview = () => {
+    const [programs, setPrograms] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-    const undergraduatePrograms = [
-        {
-            id: 'cse',
-            title: "B.Sc. in Computer Science & Engineering (CSE)",
-            code: "CSE",
-            description: "A comprehensive 4-year program designed to mold future tech leaders with a strong foundation in algorithms, software development, and AI.",
-            icon: Monitor,
-            link: "/programs/cse",
-            color: "blue",
-            image: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=2070&auto=format&fit=crop"
-        },
-        {
-            id: 'bba',
-            title: "Bachelor of Business Administration (BBA)",
-            code: "BBA",
-            description: "Develop strategic leadership skills and business acumen to thrive in the global corporate landscape.",
-            icon: Briefcase,
-            link: "/programs/bba",
-            color: "emerald",
-            image: "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=2032&auto=format&fit=crop"
-        },
-        {
-            id: 'bthm',
-            title: "BBA in Tourism & Hospitality Management (BTHM)",
-            code: "BTHM",
-            description: "Prepare for a dynamic career in the booming tourism and hospitality industry with practical training.",
-            icon: Globe,
-            link: "/programs/bthm",
-            color: "orange",
-            image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=2070&auto=format&fit=crop"
-        }
-    ];
+    useEffect(() => {
+        const fetchPrograms = async () => {
+            try {
+                const response = await fetch('/api/admin/data/ProgramsData');
+                if (!response.ok) throw new Error('Failed to fetch programs');
+                const result = await response.json();
+                const programsData = result.data?.programsData || result.data || [];
+                setPrograms(programsData);
+            } catch (error) {
+                console.error("Error fetching programs:", error);
+                setPrograms([]);
+            } finally {
+                setLoading(false);
+            }
+        };
 
-    const postgraduatePrograms = [
-        {
-            id: 'mba',
-            title: "Master of Business Administration (MBA)",
-            code: "MBA",
-            description: "Accelerate your career with advanced business knowledge and networking opportunities for working professionals.",
-            icon: Briefcase,
-            link: "/programs/mba",
-            color: "purple",
-            image: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=2070&auto=format&fit=crop"
-        },
-        {
-            id: 'mthm',
-            title: "MBA in Tourism & Hospitality Management (MTHM)",
-            code: "MTHM",
-            description: "Specialized master's program for leadership roles in the global hospitality and tourism sector.",
-            icon: Globe,
-            link: "/programs/mthm",
-            color: "rose",
-            image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=2070&auto=format&fit=crop"
-        }
-    ];
+        fetchPrograms();
+    }, []);
+
+    // Map program category to icon and color
+    const getCategoryStyle = (category, id) => {
+        const styles = {
+            engineering: { icon: Monitor, color: "blue" },
+            business: { icon: Briefcase, color: "emerald" },
+            tourism: { icon: Globe, color: "orange" },
+            default: { icon: BookOpen, color: "slate" }
+        };
+
+        // Special cases based on ID
+        if (id === 'mba' || id === 'mthm') return { ...styles.business, color: "purple" };
+        if (id === 'mthm') return { icon: Globe, color: "rose" };
+
+        return styles[category?.toLowerCase()] || styles.default;
+    };
+
+    // Separate programs by type (undergraduate vs postgraduate)
+    const undergraduatePrograms = programs.filter(p =>
+        p.degree?.toLowerCase().includes('b.sc') ||
+        p.degree?.toLowerCase().includes('bba') ||
+        p.degree?.toLowerCase() === 'bachelor' ||
+        (!p.degree?.toLowerCase().includes('mba') && !p.degree?.toLowerCase().includes('master'))
+    );
+
+    const postgraduatePrograms = programs.filter(p =>
+        p.degree?.toLowerCase().includes('mba') ||
+        p.degree?.toLowerCase().includes('master')
+    );
 
     const features = [
         { title: "NU Affiliated", desc: "Recognized degrees from National University", icon: Award },
@@ -80,6 +74,14 @@ const ProgramsOverview = () => {
         { title: "Expert Faculty", desc: "Learn from experienced academicians", icon: Users },
         { title: "Career Support", desc: "Placement assistance and internships", icon: GraduationCap }
     ];
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-slate-50">
+                <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-slate-50 font-sans selection:bg-brandColor/20 selection:text-brandColor">
@@ -134,106 +136,127 @@ const ProgramsOverview = () => {
             <div className="max-w-7xl mx-auto px-4 py-20 space-y-24">
 
                 {/* Undergraduate Programs */}
-                <section>
-                    <div className="flex items-center gap-4 mb-10">
-                        <div className="h-10 w-1.5 bg-brandColor rounded-full" />
-                        <div>
-                            <h2 className="text-3xl md:text-4xl font-bold text-slate-900">Undergraduate Programs</h2>
-                            <p className="text-slate-500 mt-1">Build a strong foundation for your future career</p>
+                {undergraduatePrograms.length > 0 && (
+                    <section>
+                        <div className="flex items-center gap-4 mb-10">
+                            <div className="h-10 w-1.5 bg-brandColor rounded-full" />
+                            <div>
+                                <h2 className="text-3xl md:text-4xl font-bold text-slate-900">Undergraduate Programs</h2>
+                                <p className="text-slate-500 mt-1">Build a strong foundation for your future career</p>
+                            </div>
                         </div>
-                    </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {undergraduatePrograms.map((program, index) => (
-                            <Link href={program.link} key={index} className="group">
-                                <motion.div
-                                    whileHover={{ y: -8 }}
-                                    className="bg-white rounded-2xl overflow-hidden shadow-lg shadow-slate-200/50 border border-slate-100 h-full flex flex-col"
-                                >
-                                    <div className="h-48 overflow-hidden relative">
-                                        <div className={`absolute inset-0 bg-${program.color}-900/20 group-hover:bg-transparent transition-colors z-10`} />
-                                        <img
-                                            src={program.image}
-                                            alt={program.title}
-                                            className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
-                                        />
-                                        <div className="absolute top-4 left-4 z-20">
-                                            <span className="bg-white/90 backdrop-blur text-slate-900 text-xs font-bold px-3 py-1 rounded-full shadow-sm">
-                                                {program.code}
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div className="p-6 flex-1 flex flex-col">
-                                        <div className={`w-12 h-12 rounded-xl bg-${program.color}-50 text-${program.color}-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
-                                            <program.icon className="w-6 h-6" />
-                                        </div>
-                                        <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-brandColor transition-colors">
-                                            {program.title}
-                                        </h3>
-                                        <p className="text-slate-500 text-sm leading-relaxed mb-6 flex-1">
-                                            {program.description}
-                                        </p>
-                                        <div className="flex items-center text-brandColor font-bold text-sm group/btn">
-                                            View Details
-                                            <ArrowRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
-                                        </div>
-                                    </div>
-                                </motion.div>
-                            </Link>
-                        ))}
-                    </div>
-                </section>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            {undergraduatePrograms.map((program, index) => {
+                                const style = getCategoryStyle(program.category, program.id);
+                                const IconComponent = style.icon;
+                                return (
+                                    <Link href={`/programs/${program.id}`} key={program.id || index} className="group">
+                                        <motion.div
+                                            whileHover={{ y: -8 }}
+                                            className="bg-white rounded-2xl overflow-hidden shadow-lg shadow-slate-200/50 border border-slate-100 h-full flex flex-col"
+                                        >
+                                            <div className="h-48 overflow-hidden relative">
+                                                <div className="absolute inset-0 bg-slate-900/20 group-hover:bg-transparent transition-colors z-10" />
+                                                <img
+                                                    src={program.image || "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=2070&auto=format&fit=crop"}
+                                                    alt={program.title}
+                                                    className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
+                                                />
+                                                <div className="absolute top-4 left-4 z-20">
+                                                    <span className="bg-white/90 backdrop-blur text-slate-900 text-xs font-bold px-3 py-1 rounded-full shadow-sm">
+                                                        {program.shortName || program.degree}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div className="p-6 flex-1 flex flex-col">
+                                                <div className={`w-12 h-12 rounded-xl bg-${style.color}-50 text-${style.color}-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
+                                                    <IconComponent className="w-6 h-6" />
+                                                </div>
+                                                <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-brandColor transition-colors">
+                                                    {program.title}
+                                                </h3>
+                                                <p className="text-slate-500 text-sm leading-relaxed mb-6 flex-1 line-clamp-3">
+                                                    {program.description}
+                                                </p>
+                                                <div className="flex items-center text-brandColor font-bold text-sm group/btn">
+                                                    View Details
+                                                    <ArrowRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
+                                                </div>
+                                            </div>
+                                        </motion.div>
+                                    </Link>
+                                );
+                            })}
+                        </div>
+                    </section>
+                )}
 
                 {/* Postgraduate Programs */}
-                <section>
-                    <div className="flex items-center gap-4 mb-10">
-                        <div className="h-10 w-1.5 bg-purple-600 rounded-full" />
-                        <div>
-                            <h2 className="text-3xl md:text-4xl font-bold text-slate-900">Postgraduate Programs</h2>
-                            <p className="text-slate-500 mt-1">Advance your expertise and leadership potential</p>
+                {postgraduatePrograms.length > 0 && (
+                    <section>
+                        <div className="flex items-center gap-4 mb-10">
+                            <div className="h-10 w-1.5 bg-purple-600 rounded-full" />
+                            <div>
+                                <h2 className="text-3xl md:text-4xl font-bold text-slate-900">Postgraduate Programs</h2>
+                                <p className="text-slate-500 mt-1">Advance your expertise and leadership potential</p>
+                            </div>
                         </div>
-                    </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        {postgraduatePrograms.map((program, index) => (
-                            <Link href={program.link} key={index} className="group">
-                                <motion.div
-                                    whileHover={{ y: -8 }}
-                                    className="bg-white rounded-2xl overflow-hidden shadow-lg shadow-slate-200/50 border border-slate-100 flex flex-col md:flex-row h-full"
-                                >
-                                    <div className="md:w-2/5 h-48 md:h-auto overflow-hidden relative">
-                                        <div className="absolute inset-0 bg-purple-900/20 group-hover:bg-transparent transition-colors z-10" />
-                                        <img
-                                            src={program.image}
-                                            alt={program.title}
-                                            className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
-                                        />
-                                    </div>
-                                    <div className="p-8 md:w-3/5 flex flex-col justify-center">
-                                        <div className="flex items-center gap-3 mb-4">
-                                            <div className={`w-10 h-10 rounded-lg bg-${program.color}-50 text-${program.color}-600 flex items-center justify-center`}>
-                                                <program.icon className="w-5 h-5" />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            {postgraduatePrograms.map((program, index) => {
+                                const style = getCategoryStyle(program.category, program.id);
+                                const IconComponent = style.icon;
+                                return (
+                                    <Link href={`/programs/${program.id}`} key={program.id || index} className="group">
+                                        <motion.div
+                                            whileHover={{ y: -8 }}
+                                            className="bg-white rounded-2xl overflow-hidden shadow-lg shadow-slate-200/50 border border-slate-100 flex flex-col md:flex-row h-full"
+                                        >
+                                            <div className="md:w-2/5 h-48 md:h-auto overflow-hidden relative">
+                                                <div className="absolute inset-0 bg-purple-900/20 group-hover:bg-transparent transition-colors z-10" />
+                                                <img
+                                                    src={program.image || "https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=2070&auto=format&fit=crop"}
+                                                    alt={program.title}
+                                                    className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
+                                                />
                                             </div>
-                                            <span className="bg-slate-100 text-slate-600 text-xs font-bold px-3 py-1 rounded-full">
-                                                {program.code}
-                                            </span>
-                                        </div>
-                                        <h3 className="text-2xl font-bold text-slate-900 mb-3 group-hover:text-purple-600 transition-colors">
-                                            {program.title}
-                                        </h3>
-                                        <p className="text-slate-500 text-sm leading-relaxed mb-6">
-                                            {program.description}
-                                        </p>
-                                        <div className="flex items-center text-purple-600 font-bold text-sm group/btn">
-                                            Program Details
-                                            <ArrowRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
-                                        </div>
-                                    </div>
-                                </motion.div>
-                            </Link>
-                        ))}
+                                            <div className="p-8 md:w-3/5 flex flex-col justify-center">
+                                                <div className="flex items-center gap-3 mb-4">
+                                                    <div className={`w-10 h-10 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center`}>
+                                                        <IconComponent className="w-5 h-5" />
+                                                    </div>
+                                                    <span className="bg-slate-100 text-slate-600 text-xs font-bold px-3 py-1 rounded-full">
+                                                        {program.shortName || program.degree}
+                                                    </span>
+                                                </div>
+                                                <h3 className="text-2xl font-bold text-slate-900 mb-3 group-hover:text-purple-600 transition-colors">
+                                                    {program.title}
+                                                </h3>
+                                                <p className="text-slate-500 text-sm leading-relaxed mb-6 line-clamp-3">
+                                                    {program.description}
+                                                </p>
+                                                <div className="flex items-center text-purple-600 font-bold text-sm group/btn">
+                                                    Program Details
+                                                    <ArrowRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
+                                                </div>
+                                            </div>
+                                        </motion.div>
+                                    </Link>
+                                );
+                            })}
+                        </div>
+                    </section>
+                )}
+
+                {/* No Programs Message */}
+                {programs.length === 0 && (
+                    <div className="text-center py-20">
+                        <BookOpen className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+                        <h3 className="text-xl font-bold text-slate-700 mb-2">No Programs Found</h3>
+                        <p className="text-slate-500">Programs will appear here once added from the admin dashboard.</p>
                     </div>
-                </section>
+                )}
 
                 {/* Why Study at DIIT */}
                 <section className="bg-slate-900 rounded-3xl p-8 md:p-16 relative overflow-hidden text-center md:text-left">
@@ -304,3 +327,4 @@ const ProgramsOverview = () => {
 };
 
 export default ProgramsOverview;
+

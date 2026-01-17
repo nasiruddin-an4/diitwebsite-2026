@@ -50,15 +50,15 @@ const DynamicProgramPage = () => {
                 if (!response.ok) throw new Error('Failed to fetch programs');
                 const result = await response.json();
                 const programs = result.data?.programsData || result.data || [];
-                
+
                 // Find program by ID (supports both numeric and string IDs)
-                const found = programs.find(p => 
+                const found = programs.find(p =>
                     String(p.id) === String(id) || p.shortName?.toLowerCase() === String(id).toLowerCase()
                 );
-                
+
                 if (found) {
                     setProgram(found);
-                    
+
                     // Fetch department-specific data based on category
                     fetchDepartmentData(found.category || found.department || "engineering");
                 } else {
@@ -156,21 +156,8 @@ const DynamicProgramPage = () => {
         { icon: Code, label: "Credits", value: safeProgram.credits || "N/A" },
     ];
 
-    // Sample alumni data (can be replaced with dynamic data from safeProgram.alumni if available)
-    const alumniList = safeProgram.alumni || [
-        {
-            name: "John Doe",
-            role: "Software Engineer at Tech Corp",
-            image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=100&auto=format&fit=crop",
-            quote: "DIIT prepared me well for my career in technology."
-        },
-        {
-            name: "Jane Smith",
-            role: "Business Manager at Global Inc",
-            image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=100&auto=format&fit=crop",
-            quote: "The education and network I gained were invaluable."
-        },
-    ];
+    // Alumni data from program (only show if data exists)
+    const alumniList = safeProgram.alumni || safeProgram.alumniStories || [];
 
     return (
         <div className="min-h-screen bg-slate-50 font-sans selection:bg-blue-100 selection:text-blue-900">
@@ -228,15 +215,15 @@ const DynamicProgramPage = () => {
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-[#001229] via-transparent to-transparent opacity-60" />
                         </div>
-                        {/* Stats Floating Card */}
-                        <div className="absolute -bottom-10 left-10 right-10 bg-white rounded-2xl shadow-xl p-6 hidden md:grid grid-cols-4 gap-4 items-center border border-slate-100 divide-x divide-slate-100">
+
+                        {/* <div className="absolute -bottom-10 left-10 right-10 bg-white rounded-2xl shadow-xl p-6 hidden md:grid grid-cols-4 gap-4 items-center border border-slate-100 divide-x divide-slate-100">
                             {safeProgram.stats.map((stat, idx) => (
                                 <div key={idx} className="text-center px-2">
                                     <h4 className="text-2xl font-bold text-slate-900">{stat.value}</h4>
                                     <p className="text-xs text-slate-500 font-bold uppercase tracking-wide mt-1">{stat.label}</p>
                                 </div>
                             ))}
-                        </div>
+                        </div> */}
                     </motion.div>
                 </div>
             </div>
@@ -255,10 +242,10 @@ const DynamicProgramPage = () => {
                             <div className="shrink-0">
                                 <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-slate-50 shadow-md">
                                     <Image src={safeProgram.headImage}
-                                     alt={safeProgram.headName}
-                                     width={240}
-                                     height={240}
-                                     className="w-full h-full object-cover" />
+                                        alt={safeProgram.headName}
+                                        width={240}
+                                        height={240}
+                                        className="w-full h-full object-cover" />
                                 </div>
                             </div>
                             <div>
@@ -338,94 +325,100 @@ const DynamicProgramPage = () => {
                         </div>
                     </section>
 
-                    {/* Facilities Showcase */}
-                    <section>
-                        <h2 className="text-3xl font-bold text-slate-900 mb-6 flex items-center gap-3">
-                            <span className="w-2 h-8 bg-blue-600 rounded-full"></span> Existing Facilities
-                        </h2>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                            {safeProgram.facilities.map((facility, idx) => (
-                                <div key={idx} className="group relative rounded-2xl overflow-hidden aspect-video shadow-md cursor-pointer">
-                                    <img
-                                        src={facility.image}
-                                        alt={facility.name}
-                                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                                        loading="lazy"
-                                    />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-6 flex items-end">
-                                        <h4 className="text-white font-bold text-lg">{facility.name}</h4>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </section>
-
-                    {/* Career Opportunities */}
-                    <section>
-                        <h2 className="text-3xl font-bold text-slate-900 mb-6 flex items-center gap-3">
-                            <span className="w-2 h-8 bg-blue-600 rounded-full"></span> Career Opportunities
-                        </h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {safeProgram.careers.map((career, idx) => (
-                                <div key={idx} className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md hover:border-blue-100 transition-all group">
-                                    <div className="flex items-start gap-4">
-                                        <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                                            <Briefcase className="w-6 h-6" />
-                                        </div>
-                                        <div className="flex-1">
-                                            <h4 className="font-bold text-slate-900 text-lg group-hover:text-blue-600 transition-colors">{career.area}</h4>
-                                            {career.description && (
-                                                <p className="text-slate-500 text-sm mb-3">{career.description}</p>
-                                            )}
-                                            {career.skills && (
-                                                <div className="flex flex-wrap gap-2">
-                                                    {career.skills.split(",").map((skill, sIdx) => (
-                                                        <span key={sIdx} className="inline-block px-2.5 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full border border-blue-200">
-                                                            {skill.trim()}
-                                                        </span>
-                                                    ))}
-                                                </div>
-                                            )}
+                    {/* Facilities Showcase - Only show if facilities exist */}
+                    {safeProgram.facilities.length > 0 && (
+                        <section>
+                            <h2 className="text-3xl font-bold text-slate-900 mb-6 flex items-center gap-3">
+                                <span className="w-2 h-8 bg-blue-600 rounded-full"></span> Existing Facilities
+                            </h2>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                {safeProgram.facilities.map((facility, idx) => (
+                                    <div key={idx} className="group relative rounded-2xl overflow-hidden aspect-video shadow-md cursor-pointer">
+                                        <img
+                                            src={facility.image}
+                                            alt={facility.name}
+                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                                            loading="lazy"
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-6 flex items-end">
+                                            <h4 className="text-white font-bold text-lg">{facility.name}</h4>
                                         </div>
                                     </div>
-                                </div>
-                            ))}
-                        </div>
-                    </section>
+                                ))}
+                            </div>
+                        </section>
+                    )}
 
-                    {/* FAQs */}
-                    <section>
-                        <h2 className="text-3xl font-bold text-slate-900 mb-6 flex items-center gap-3">
-                            <span className="w-2 h-8 bg-blue-600 rounded-full"></span> FAQs
-                        </h2>
-                        <div className="space-y-3">
-                            {safeProgram.faqs.map((faq, idx) => (
-                                <div key={idx} className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-                                    <button
-                                        onClick={() => toggleFaq(idx)}
-                                        className="w-full flex items-center justify-between p-5 text-left font-bold text-slate-800 hover:bg-slate-50 transition-colors"
-                                    >
-                                        {faq.question}
-                                        {openFaq === idx ? <ChevronUp className="w-5 h-5 text-blue-500" /> : <ChevronDown className="w-5 h-5 text-slate-400" />}
-                                    </button>
-                                    <AnimatePresence>
-                                        {openFaq === idx && (
-                                            <motion.div
-                                                initial={{ height: 0, opacity: 0 }}
-                                                animate={{ height: "auto", opacity: 1 }}
-                                                exit={{ height: 0, opacity: 0 }}
-                                                className="overflow-hidden"
-                                            >
-                                                <div className="px-5 pb-5 text-slate-600 leading-relaxed border-t border-slate-100 pt-4 bg-slate-50/50">
-                                                    {faq.answer}
-                                                </div>
-                                            </motion.div>
-                                        )}
-                                    </AnimatePresence>
-                                </div>
-                            ))}
-                        </div>
-                    </section>
+                    {/* Career Opportunities - Only show if careers exist */}
+                    {safeProgram.careers.length > 0 && (
+                        <section>
+                            <h2 className="text-3xl font-bold text-slate-900 mb-6 flex items-center gap-3">
+                                <span className="w-2 h-8 bg-blue-600 rounded-full"></span> Career Opportunities
+                            </h2>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {safeProgram.careers.map((career, idx) => (
+                                    <div key={idx} className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md hover:border-blue-100 transition-all group">
+                                        <div className="flex items-start gap-4">
+                                            <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                                                <Briefcase className="w-6 h-6" />
+                                            </div>
+                                            <div className="flex-1">
+                                                <h4 className="font-bold text-slate-900 text-lg group-hover:text-blue-600 transition-colors">{career.area}</h4>
+                                                {career.description && (
+                                                    <p className="text-slate-500 text-sm mb-3">{career.description}</p>
+                                                )}
+                                                {career.skills && (
+                                                    <div className="flex flex-wrap gap-2">
+                                                        {career.skills.split(",").map((skill, sIdx) => (
+                                                            <span key={sIdx} className="inline-block px-2.5 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full border border-blue-200">
+                                                                {skill.trim()}
+                                                            </span>
+                                                        ))}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+                    )}
+
+                    {/* FAQs - Only show if FAQs exist */}
+                    {safeProgram.faqs.length > 0 && (
+                        <section>
+                            <h2 className="text-3xl font-bold text-slate-900 mb-6 flex items-center gap-3">
+                                <span className="w-2 h-8 bg-blue-600 rounded-full"></span> FAQs
+                            </h2>
+                            <div className="space-y-3">
+                                {safeProgram.faqs.map((faq, idx) => (
+                                    <div key={idx} className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+                                        <button
+                                            onClick={() => toggleFaq(idx)}
+                                            className="w-full flex items-center justify-between p-5 text-left font-bold text-slate-800 hover:bg-slate-50 transition-colors"
+                                        >
+                                            {faq.question}
+                                            {openFaq === idx ? <ChevronUp className="w-5 h-5 text-blue-500" /> : <ChevronDown className="w-5 h-5 text-slate-400" />}
+                                        </button>
+                                        <AnimatePresence>
+                                            {openFaq === idx && (
+                                                <motion.div
+                                                    initial={{ height: 0, opacity: 0 }}
+                                                    animate={{ height: "auto", opacity: 1 }}
+                                                    exit={{ height: 0, opacity: 0 }}
+                                                    className="overflow-hidden"
+                                                >
+                                                    <div className="px-5 pb-5 text-slate-600 leading-relaxed border-t border-slate-100 pt-4 bg-slate-50/50">
+                                                        {faq.answer}
+                                                    </div>
+                                                </motion.div>
+                                            )}
+                                        </AnimatePresence>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+                    )}
                 </div>
 
                 {/* Sidebar Sticky */}
@@ -450,73 +443,76 @@ const DynamicProgramPage = () => {
                             </div>
                         </div>
 
-                        {/* Resources/Downloads */}
-                        <div className="bg-slate-900 rounded-2xl p-6 text-white relative overflow-hidden">
-                            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/20 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
-                            <h3 className="font-bold text-lg mb-4 relative z-10">Student Resources</h3>
-                            <div className="space-y-3 relative z-10">
-                                {(safeProgram.resources || []).map((item, i) => (
-                                    <a key={i} href="#" className="flex items-center justify-between p-3 bg-white/10 rounded-xl hover:bg-white/20 transition-colors group">
-                                        <div className="flex items-center gap-3">
-                                            <FileText className="w-4 h-4 text-blue-400" />
-                                            <div className="text-left">
-                                                <p className="text-sm font-bold group-hover:text-blue-300 transition-colors">{item.name}</p>
-                                                <p className="text-[10px] text-slate-400">PDF • {item.size || "N/A"}</p>
+                        {/* Resources/Downloads - Only show if resources exist */}
+                        {safeProgram.resources && safeProgram.resources.length > 0 && (
+                            <div className="bg-slate-900 rounded-2xl p-6 text-white relative overflow-hidden">
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/20 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
+                                <h3 className="font-bold text-lg mb-4 relative z-10">Student Resources</h3>
+                                <div className="space-y-3 relative z-10">
+                                    {safeProgram.resources.map((item, i) => (
+                                        <a key={i} href={item.url || "#"} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-3 bg-white/10 rounded-xl hover:bg-white/20 transition-colors group">
+                                            <div className="flex items-center gap-3">
+                                                <FileText className="w-4 h-4 text-blue-400" />
+                                                <div className="text-left">
+                                                    <p className="text-sm font-bold group-hover:text-blue-300 transition-colors">{item.name}</p>
+                                                    <p className="text-[10px] text-slate-400">PDF • {item.size || "Download"}</p>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <Download className="w-4 h-4 text-slate-400 group-hover:text-white transition-colors" />
-                                    </a>
-                                ))}
-                                {(!safeProgram.resources || safeProgram.resources.length === 0) && (
-                                    <p className="text-sm text-slate-400">No resources available yet.</p>
-                                )}
-                            </div>
-                        </div>
-
-                        {/* Alumni Carousel Snippet */}
-                        <div className="bg-white rounded-2xl p-6 border border-slate-100 relative overflow-hidden">
-                            <div className="flex items-center justify-between mb-4">
-                                <h3 className="font-bold text-slate-900">Alumni Stories</h3>
-                                <div className="flex gap-1">
-                                    <button
-                                        onClick={() => setAlumniIndex(prev => prev === 0 ? alumniList.length - 1 : prev - 1)}
-                                        className="p-1 rounded bg-slate-100 hover:bg-blue-50 text-slate-500 hover:text-blue-600 transition-colors"
-                                    >
-                                        <ChevronDown className="w-4 h-4 rotate-90" />
-                                    </button>
-                                    <button
-                                        onClick={() => setAlumniIndex(prev => (prev + 1) % alumniList.length)}
-                                        className="p-1 rounded bg-slate-100 hover:bg-blue-50 text-slate-500 hover:text-blue-600 transition-colors"
-                                    >
-                                        <ChevronDown className="w-4 h-4 -rotate-90" />
-                                    </button>
+                                            <Download className="w-4 h-4 text-slate-400 group-hover:text-white transition-colors" />
+                                        </a>
+                                    ))}
                                 </div>
                             </div>
+                        )}
 
-                            <div className="relative">
-                                <AnimatePresence mode="wait">
-                                    <motion.div
-                                        key={alumniIndex}
-                                        initial={{ opacity: 0, x: 20 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        exit={{ opacity: 0, x: -20 }}
-                                        transition={{ duration: 0.3 }}
-                                        className="text-center"
-                                    >
-                                        <div className="w-20 h-20 mx-auto rounded-full overflow-hidden mb-3 border-2 border-blue-100 p-1">
-                                            <img src={alumniList[alumniIndex].image} alt="Alumnus" className="w-full h-full object-cover rounded-full" />
+                        {/* Alumni Carousel Snippet - Only show if alumni data exists */}
+                        {alumniList.length > 0 && (
+                            <div className="bg-white rounded-2xl p-6 border border-slate-100 relative overflow-hidden">
+                                <div className="flex items-center justify-between mb-4">
+                                    <h3 className="font-bold text-slate-900">Alumni Stories</h3>
+                                    {alumniList.length > 1 && (
+                                        <div className="flex gap-1">
+                                            <button
+                                                onClick={() => setAlumniIndex(prev => prev === 0 ? alumniList.length - 1 : prev - 1)}
+                                                className="p-1 rounded bg-slate-100 hover:bg-blue-50 text-slate-500 hover:text-blue-600 transition-colors"
+                                            >
+                                                <ChevronDown className="w-4 h-4 rotate-90" />
+                                            </button>
+                                            <button
+                                                onClick={() => setAlumniIndex(prev => (prev + 1) % alumniList.length)}
+                                                className="p-1 rounded bg-slate-100 hover:bg-blue-50 text-slate-500 hover:text-blue-600 transition-colors"
+                                            >
+                                                <ChevronDown className="w-4 h-4 -rotate-90" />
+                                            </button>
                                         </div>
-                                        <p className="text-sm text-slate-600 italic mb-3">"{alumniList[alumniIndex].quote}"</p>
-                                        <h4 className="font-bold text-slate-900 text-sm">{alumniList[alumniIndex].name}</h4>
-                                        <p className="text-xs text-slate-500">{alumniList[alumniIndex].role}</p>
-                                    </motion.div>
-                                </AnimatePresence>
-                            </div>
+                                    )}
+                                </div>
 
-                            <div className="mt-4 pt-4 border-t border-slate-50 text-center">
-                                <Link href="/alumni" className="text-xs text-blue-600 font-bold hover:underline">View Application Alumni</Link>
+                                <div className="relative">
+                                    <AnimatePresence mode="wait">
+                                        <motion.div
+                                            key={alumniIndex}
+                                            initial={{ opacity: 0, x: 20 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            exit={{ opacity: 0, x: -20 }}
+                                            transition={{ duration: 0.3 }}
+                                            className="text-center"
+                                        >
+                                            <div className="w-20 h-20 mx-auto rounded-full overflow-hidden mb-3 border-2 border-blue-100 p-1">
+                                                <img src={alumniList[alumniIndex].image} alt="Alumnus" className="w-full h-full object-cover rounded-full" />
+                                            </div>
+                                            <p className="text-sm text-slate-600 italic mb-3">"{alumniList[alumniIndex].quote}"</p>
+                                            <h4 className="font-bold text-slate-900 text-sm">{alumniList[alumniIndex].name}</h4>
+                                            <p className="text-xs text-slate-500">{alumniList[alumniIndex].role}</p>
+                                        </motion.div>
+                                    </AnimatePresence>
+                                </div>
+
+                                <div className="mt-4 pt-4 border-t border-slate-50 text-center">
+                                    <Link href="/alumni" className="text-xs text-blue-600 font-bold hover:underline">View All Alumni</Link>
+                                </div>
                             </div>
-                        </div>
+                        )}
 
                         {/* Admission CTA */}
                         <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-6 text-center text-white shadow-xl shadow-blue-900/20">

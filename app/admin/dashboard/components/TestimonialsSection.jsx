@@ -238,14 +238,34 @@ export default function TestimonialsSection({ data, updateField, addItem, delete
                         <input
                           type="file"
                           accept="image/*"
-                          onChange={(e) => {
+                          onChange={async (e) => {
                             const file = e.target.files?.[0];
                             if (file) {
-                              const reader = new FileReader();
-                              reader.onload = (ev) => handleUpdate(editingIndex, "image", ev.target.result);
-                              reader.readAsDataURL(file);
+                              try {
+                                Swal.showLoading();
+                                const formData = new FormData();
+                                formData.append("file", file);
+                                formData.append("folder", "testimonials");
+
+                                const res = await fetch("/api/upload", {
+                                  method: "POST",
+                                  body: formData,
+                                });
+                                const result = await res.json();
+
+                                if (result.success) {
+                                  handleUpdate(editingIndex, "image", result.url);
+                                  Swal.fire({ icon: "success", title: "Uploaded!", text: "Student photo updated", toast: true, position: "top-end", timer: 2000 });
+                                } else {
+                                  throw new Error(result.message);
+                                }
+                              } catch (error) {
+                                console.error("Testimonial upload error:", error);
+                                Swal.fire({ icon: "error", title: "Upload Failed", text: error.message || "Could not upload photo" });
+                              }
                             }
                           }}
+
                           className="hidden"
                         />
                       </label>

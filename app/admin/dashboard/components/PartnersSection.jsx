@@ -199,18 +199,39 @@ export default function PartnersSection({ data, updateField, addItem, deleteItem
                         <input
                           type="file"
                           accept="image/*"
-                          onChange={(e) => {
+                          onChange={async (e) => {
                             const file = e.target.files?.[0];
                             if (file) {
                               if (file.size > 5 * 1024 * 1024) {
                                 Swal.fire({ icon: "error", title: "Too large", text: "Logo must be less than 5MB", toast: true, position: "top-end", timer: 3000 });
                                 return;
                               }
-                              const reader = new FileReader();
-                              reader.onload = (ev) => updateField("internationalPartners", editingIndex, "logo", ev.target.result);
-                              reader.readAsDataURL(file);
+
+                              try {
+                                Swal.showLoading();
+                                const formData = new FormData();
+                                formData.append("file", file);
+                                formData.append("folder", "partners");
+
+                                const res = await fetch("/api/upload", {
+                                  method: "POST",
+                                  body: formData,
+                                });
+                                const result = await res.json();
+
+                                if (result.success) {
+                                  updateField("internationalPartners", editingIndex, "logo", result.url);
+                                  Swal.fire({ icon: "success", title: "Uploaded!", text: "Logo updated", toast: true, position: "top-end", timer: 2000 });
+                                } else {
+                                  throw new Error(result.message);
+                                }
+                              } catch (error) {
+                                console.error("Partner logo upload error:", error);
+                                Swal.fire({ icon: "error", title: "Upload Failed", text: error.message || "Could not upload logo" });
+                              }
                             }
                           }}
+
                           className="hidden"
                         />
                       </label>

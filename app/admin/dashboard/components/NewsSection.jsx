@@ -237,18 +237,39 @@ export default function NewsSection({ data, updateField, addItem, deleteItem, on
                           <input
                             type="file"
                             accept="image/*"
-                            onChange={(e) => {
+                            onChange={async (e) => {
                               const file = e.target.files?.[0];
                               if (file) {
                                 if (file.size > 5 * 1024 * 1024) {
                                   Swal.fire({ icon: "error", title: "Too large", text: "Image size must be less than 5MB", toast: true, position: "top-end", timer: 3000 });
                                   return;
                                 }
-                                const reader = new FileReader();
-                                reader.onload = (ev) => updateField("newsEvents", editingIndex, "image", ev.target.result);
-                                reader.readAsDataURL(file);
+
+                                try {
+                                  Swal.showLoading();
+                                  const formData = new FormData();
+                                  formData.append("file", file);
+                                  formData.append("folder", "news");
+
+                                  const res = await fetch("/api/upload", {
+                                    method: "POST",
+                                    body: formData,
+                                  });
+                                  const result = await res.json();
+
+                                  if (result.success) {
+                                    updateField("newsEvents", editingIndex, "image", result.url);
+                                    Swal.fire({ icon: "success", title: "Uploaded!", text: "Cover image updated", toast: true, position: "top-end", timer: 2000 });
+                                  } else {
+                                    throw new Error(result.message);
+                                  }
+                                } catch (error) {
+                                  console.error("News upload error:", error);
+                                  Swal.fire({ icon: "error", title: "Upload Failed", text: error.message || "Could not upload image" });
+                                }
                               }
                             }}
+
                             className="hidden"
                           />
                           <div className="bg-white px-4 py-2 rounded-md shadow-lg font-bold text-sm text-blue-600 flex items-center gap-2">

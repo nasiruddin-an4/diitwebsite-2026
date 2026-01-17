@@ -1,22 +1,19 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, X, Check, Loader2, Image as ImageIcon, Edit2, Trash2, Save, Home, Upload } from "lucide-react";
+import { Plus, X, Loader2, Image as ImageIcon, Edit2, Trash2, Save, Home, Upload } from "lucide-react";
 import Swal from "sweetalert2";
 import { InputField } from "./InputField";
-import Image from "next/image";
 
 export default function HeroSection({ data, updateField, addItem, deleteItem, onSave, saving }) {
   const [editingId, setEditingId] = useState(null);
   const [uploading, setUploading] = useState(false);
+  const [deleting, setDeleting] = useState(null); // Track which slide is being deleted
   const [isCreating, setIsCreating] = useState(false);
+  const [creating, setCreating] = useState(false); // Loading state for create
   const [newSlide, setNewSlide] = useState({
     title: "",
     subtitle: "",
-    image: "",
-    buttons: {
-      primary: { text: "Explore Programs", link: "/programs" },
-      secondary: { text: "Contact Us", link: "/contact" }
-    }
+    image: ""
   });
 
   const slides = data?.heroSlides || [];
@@ -33,38 +30,84 @@ export default function HeroSection({ data, updateField, addItem, deleteItem, on
     }
 
     setUploading(true);
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      if (typeof index === 'number') {
-        updateField("heroSlides", index, "image", event.target.result);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("folder", "hero");
+
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const result = await res.json();
+
+      if (result.success) {
+        if (typeof index === 'number') {
+          updateField("heroSlides", index, "image", result.url);
+        } else {
+          setNewSlide(prev => ({ ...prev, image: result.url }));
+        }
+        Swal.fire({ icon: "success", title: "Uploaded!", text: "Image uploaded to Cloudinary", toast: true, position: "top-end", timer: 2000 });
       } else {
-        setNewSlide(prev => ({ ...prev, image: event.target.result }));
+        throw new Error(result.message);
       }
+    } catch (error) {
+      console.error("Hero upload error:", error);
+      Swal.fire({ icon: "error", title: "Upload Failed", text: error.message || "Could not upload image", toast: true, position: "top-end", timer: 3000 });
+    } finally {
       setUploading(false);
-    };
-    reader.readAsDataURL(file);
+    }
   };
 
-  const handleCreateSlide = () => {
+  // CREATE - Add new slide to MongoDB immediately
+  const handleCreateSlide = async () => {
     if (!newSlide.title || !newSlide.image) {
       Swal.fire({ icon: "warning", title: "Information Required", text: "Title and Image are required for a slide.", toast: true, position: "top-end", timer: 3000 });
       return;
     }
 
-    addItem("heroSlides", { ...newSlide, id: Date.now() });
-    setIsCreating(false);
-    setNewSlide({
-      title: "",
-      subtitle: "",
-      image: "",
-      buttons: { primary: { text: "Explore", link: "/programs" }, secondary: { text: "Contact", link: "/contact" } }
-    });
+    setCreating(true);
+    try {
+      const slideData = {
+        title: newSlide.title,
+        subtitle: newSlide.subtitle || "",
+        image: newSlide.image,
+        order: slides.length
+      };
+
+      const res = await fetch("/api/admin/hero", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(slideData),
+      });
+
+      const result = await res.json();
+
+      if (result.success) {
+        // Add to local state with the MongoDB _id
+        addItem("heroSlides", { ...slideData, _id: result.data._id, id: result.data._id });
+        setIsCreating(false);
+        setNewSlide({ title: "", subtitle: "", image: "" });
+        Swal.fire({ icon: "success", title: "Created!", text: "Slide created and saved to database", toast: true, position: "top-end", timer: 2000 });
+      } else {
+        throw new Error(result.message);
+      }
+    } catch (error) {
+      console.error("Create slide error:", error);
+      Swal.fire({ icon: "error", title: "Create Failed", text: error.message || "Could not create slide", toast: true, position: "top-end", timer: 3000 });
+    } finally {
+      setCreating(false);
+    }
   };
 
-  const handleDelete = (item, index) => {
-    Swal.fire({
+  // DELETE - Remove slide from MongoDB immediately
+  const handleDelete = async (slide, index) => {
+    const slideId = slide._id || slide.id;
+
+    const result = await Swal.fire({
       title: "Delete Slide?",
-      text: "This action will remove the slide from the homepage.",
+      text: "This action will permanently remove the slide from the database.",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#dc2626",
@@ -75,51 +118,34 @@ export default function HeroSection({ data, updateField, addItem, deleteItem, on
         confirmButton: "rounded-lg px-6 py-2 font-bold",
         cancelButton: "rounded-lg px-6 py-2 font-bold"
       }
-    }).then((result) => {
-      if (result.isConfirmed) {
-        deleteItem("heroSlides", index);
-      }
     });
-  };
 
-  const SlideForm = ({ slide, index, isNew = false }) => {
-    const updateLocalField = (field, value) => {
-      if (isNew) setNewSlide(p => ({ ...p, [field]: value }));
-      else updateField("heroSlides", index, field, value);
-    };
+    if (result.isConfirmed) {
+      setDeleting(slideId);
+      try {
+        // If the slide has a MongoDB _id, delete from database
+        if (slide._id) {
+          const res = await fetch(`/api/admin/hero?id=${slide._id}`, {
+            method: "DELETE",
+          });
 
-    return (
-      <div className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <InputField label="Slide Title" value={slide.title} onChange={(v) => updateLocalField("title", v)} placeholder="Main headline..." />
-          <InputField label="Subtitle" value={slide.subtitle} onChange={(v) => updateLocalField("subtitle", v)} placeholder="Supporting text..." />
-        </div>
+          const deleteResult = await res.json();
 
-        {/* Image Upload */}
-        <div className="space-y-3">
-          <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider">Slide Background</label>
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="w-full sm:w-60 h-32 rounded-md bg-slate-100 border-2 border-slate-200 flex items-center justify-center overflow-hidden">
-              {slide.image ? (
-                <img src={slide.image} alt="Preview" className="w-full h-full object-cover" />
-              ) : (
-                <ImageIcon className="w-10 h-10 text-slate-300" />
-              )}
-            </div>
-            <div className="flex-1">
-              <label className="flex items-center justify-center h-32 border-2 border-dashed border-blue-200 rounded-md cursor-pointer bg-blue-50/30 hover:bg-blue-50 transition-all group">
-                <div className="text-center">
-                  <Upload className="w-6 h-6 text-blue-500 mx-auto mb-1 group-hover:scale-110" />
-                  <p className="text-xs font-bold text-blue-700">Upload Image</p>
-                  <p className="text-[10px] text-slate-400 mt-1">Recommended: 1920x600px</p>
-                </div>
-                <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, index)} className="hidden" />
-              </label>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+          if (!res.ok) {
+            throw new Error(deleteResult.message || "Failed to delete from database");
+          }
+        }
+
+        // Remove from local state
+        deleteItem("heroSlides", index);
+        Swal.fire({ icon: "success", title: "Deleted!", text: "Slide removed from database", toast: true, position: "top-end", timer: 2000 });
+      } catch (error) {
+        console.error("Delete error:", error);
+        Swal.fire({ icon: "error", title: "Delete Failed", text: error.message || "Could not delete slide", toast: true, position: "top-end", timer: 3000 });
+      } finally {
+        setDeleting(null);
+      }
+    }
   };
 
   return (
@@ -136,7 +162,7 @@ export default function HeroSection({ data, updateField, addItem, deleteItem, on
             className="flex items-center gap-2 px-6 py-2 bg-green-700 hover:bg-green-800 text-white rounded-md cursor-pointer font-medium transition-all disabled:opacity-50 text-sm"
           >
             {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-            Save Changes
+            Save All Changes
           </button>
           <button
             onClick={() => setIsCreating(true)}
@@ -166,7 +192,7 @@ export default function HeroSection({ data, updateField, addItem, deleteItem, on
             </thead>
             <tbody className="divide-y divide-slate-100">
               {slides.map((slide, index) => (
-                <tr key={slide.id || index} className="group hover:bg-slate-50">
+                <tr key={slide._id || slide.id || index} className="group hover:bg-slate-50">
                   <td className="p-4">
                     <div className="w-24 h-14 rounded-md overflow-hidden border border-slate-200 relative bg-slate-100">
                       {slide.image && <img src={slide.image} alt="" className="w-full h-full object-cover" />}
@@ -178,8 +204,24 @@ export default function HeroSection({ data, updateField, addItem, deleteItem, on
                   </td>
                   <td className="p-4">
                     <div className="flex justify-center gap-2">
-                      <button onClick={() => setEditingId(slide.id || slide._id)} className="p-2 text-blue-600 bg-blue-50 border border-blue-100 rounded-md cursor-pointer hover:bg-blue-100"><Edit2 className="w-4 h-4" /></button>
-                      <button onClick={() => handleDelete(slide, index)} className="p-2 text-red-600 bg-red-50 border border-red-100 rounded-md cursor-pointer hover:bg-red-100"><Trash2 className="w-4 h-4" /></button>
+                      <button
+                        onClick={() => setEditingId(slide._id || slide.id)}
+                        className="p-2 text-blue-600 bg-blue-50 border border-blue-100 rounded-md cursor-pointer hover:bg-blue-100"
+                        disabled={deleting === (slide._id || slide.id)}
+                      >
+                        <Edit2 className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(slide, index)}
+                        className="p-2 text-red-600 bg-red-50 border border-red-100 rounded-md cursor-pointer hover:bg-red-100 disabled:opacity-50"
+                        disabled={deleting === (slide._id || slide.id)}
+                      >
+                        {deleting === (slide._id || slide.id) ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <Trash2 className="w-4 h-4" />
+                        )}
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -189,7 +231,6 @@ export default function HeroSection({ data, updateField, addItem, deleteItem, on
         </div>
       )}
 
-      {/* Shared Modal UI */}
       <AnimatePresence>
         {(isCreating || editingId !== null) && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
@@ -211,16 +252,40 @@ export default function HeroSection({ data, updateField, addItem, deleteItem, on
 
               <div className="p-6 max-h-[70vh] overflow-y-auto">
                 {isCreating ? (
-                  <SlideForm slide={newSlide} isNew />
+                  <SlideForm
+                    slide={newSlide}
+                    isNew
+                    setNewSlide={setNewSlide}
+                    updateField={updateField}
+                    handleImageUpload={handleImageUpload}
+                    uploading={uploading}
+                  />
                 ) : editingSlide ? (
-                  <SlideForm slide={editingSlide} index={editingIndex} />
+                  <SlideForm
+                    slide={editingSlide}
+                    index={editingIndex}
+                    updateField={updateField}
+                    handleImageUpload={handleImageUpload}
+                    uploading={uploading}
+                  />
                 ) : null}
               </div>
 
               <div className="p-4 border-t border-slate-100 bg-slate-50/50 flex justify-end gap-3">
-                <button onClick={() => { setIsCreating(false); setEditingId(null); }} className="px-6 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-md cursor-pointer font-bold text-sm">Cancel</button>
-                <button onClick={() => { if (isCreating) handleCreateSlide(); else setEditingId(null); }} className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md cursor-pointer font-bold text-sm">
-                  {isCreating ? "Create Slide" : "Save & Close"}
+                <button
+                  onClick={() => { setIsCreating(false); setEditingId(null); }}
+                  className="px-6 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-md cursor-pointer font-bold text-sm"
+                  disabled={creating}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => { if (isCreating) handleCreateSlide(); else setEditingId(null); }}
+                  className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md cursor-pointer font-bold text-sm disabled:opacity-50 flex items-center gap-2"
+                  disabled={creating}
+                >
+                  {creating && <Loader2 className="w-4 h-4 animate-spin" />}
+                  {isCreating ? (creating ? "Creating..." : "Create Slide") : "Save & Close"}
                 </button>
               </div>
             </motion.div>
@@ -230,3 +295,54 @@ export default function HeroSection({ data, updateField, addItem, deleteItem, on
     </div>
   );
 }
+
+// SlideForm component - simplified without buttons
+const SlideForm = ({ slide, index, isNew = false, setNewSlide, updateField, handleImageUpload, uploading }) => {
+  const updateLocalField = (field, value) => {
+    if (isNew) setNewSlide(p => ({ ...p, [field]: value }));
+    else updateField("heroSlides", index, field, value);
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <InputField label="Slide Title" value={slide.title} onChange={(v) => updateLocalField("title", v)} placeholder="Main headline..." />
+        <InputField label="Subtitle" value={slide.subtitle} onChange={(v) => updateLocalField("subtitle", v)} placeholder="Supporting text..." />
+      </div>
+
+      {/* Image Upload */}
+      <div className="space-y-3">
+        <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider">Slide Background</label>
+        <div className="flex flex-col sm:flex-row gap-4">
+          <div className="w-full sm:w-60 h-32 rounded-md bg-slate-100 border-2 border-slate-200 flex items-center justify-center overflow-hidden relative">
+            {slide.image ? (
+              <img src={slide.image} alt="Preview" className="w-full h-full object-cover" />
+            ) : (
+              <ImageIcon className="w-10 h-10 text-slate-300" />
+            )}
+            {uploading && (
+              <div className="absolute inset-0 bg-white/60 flex items-center justify-center z-10">
+                <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
+              </div>
+            )}
+          </div>
+          <div className="flex-1">
+            <label className={`flex items-center justify-center h-32 border-2 border-dashed border-blue-200 rounded-md ${uploading ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:bg-blue-50'} bg-blue-50/30 transition-all group`}>
+              <div className="text-center">
+                {uploading ? (
+                  <Loader2 className="w-6 h-6 text-blue-500 mx-auto mb-1 animate-spin" />
+                ) : (
+                  <Upload className="w-6 h-6 text-blue-500 mx-auto mb-1 group-hover:scale-110" />
+                )}
+                <p className="text-xs font-bold text-blue-700">{uploading ? 'Uploading...' : 'Upload Image'}</p>
+                <p className="text-[10px] text-slate-400 mt-1">Recommended: 1920x600px</p>
+              </div>
+              <input type="file" accept="image/*" onChange={(e) => !uploading && handleImageUpload(e, index)} className="hidden" />
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+

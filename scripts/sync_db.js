@@ -3,7 +3,7 @@ const fs = require("fs");
 const path = require("path");
 
 const uri =
-  "mongodb+srv://dynamiceduDB:dynamiceduDB@facultydb.ptg8qx3.mongodb.net/?appName=facultydb";
+  "mongodb+srv://diitdb:4y9AgAazdY2WfrFb@diitdb.96eb9tv.mongodb.net/?appName=diitdb";
 const client = new MongoClient(uri);
 
 async function run() {

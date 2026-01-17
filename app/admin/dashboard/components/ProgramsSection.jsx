@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, X, BookOpen, Edit2, Trash2, Save, Loader2, Upload, Image as ImageIcon, Plus as PlusIcon, Users, Briefcase, HelpCircle } from "lucide-react";
+import { Plus, X, BookOpen, Edit2, Trash2, Save, Loader2, Upload, Image as ImageIcon, Plus as PlusIcon, Users, Briefcase, HelpCircle, FileText, Download } from "lucide-react";
 import Swal from "sweetalert2";
 import { InputField } from "./InputField";
 
@@ -17,17 +17,22 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
     description: "",
     skills: ""
   });
+  const [resourceInput, setResourceInput] = useState({
+    name: "",
+    file: null
+  });
+  const [uploadingResource, setUploadingResource] = useState(false);
 
   const programs = data?.programsData || [];
 
-  const template = { 
-    id: Date.now(), 
+  const template = {
+    id: Date.now(),
     serial: programs.length + 1,
-    title: "", 
-    category: "engineering", 
-    duration: "4 Years", 
-    degree: "B.Sc.", 
-    description: "", 
+    title: "",
+    category: "engineering",
+    duration: "4 Years",
+    degree: "B.Sc.",
+    description: "",
     image: "",
     // Quick Facts
     affiliation: "National University",
@@ -82,7 +87,7 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
       if (result.isConfirmed) {
         const updatedPrograms = programs.filter((_, i) => i !== index);
         updateField("programsData", null, null, updatedPrograms);
-        
+
         Swal.fire({
           icon: "success",
           title: "Deleted!",
@@ -259,16 +264,16 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
                   { id: "details", label: "Details" },
                   { id: "head", label: "Head Message" },
                   { id: "curriculum", label: "Curriculum" },
-                  { id: "extras", label: "Career" }
+                  { id: "extras", label: "Career" },
+                  { id: "resources", label: "Resources" }
                 ].map(tab => (
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`px-4 py-3 font-medium text-sm whitespace-nowrap border-b-2 transition-colors ${
-                      activeTab === tab.id
-                        ? "border-blue-600 text-blue-600"
-                        : "border-transparent text-slate-600 hover:text-slate-900"
-                    }`}
+                    className={`px-4 py-3 font-medium text-sm whitespace-nowrap border-b-2 transition-colors ${activeTab === tab.id
+                      ? "border-blue-600 text-blue-600"
+                      : "border-transparent text-slate-600 hover:text-slate-900"
+                      }`}
                   >
                     {tab.label}
                   </button>
@@ -344,18 +349,39 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
                             <input
                               type="file"
                               accept="image/*"
-                              onChange={(e) => {
+                              onChange={async (e) => {
                                 const file = e.target.files?.[0];
                                 if (file) {
                                   if (file.size > 5 * 1024 * 1024) {
                                     Swal.fire({ icon: "error", title: "Too large", text: "Image size must be less than 5MB", toast: true, position: "top-end", timer: 3000 });
                                     return;
                                   }
-                                  const reader = new FileReader();
-                                  reader.onload = (ev) => handleUpdateField("image", ev.target.result);
-                                  reader.readAsDataURL(file);
+
+                                  try {
+                                    Swal.showLoading();
+                                    const formData = new FormData();
+                                    formData.append("file", file);
+                                    formData.append("folder", "programs");
+
+                                    const res = await fetch("/api/upload", {
+                                      method: "POST",
+                                      body: formData,
+                                    });
+                                    const result = await res.json();
+
+                                    if (result.success) {
+                                      handleUpdateField("image", result.url);
+                                      Swal.fire({ icon: "success", title: "Uploaded!", text: "Program image updated", toast: true, position: "top-end", timer: 2000 });
+                                    } else {
+                                      throw new Error(result.message);
+                                    }
+                                  } catch (error) {
+                                    console.error("Program upload error:", error);
+                                    Swal.fire({ icon: "error", title: "Upload Failed", text: error.message || "Could not upload image" });
+                                  }
                                 }
                               }}
+
                               className="hidden"
                             />
                           </label>
@@ -452,16 +478,36 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
                           <input
                             type="file"
                             accept="image/*"
-                            onChange={(e) => {
+                            onChange={async (e) => {
                               const file = e.target.files?.[0];
                               if (file) {
-                                const reader = new FileReader();
-                                reader.onload = (ev) => handleUpdateField("headImage", ev.target.result);
-                                reader.readAsDataURL(file);
+                                try {
+                                  Swal.showLoading();
+                                  const formData = new FormData();
+                                  formData.append("file", file);
+                                  formData.append("folder", "program_heads");
+
+                                  const res = await fetch("/api/upload", {
+                                    method: "POST",
+                                    body: formData,
+                                  });
+                                  const result = await res.json();
+
+                                  if (result.success) {
+                                    handleUpdateField("headImage", result.url);
+                                    Swal.fire({ icon: "success", title: "Uploaded!", text: "Head photo updated", toast: true, position: "top-end", timer: 2000 });
+                                  } else {
+                                    throw new Error(result.message);
+                                  }
+                                } catch (error) {
+                                  console.error("Head image upload error:", error);
+                                  Swal.fire({ icon: "error", title: "Upload Failed", text: error.message || "Could not upload photo" });
+                                }
                               }
                             }}
                             className="hidden"
                           />
+
                         </label>
                       </div>
                     </div>
@@ -547,7 +593,7 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
                             .split("\n")
                             .map(s => s.trim())
                             .filter(s => s.length > 0);
-                          
+
                           if (subjects.length === 0) {
                             Swal.fire({ icon: "warning", title: "Required", text: "Please add at least one subject", toast: true, position: "top-end", timer: 2000 });
                             return;
@@ -561,7 +607,7 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
                           const updated = [...(editingProgram.curriculum || []), newSemester];
                           handleUpdateField("curriculum", updated);
                           setCurriculumInput({ semesterName: "", subjects: "" });
-                          
+
                           Swal.fire({
                             icon: "success",
                             title: "Added!",
@@ -673,7 +719,7 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
                             const updated = [...(editingProgram.careers || []), newCareer];
                             handleUpdateField("careers", updated);
                             setCareerInput({ area: "", description: "", skills: "" });
-                            
+
                             Swal.fire({
                               icon: "success",
                               title: "Added!",
@@ -735,6 +781,180 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
                     <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
                       <p className="text-sm text-amber-900">
                         <strong>💡 How it works:</strong> Career Opportunities are added per program. Faculty members and FAQs are fetched automatically from the department level, ensuring all programs in the same department show the same consistent information.
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Resources Tab */}
+                {activeTab === "resources" && (
+                  <div className="space-y-6">
+                    <div className="border-b border-slate-200 pb-4">
+                      <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2 mb-2">
+                        <FileText className="w-5 h-5 text-blue-600" />
+                        Student Resources & Downloads
+                      </h3>
+                      <p className="text-xs text-slate-500">Upload PDF documents for students to download (syllabus, handbooks, etc.)</p>
+                    </div>
+
+                    {/* Current Resources List */}
+                    <div className="space-y-3">
+                      <p className="text-xs font-semibold text-slate-600 uppercase">Uploaded Resources</p>
+                      <div className="bg-slate-50 rounded-lg border border-slate-200 p-4 space-y-3 max-h-64 overflow-y-auto">
+                        {editingProgram.resources && editingProgram.resources.length > 0 ? (
+                          editingProgram.resources.map((resource, idx) => (
+                            <div key={idx} className="bg-white border border-slate-200 rounded-lg p-4 flex items-center justify-between hover:shadow-sm transition-all">
+                              <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-lg bg-red-50 text-red-600 flex items-center justify-center">
+                                  <FileText className="w-5 h-5" />
+                                </div>
+                                <div>
+                                  <p className="font-bold text-slate-900 text-sm">{resource.name}</p>
+                                  <p className="text-xs text-slate-500 truncate max-w-xs">{resource.url}</p>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <a
+                                  href={resource.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="p-2 text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                                >
+                                  <Download className="w-4 h-4" />
+                                </a>
+                                <button
+                                  onClick={() => {
+                                    const updated = editingProgram.resources.filter((_, i) => i !== idx);
+                                    handleUpdateField("resources", updated);
+                                  }}
+                                  className="p-2 text-red-600 hover:bg-red-50 rounded transition-colors"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </div>
+                            </div>
+                          ))
+                        ) : (
+                          <p className="text-center text-slate-500 text-sm py-6">No resources uploaded yet. Add one below.</p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Add New Resource */}
+                    <div className="border-t border-slate-200 pt-4 space-y-4">
+                      <h4 className="font-semibold text-slate-900">Upload New Resource</h4>
+                      <InputField
+                        label="Resource Name"
+                        value={resourceInput.name}
+                        onChange={(v) => setResourceInput({ ...resourceInput, name: v })}
+                        placeholder="e.g. Program Syllabus, Student Handbook, Academic Calendar..."
+                      />
+
+                      <div className="space-y-2">
+                        <label className="block text-xs font-bold text-slate-600 uppercase">PDF File</label>
+                        <label className={`flex items-center justify-center h-24 border-2 border-dashed border-blue-200 rounded-lg ${uploadingResource ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:bg-blue-50'} bg-blue-50/30 transition-all group`}>
+                          <div className="text-center">
+                            {uploadingResource ? (
+                              <Loader2 className="w-6 h-6 text-blue-500 mx-auto mb-1 animate-spin" />
+                            ) : (
+                              <Upload className="w-6 h-6 text-blue-500 mx-auto mb-1 group-hover:scale-110" />
+                            )}
+                            <p className="text-xs font-bold text-blue-700">
+                              {uploadingResource ? 'Uploading...' : resourceInput.file ? resourceInput.file.name : 'Select PDF File'}
+                            </p>
+                            <p className="text-[10px] text-slate-400 mt-1">PDF files only, max 10MB</p>
+                          </div>
+                          <input
+                            type="file"
+                            accept=".pdf,application/pdf"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                if (file.size > 10 * 1024 * 1024) {
+                                  Swal.fire({ icon: "error", title: "File too large", text: "PDF must be less than 10MB", toast: true, position: "top-end", timer: 3000 });
+                                  return;
+                                }
+                                if (file.type !== 'application/pdf') {
+                                  Swal.fire({ icon: "error", title: "Invalid file", text: "Only PDF files are allowed", toast: true, position: "top-end", timer: 3000 });
+                                  return;
+                                }
+                                setResourceInput({ ...resourceInput, file });
+                              }
+                            }}
+                            className="hidden"
+                            disabled={uploadingResource}
+                          />
+                        </label>
+                      </div>
+
+                      <button
+                        onClick={async () => {
+                          if (!resourceInput.name.trim()) {
+                            Swal.fire({ icon: "warning", title: "Required", text: "Please enter a resource name", toast: true, position: "top-end", timer: 2000 });
+                            return;
+                          }
+                          if (!resourceInput.file) {
+                            Swal.fire({ icon: "warning", title: "Required", text: "Please select a PDF file", toast: true, position: "top-end", timer: 2000 });
+                            return;
+                          }
+
+                          setUploadingResource(true);
+                          try {
+                            // Upload to Cloudinary
+                            const formData = new FormData();
+                            formData.append("file", resourceInput.file);
+                            formData.append("folder", "program_resources");
+
+                            const res = await fetch("/api/upload", {
+                              method: "POST",
+                              body: formData,
+                            });
+                            const result = await res.json();
+
+                            if (result.success) {
+                              const newResource = {
+                                name: resourceInput.name,
+                                url: result.url,
+                                size: `${(resourceInput.file.size / 1024 / 1024).toFixed(1)} MB`
+                              };
+
+                              const updated = [...(editingProgram.resources || []), newResource];
+                              handleUpdateField("resources", updated);
+                              setResourceInput({ name: "", file: null });
+
+                              Swal.fire({
+                                icon: "success",
+                                title: "Uploaded!",
+                                text: `${resourceInput.name} uploaded successfully`,
+                                toast: true,
+                                position: "top-end",
+                                timer: 2000,
+                                showConfirmButton: false
+                              });
+                            } else {
+                              throw new Error(result.message);
+                            }
+                          } catch (error) {
+                            console.error("Resource upload error:", error);
+                            Swal.fire({ icon: "error", title: "Upload Failed", text: error.message || "Could not upload file", toast: true, position: "top-end", timer: 3000 });
+                          } finally {
+                            setUploadingResource(false);
+                          }
+                        }}
+                        disabled={uploadingResource || !resourceInput.name || !resourceInput.file}
+                        className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md cursor-pointer font-bold transition-all text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {uploadingResource ? (
+                          <><Loader2 className="w-4 h-4 animate-spin" /> Uploading...</>
+                        ) : (
+                          <><PlusIcon className="w-4 h-4" /> Upload Resource</>
+                        )}
+                      </button>
+                    </div>
+
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                      <p className="text-sm text-blue-900">
+                        <strong>💡 Tip:</strong> Resources uploaded here will appear in the "Student Resources" sidebar on the program detail page. Students can download these PDFs directly.
                       </p>
                     </div>
                   </div>

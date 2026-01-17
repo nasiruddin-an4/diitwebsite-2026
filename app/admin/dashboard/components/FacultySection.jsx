@@ -110,16 +110,36 @@ export default function FacultySection() {
     setFormData({ ...formData, [field]: value });
   };
 
-  const handleImageUpload = (e) => {
+  const handleImageUpload = async (e) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData({ ...formData, image: reader.result });
-      };
-      reader.readAsDataURL(file);
+      try {
+        setSaving(true); // Reuse saving state or add uploading state
+        const res = await fetch("/api/upload", {
+          method: "POST",
+          body: (() => {
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("folder", "faculty");
+            return formData;
+          })(),
+        });
+        const result = await res.json();
+        if (result.success) {
+          setFormData({ ...formData, image: result.url });
+          setMessage({ type: "success", text: "Image uploaded successfully" });
+        } else {
+          throw new Error(result.message);
+        }
+      } catch (error) {
+        console.error("Upload error:", error);
+        setMessage({ type: "error", text: "Failed to upload image" });
+      } finally {
+        setSaving(false);
+      }
     }
   };
+
 
   const handleSave = async () => {
     if (!formData.name || !formData.designation || !formData.department) {
@@ -182,8 +202,8 @@ export default function FacultySection() {
     }
   };
 
-  const filteredFaculty = filterDept === "All" 
-    ? faculty 
+  const filteredFaculty = filterDept === "All"
+    ? faculty
     : faculty.filter(f => f.department === filterDept);
 
   if (loading) {
@@ -217,11 +237,10 @@ export default function FacultySection() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className={`flex items-center gap-2 p-4 rounded-lg ${
-              message.type === "success"
+            className={`flex items-center gap-2 p-4 rounded-lg ${message.type === "success"
                 ? "bg-green-50 text-green-700 border border-green-200"
                 : "bg-red-50 text-red-700 border border-red-200"
-            }`}
+              }`}
           >
             {message.type === "success" ? (
               <Check className="w-5 h-5" />
@@ -239,11 +258,10 @@ export default function FacultySection() {
           <button
             key={dept}
             onClick={() => setFilterDept(dept)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-              filterDept === dept
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${filterDept === dept
                 ? "bg-blue-600 text-white"
                 : "bg-slate-100 text-slate-700 hover:bg-slate-200"
-            }`}
+              }`}
           >
             {dept}
           </button>
