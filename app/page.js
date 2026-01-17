@@ -46,6 +46,18 @@ export default async function Home() {
     id: t.id || t._id.toString()
   }));
 
+  // --- News & Events ---
+  const newsEventsData = await db.collection("news_events")
+    .find({})
+    .sort({ date: -1, createdAt: -1 })
+    .toArray();
+
+  const newsEvents = newsEventsData.map(n => ({
+    ...n,
+    _id: n._id.toString(),
+    id: n.id || n._id.toString()
+  }));
+
   return (
     <div className="min-h-screen font-sans">
       <Hero />
@@ -53,7 +65,7 @@ export default async function Home() {
       <ProgramExplorer data={programsData?.programsData || programsData} />
       <FindYourWay />
       <CredibilitySection data={{ ...homeData, internationalPartners: partners, collaborationBenefits: benefits }} />
-      <NewsEventsSection data={homeData.newsEvents} />
+      <NewsEventsSection newsEvents={newsEvents} />
       <TestimonialsSection testimonials={testimonials} />
       <CallToActionSection />
       <BackToTop />

@@ -121,6 +121,11 @@ export default function AdminDashboard() {
       const testimonialsResult = await testimonialsRes.json();
       const testimonialsData = testimonialsResult.success ? testimonialsResult.data : [];
 
+      // Fetch News & Events
+      const newsRes = await fetch("/api/admin/news-events");
+      const newsResult = await newsRes.json();
+      const newsData = newsResult.success ? newsResult.data : [];
+
       setData({
         ...defaultData,
         ...homeData,
@@ -128,7 +133,8 @@ export default function AdminDashboard() {
         programsData: programsData,
         internationalPartners: partnersData.partners || [],
         collaborationBenefits: partnersData.benefits || [],
-        testimonials: testimonialsData || []
+        testimonials: testimonialsData || [],
+        newsEvents: newsData || []
       });
 
       if (!heroResult.success || !homeResult.success || !programsResult.success) {
@@ -160,6 +166,7 @@ export default function AdminDashboard() {
       delete bodyContent.internationalPartners; // Managed via dedicated API
       delete bodyContent.collaborationBenefits; // Managed via dedicated API
       delete bodyContent.testimonials; // Managed via dedicated API
+      delete bodyContent.newsEvents; // Managed via dedicated API
 
       const homeRes = await fetch("/api/admin/homepage", {
         method: "POST",

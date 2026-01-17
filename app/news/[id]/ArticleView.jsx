@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
@@ -8,7 +8,6 @@ import {
     Calendar,
     Clock,
     Share2,
-    ArrowRight,
     Facebook,
     Twitter,
     Linkedin,
@@ -34,52 +33,9 @@ const staggerContainer = {
     }
 };
 
-export default function ArticleView({ newsId, initialData }) {
-    const [newsItem, setNewsItem] = useState(initialData);
-    const [recentNews, setRecentNews] = useState([]);
-    const [categories, setCategories] = useState([]);
-    const [isLoading, setIsLoading] = useState(!initialData);
-
-    useEffect(() => {
-        const fetchAllNews = async () => {
-            try {
-                const response = await fetch('/api/admin/data/HomePage');
-                const result = await response.json();
-                if (result.success && result.data.newsEvents) {
-                    const allNews = result.data.newsEvents;
-                    if (!newsItem) {
-                        const item = allNews.find(n => n.id === newsId);
-                        setNewsItem(item);
-                    }
-
-                    // Get recent news for sidebar
-                    const recent = allNews
-                        .filter(n => n.id !== newsId)
-                        .sort((a, b) => b.id - a.id)
-                        .slice(0, 4);
-                    setRecentNews(recent);
-
-                    // Get Categories (Unique)
-                    const cats = [...new Set(allNews.map(n => n.category))];
-                    setCategories(cats);
-                }
-            } catch (error) {
-                console.error("Failed to fetch news for article view:", error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchAllNews();
-    }, [newsId]);
-
-    if (isLoading) {
-        return (
-            <div className="min-h-screen flex items-center justify-center bg-white">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brandColor"></div>
-            </div>
-        );
-    }
+export default function ArticleView({ newsItem, recentNews }) {
+    // Fallback categories or extracted from recent
+    const categories = ["News", "Events", "Academic", "Notices"];
 
     if (!newsItem) {
         return (
@@ -94,14 +50,6 @@ export default function ArticleView({ newsId, initialData }) {
 
     return (
         <div className="min-h-screen bg-white font-sans text-gray-900 pb-20">
-            {/* Scroll Progress Bar (Simplified as a top border for now or could be hook based) */}
-            <motion.div
-                className="fixed top-0 left-0 right-0 h-1 bg-brandColor origin-left z-50"
-                initial={{ scaleX: 0 }}
-                animate={{ scaleX: 1 }}
-                transition={{ duration: 1.5, ease: "circOut" }}
-            />
-
             {/* Hero Section */}
             <div className="relative h-[65vh] md:h-[75vh] w-full overflow-hidden">
                 <motion.div
@@ -116,14 +64,14 @@ export default function ArticleView({ newsId, initialData }) {
                         className="w-full h-full object-cover"
                     />
                 </motion.div>
-                <div className="absolute inset-0 bg-linear-to-t from-gray-900 via-gray-900/60 to-gray-900/10 opacity-90" />
+                <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/60 to-gray-900/10 opacity-90" />
 
                 {/* Navigation Breadcrumb overlay */}
-                <div className="absolute top-0 left-0 w-full p-6 pt-24 z-10">
+                <div className="absolute top-0 left-0 w-full p-2 pt-14 z-10">
                     <div className="max-w-7xl mx-auto flex justify-between items-center">
                         <Link
                             href="/news"
-                            className="group inline-flex items-center text-white/90 hover:text-white bg-black/20 hover:bg-black/40 backdrop-blur-md px-5 py-2.5 rounded-full transition-all duration-300 border border-white/10"
+                            className="group inline-flex items-center text-white/90 hover:text-white bg-black/20 hover:bg-black/40 backdrop-blur-md px-5 py-1 rounded-full transition-all duration-300 border border-white/10"
                         >
                             <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
                             <span className="font-medium">Back to News</span>
@@ -131,7 +79,7 @@ export default function ArticleView({ newsId, initialData }) {
                     </div>
                 </div>
 
-                <div className="absolute bottom-0 left-0 w-full p-6 pb-24">
+                <div className="absolute bottom-0 left-0 w-full p-6 pb-12">
                     <div className="max-w-7xl mx-auto">
                         <motion.div
                             initial="hidden"
@@ -144,7 +92,7 @@ export default function ArticleView({ newsId, initialData }) {
                                     px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest shadow-lg
                                     ${newsItem.category === 'NEWS' ? 'bg-blue-600 text-white' : 'bg-yellow-500 text-black'}
                                 `}>
-                                    {newsItem.category}
+                                    {newsItem.category || "News"}
                                 </span>
                                 <div className="flex items-center gap-2 text-white/90 bg-white/10 px-4 py-1.5 rounded-full backdrop-blur-md border border-white/10">
                                     <Calendar className="w-3.5 h-3.5" />
@@ -154,7 +102,7 @@ export default function ArticleView({ newsId, initialData }) {
 
                             <motion.h1
                                 variants={fadeIn}
-                                className="text-3xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight drop-shadow-xl mb-6"
+                                className="text-3xl md:text-5xl font-extrabold text-white leading-tight drop-shadow-xl mb-6"
                             >
                                 {newsItem.title}
                             </motion.h1>
@@ -190,25 +138,31 @@ export default function ArticleView({ newsId, initialData }) {
                     >
                         <div className="bg-white rounded-3xl p-8 md:p-12 shadow-sm border border-gray-100 ring-1 ring-gray-100/50">
                             {/* Excerpt Section */}
-                            <div className="mb-10 p-8 bg-slate-50 rounded-2xl border-l-4 border-brandColor relative overflow-hidden">
-                                <div className="absolute top-0 right-0 -mt-2 -mr-2 opacity-5">
-                                    <Bookmark className="w-32 h-32" />
+                            {(newsItem.excerpt || newsItem.desc) && (
+                                <div className="mb-10 p-8 bg-slate-50 rounded-2xl border-l-4 border-brandColor relative overflow-hidden">
+                                    <div className="absolute top-0 right-0 -mt-2 -mr-2 opacity-5">
+                                        <Bookmark className="w-32 h-32" />
+                                    </div>
+                                    <p className="text-xl md:text-2xl font-medium text-gray-800 italic leading-relaxed relative z-10">
+                                        "{newsItem.excerpt || newsItem.desc}"
+                                    </p>
                                 </div>
-                                <p className="text-xl md:text-2xl font-medium text-gray-800 italic leading-relaxed relative z-10">
-                                    "{newsItem.excerpt}"
-                                </p>
-                            </div>
+                            )}
 
                             {/* Main Body */}
                             <article className="prose prose-lg md:prose-xl max-w-none text-gray-600 leading-8 font-serif-setup">
-                                {newsItem.content && newsItem.content.map((paragraph, idx) => (
-                                    <p key={idx} className={`
+                                {Array.isArray(newsItem.content) ? (
+                                    newsItem.content.map((paragraph, idx) => (
+                                        <p key={idx} className={`
                                         mb-6 text-gray-700
                                         ${idx === 0 ? "first-letter:text-5xl first-letter:font-bold first-letter:text-brandColor first-letter:mr-3 first-letter:float-left" : ""}
                                     `}>
-                                        {paragraph}
-                                    </p>
-                                ))}
+                                            {paragraph}
+                                        </p>
+                                    ))
+                                ) : (
+                                    <div dangerouslySetInnerHTML={{ __html: newsItem.content }} />
+                                )}
                             </article>
 
                             {/* Tags */}
@@ -218,7 +172,7 @@ export default function ArticleView({ newsId, initialData }) {
                                         <Tag className="w-4 h-4" />
                                         Tags:
                                     </span>
-                                    {["DIIT", "Education", "Technology", "Innovation", "Campus Life"].map((tag) => (
+                                    {["DIIT", "Education", newsItem.category || "News"].map((tag) => (
                                         <span key={tag} className="px-4 py-1.5 bg-gray-100 hover:bg-brandColor hover:text-white text-gray-600 text-sm font-medium rounded-full cursor-pointer transition-colors duration-300">
                                             #{tag}
                                         </span>
@@ -262,7 +216,7 @@ export default function ArticleView({ newsId, initialData }) {
                             </h3>
                             <div className="space-y-6">
                                 {recentNews.map((news) => (
-                                    <Link href={`/news/${news.id}`} key={news.id} className="group flex items-start gap-4">
+                                    <Link href={`/news/${news.id || news._id}`} key={news.id || news._id} className="group flex items-start gap-4">
                                         <div className="w-20 h-20 shrink-0 rounded-lg overflow-hidden relative">
                                             <img src={news.image} alt={news.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                                         </div>
@@ -288,16 +242,10 @@ export default function ArticleView({ newsId, initialData }) {
                                     <li key={cat}>
                                         <Link href="/news" className="flex items-center justify-between p-3 rounded-lg bg-gray-50 hover:bg-brandColor hover:text-white group transition-all duration-300">
                                             <span className="font-medium">{cat}</span>
-                                            < ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-white" />
+                                            <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-white" />
                                         </Link>
                                     </li>
                                 ))}
-                                <li>
-                                    <Link href="/news" className="flex items-center justify-between p-3 rounded-lg bg-gray-50 hover:bg-brandColor hover:text-white group transition-all duration-300">
-                                        <span className="font-medium">Academic</span>
-                                        < ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-white" />
-                                    </Link>
-                                </li>
                             </ul>
                         </div>
 

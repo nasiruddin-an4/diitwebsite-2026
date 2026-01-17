@@ -7,15 +7,12 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, EffectFade } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/effect-fade";
-import HomePageData from "@/public/Data/HomePage.json";
 
-const NewsEventsSection = ({ data }) => {
-    const [newsData, setNewsData] = useState([]);
+const NewsEventsSection = ({ newsEvents }) => {
     const [activeIndex, setActiveIndex] = useState(0);
 
-    useEffect(() => {
-        const newsEventsData = data || HomePageData.newsEvents;
-        const rawData = (newsEventsData?.news || newsEventsData) || [];
+    const newsData = React.useMemo(() => {
+        const rawData = newsEvents || [];
 
         // Helper to parse date strings into Date objects
         const parseDate = (dateStr) => {
@@ -25,22 +22,19 @@ const NewsEventsSection = ({ data }) => {
             const date = new Date(dateStr);
             if (!isNaN(date.getTime())) return date;
 
-            // Handle human-readable formats like "Nov. 9, 2025" or "Oct. 25, 2025"
+            // Handle human-readable formats
             try {
-                // Remove dots and split by space
                 const parts = dateStr.replace(/\./g, '').split(/[ ,]+/);
                 if (parts.length >= 3) {
                     const monthStr = parts[0];
                     const day = parts[1];
                     const year = parts[2];
-
                     const months = {
                         "Jan": 0, "Feb": 1, "Mar": 2, "Apr": 3, "May": 4, "Jun": 5,
                         "Jul": 6, "Aug": 7, "Sep": 8, "Oct": 9, "Nov": 10, "Dec": 11,
                         "January": 0, "February": 1, "March": 2, "April": 3, "August": 7,
                         "September": 8, "October": 9, "November": 10, "December": 11
                     };
-
                     const month = months[monthStr] !== undefined ? months[monthStr] : 0;
                     return new Date(year, month, day);
                 }
@@ -57,17 +51,19 @@ const NewsEventsSection = ({ data }) => {
 
             // If dates are the same, use ID as fallback (assuming higher ID = newer)
             if (dateB.getTime() === dateA.getTime()) {
-                return (b.id || 0) - (a.id || 0);
+                const idA = parseInt(a.id || a._id) || 0;
+                const idB = parseInt(b.id || b._id) || 0;
+                return idB - idA;
             }
             return dateB.getTime() - dateA.getTime();
         });
 
         // Enhance items with derived date fields if missing
-        const enhancedData = sortedData.map(item => {
-            const dateObj = parseDate(item.date);
-            const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-            const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
+        return sortedData.map(item => {
+            const dateObj = parseDate(item.date);
             return {
                 ...item,
                 day: item.day || dateObj.getDate().toString().padStart(2, '0'),
@@ -77,12 +73,9 @@ const NewsEventsSection = ({ data }) => {
                 time: item.time || "All Day"
             };
         });
-
-        setNewsData(enhancedData);
-    }, []);
+    }, [newsEvents]);
 
     // Get the top 4 latest items
-    // We show these 4 in BOTH the slider and the side-list for a consistent "Latest 4" view
     const latestItems = newsData.slice(0, 4);
 
     if (newsData.length === 0) return null;
@@ -131,8 +124,8 @@ const NewsEventsSection = ({ data }) => {
                             className="rounded-xl overflow-hidden h-full min-h-[500px]"
                         >
                             {latestItems.map((news) => (
-                                <SwiperSlide key={`slide-${news.id}`}>
-                                    <Link href={`/news/${news.id}`} className="group block relative h-full">
+                                <SwiperSlide key={`slide-${news.id || news._id}`}>
+                                    <Link href={`/news/${news.id || news._id}`} className="group block relative h-full">
                                         <div className="relative h-full min-h-[500px] overflow-hidden">
                                             <img
                                                 src={news.image}
@@ -192,8 +185,8 @@ const NewsEventsSection = ({ data }) => {
                     <div className="flex flex-col gap-5">
                         {latestItems.map((news, index) => (
                             <Link
-                                key={`list-${news.id}`}
-                                href={`/news/${news.id}`}
+                                key={`list-${news.id || news._id}`}
+                                href={`/news/${news.id || news._id}`}
                                 className="group flex items-center bg-white rounded-xl p-5 border border-slate-100 hover:border-brandColor/30 hover:shadow-md hover:-translate-y-1 transition-all duration-500"
                             >
                                 {/* Date Box */}
