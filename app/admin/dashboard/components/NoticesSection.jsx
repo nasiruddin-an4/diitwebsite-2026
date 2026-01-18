@@ -24,6 +24,15 @@ const categoryOptions = [
   { value: "General", label: "General" },
 ];
 
+const departmentOptions = [
+  { value: "All", label: "All Departments" },
+  { value: "BBA", label: "BBA" },
+  { value: "CSE", label: "CSE" },
+  { value: "BTHM", label: "BTHM" },
+  { value: "MBA", label: "MBA" },
+  { value: "MTHM", label: "MTHM" },
+];
+
 export default function NoticesSection() {
   const [notices, setNotices] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -65,6 +74,7 @@ export default function NoticesSection() {
         day: "numeric",
       }),
       category: "General",
+      department: "All",
       pinned: false,
       image: "",
       pdf: "",
@@ -239,8 +249,8 @@ export default function NoticesSection() {
                   />
                 </div>
 
-                {/* Date and Category */}
-                <div className="grid grid-cols-2 gap-4">
+                {/* Date, Category, and Department */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-slate-700 mb-2">
                       Date
@@ -262,6 +272,22 @@ export default function NoticesSection() {
                       className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                       {categoryOptions.map((opt) => (
+                        <option key={opt.value} value={opt.value}>
+                          {opt.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                      Department
+                    </label>
+                    <select
+                      value={formData.department || "All"}
+                      onChange={(e) => handleFieldChange("department", e.target.value)}
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      {departmentOptions.map((opt) => (
                         <option key={opt.value} value={opt.value}>
                           {opt.label}
                         </option>
@@ -307,7 +333,7 @@ export default function NoticesSection() {
                       folder="diit_notices"
                       acceptedFileTypes="image/*"
                       maxSizeInMB={1}
-                      onUploadSuccess={(result) => handleFieldChange("image", result.secure_url)}
+                      onUploadSuccess={(result) => handleFieldChange("image", result.url)}
                     />
                     {formData.image && (
                       <div className="mt-2 relative group w-fit">
@@ -351,7 +377,7 @@ export default function NoticesSection() {
                       folder="diit_notices_pdfs"
                       acceptedFileTypes="application/pdf"
                       maxSizeInMB={2}
-                      onUploadSuccess={(result) => handleFieldChange("pdf", result.secure_url)}
+                      onUploadSuccess={(result) => handleFieldChange("pdf", result.url)}
                     />
                     {formData.pdf && (
                       <div className="mt-2 flex items-center gap-2 p-2 bg-slate-50 border border-slate-200 rounded-lg w-fit">
@@ -445,7 +471,7 @@ export default function NoticesSection() {
                         {notice.title}
                       </h3>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
                       <span className="text-xs font-medium text-slate-500">{notice.date}</span>
                       <span className={`text-xs font-bold px-2 py-1 rounded-full ${notice.category === "Exam"
                         ? "bg-red-100 text-red-700"
@@ -459,6 +485,11 @@ export default function NoticesSection() {
                         }`}>
                         {notice.category}
                       </span>
+                      {notice.department && notice.department !== "All" && (
+                        <span className="text-xs font-bold px-2 py-1 rounded-full bg-indigo-100 text-indigo-700">
+                          {notice.department}
+                        </span>
+                      )}
                     </div>
                   </div>
                 </div>

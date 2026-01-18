@@ -14,15 +14,9 @@ import {
     GraduationCap,
     User,
     Calendar,
-    MapPin,
-    Briefcase,
     FileText,
     ExternalLink,
-    Quote,
-    Users,
     Star,
-    Globe,
-    ChevronRight,
     Loader2,
     AlertCircle
 } from 'lucide-react';
@@ -44,8 +38,8 @@ const FacultyDetailsPage = () => {
 
                 if (result.success && result.data) {
                     // Find the faculty by _id or id (handle both MongoDB ObjectId and string id)
-                    const foundMember = result.data.find(f => 
-                        String(f._id) === String(params.id) || 
+                    const foundMember = result.data.find(f =>
+                        String(f._id) === String(params.id) ||
                         String(f.id) === String(params.id)
                     );
                     if (foundMember) {
@@ -70,7 +64,7 @@ const FacultyDetailsPage = () => {
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-                <motion.div 
+                <motion.div
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     className="text-center bg-white/5 backdrop-blur-xl p-12 rounded-3xl border border-white/10"
@@ -85,7 +79,7 @@ const FacultyDetailsPage = () => {
     if (error || !member) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-                <motion.div 
+                <motion.div
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     className="text-center bg-white/5 backdrop-blur-xl p-12 rounded-3xl border border-white/10"
@@ -117,45 +111,33 @@ const FacultyDetailsPage = () => {
         visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
     };
 
-    // Stats data
-    const stats = [
-        { icon: BookOpen, label: "Publications", value: "15+", color: "from-blue-500 to-cyan-400" },
-        { icon: Users, label: "Students Mentored", value: "200+", color: "from-purple-500 to-pink-400" },
-        { icon: Award, label: "Awards", value: "5", color: "from-amber-500 to-orange-400" },
-        { icon: Calendar, label: "Years Experience", value: "10+", color: "from-emerald-500 to-teal-400" }
-    ];
-
-    // Research interests
-    const researchInterests = [
-        "Artificial Intelligence & Machine Learning",
-        "Data Science & Analytics",
-        "Software Engineering",
-        "Cloud Computing",
-        "Educational Technology"
-    ];
-
-    // Courses taught
-    const courses = [
-        { code: "CSE-301", name: "Data Structures", semester: "Fall 2024" },
-        { code: "CSE-405", name: "Machine Learning", semester: "Spring 2025" },
-        { code: "CSE-201", name: "Object Oriented Programming", semester: "Fall 2024" }
-    ];
+    // Build dynamic stats from actual member data
+    const dynamicStats = [];
+    if (member.publications) {
+        dynamicStats.push({ icon: BookOpen, label: "Publications", value: member.publications, color: "from-blue-500 to-cyan-400" });
+    }
+    if (member.yearsExperience) {
+        dynamicStats.push({ icon: Calendar, label: "Years Experience", value: member.yearsExperience + "+", color: "from-emerald-500 to-teal-400" });
+    }
+    if (member.awards) {
+        dynamicStats.push({ icon: Award, label: "Awards", value: member.awards, color: "from-amber-500 to-orange-400" });
+    }
 
     return (
         <div className="min-h-screen bg-slate-950 relative">
             {/* Animated Background Elements */}
             <div className="fixed inset-0 overflow-hidden pointer-events-none">
                 <div className="absolute top-0 left-0 w-full h-full bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMzLjMxNCAwIDYgMi42ODYgNiA2cy0yLjY4NiA2LTYgNi02LTIuNjg2LTYtNiAyLjY4Ni02IDYtNiIgc3Ryb2tlPSIjMzM0MTU1IiBzdHJva2Utd2lkdGg9IjAuNSIvPjwvZz48L3N2Zz4=')] opacity-20" />
-                <motion.div 
-                    animate={{ 
+                <motion.div
+                    animate={{
                         scale: [1, 1.2, 1],
                         rotate: [0, 90, 0]
                     }}
                     transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
                     className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-brandColor/30 to-cyan-500/20 rounded-full blur-3xl"
                 />
-                <motion.div 
-                    animate={{ 
+                <motion.div
+                    animate={{
                         scale: [1.2, 1, 1.2],
                         rotate: [0, -90, 0]
                     }}
@@ -180,14 +162,14 @@ const FacultyDetailsPage = () => {
                     </motion.div>
 
                     {/* Header Content */}
-                    <motion.div 
+                    <motion.div
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6, delay: 0.2 }}
-                        className="flex flex-col md:flex-row items-start gap-6"
+                        className="flex flex-col items-center text-center gap-6"
                     >
-                        <div className="flex-1">
-                            <div className="flex flex-wrap items-center gap-3 mb-4">
+                        <div className="w-full max-w-4xl">
+                            <div className="flex flex-wrap items-center justify-center gap-3 mb-4">
                                 <span className="px-4 py-1.5 rounded-full bg-gradient-to-r from-brandColor to-cyan-500 text-white text-xs font-bold uppercase tracking-wider shadow-lg shadow-brandColor/20">
                                     {member.department}
                                 </span>
@@ -198,9 +180,11 @@ const FacultyDetailsPage = () => {
                             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 leading-tight">
                                 {member.name}
                             </h1>
-                            <p className="text-lg text-slate-400 max-w-2xl leading-relaxed">
-                                Dedicated educator and researcher at DIIT, committed to fostering innovation and excellence in students.
-                            </p>
+                            {member.about && (
+                                <p className="text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed line-clamp-3">
+                                    {member.about}
+                                </p>
+                            )}
                         </div>
                     </motion.div>
                 </div>
@@ -227,7 +211,7 @@ const FacultyDetailsPage = () => {
                                         className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent opacity-80" />
-                                    
+
                                     {/* Floating Badge */}
                                     <div className="absolute bottom-4 left-4 right-4">
                                         <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-4 border border-white/20">
@@ -262,16 +246,6 @@ const FacultyDetailsPage = () => {
                                             <ExternalLink className="w-4 h-4 text-slate-500 group-hover:text-emerald-400 transition-colors shrink-0" />
                                         </a>
                                     )}
-
-                                    <a href="#" className="flex items-center gap-4 p-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 hover:border-purple-500/30 transition-all group">
-                                        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-400 flex items-center justify-center shrink-0 shadow-lg shadow-purple-500/20 group-hover:scale-110 transition-transform">
-                                            <MapPin className="w-5 h-5 text-white" />
-                                        </div>
-                                        <div className="min-w-0 flex-1">
-                                            <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-0.5">Office</p>
-                                            <p className="text-white font-medium">Building A, Room 405</p>
-                                        </div>
-                                    </a>
                                 </div>
 
                                 {/* Social Links */}
@@ -302,61 +276,31 @@ const FacultyDetailsPage = () => {
 
                         {/* RIGHT COLUMN - Details */}
                         <div className="space-y-8">
-                            
-                            {/* Stats Grid */}
-                            <motion.div variants={itemVariants}>
-                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                    {stats.map((stat, index) => (
-                                        <motion.div
-                                            key={index}
-                                            whileHover={{ scale: 1.05, y: -5 }}
-                                            className="bg-gradient-to-b from-slate-800/60 to-slate-900/60 backdrop-blur-xl rounded-2xl p-5 border border-white/10 hover:border-white/20 transition-all group"
-                                        >
-                                            <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform`}>
-                                                <stat.icon className="w-5 h-5 text-white" />
-                                            </div>
-                                            <p className="text-3xl font-bold text-white mb-1">{stat.value}</p>
-                                            <p className="text-sm text-slate-400">{stat.label}</p>
-                                        </motion.div>
-                                    ))}
-                                </div>
-                            </motion.div>
 
-                            {/* About Section */}
-                            <motion.div variants={itemVariants}>
-                                <div className="bg-gradient-to-b from-slate-800/60 to-slate-900/60 backdrop-blur-xl rounded-3xl p-8 border border-white/10 overflow-hidden relative">
-                                    <div className="absolute -top-10 -right-10 w-40 h-40 bg-gradient-to-br from-brandColor/20 to-cyan-500/10 rounded-full blur-3xl" />
-                                    
-                                    <div className="flex items-center gap-3 mb-6">
-                                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brandColor to-cyan-500 flex items-center justify-center shadow-lg shadow-brandColor/20">
-                                            <User className="w-5 h-5 text-white" />
-                                        </div>
-                                        <h2 className="text-xl font-bold text-white">About</h2>
+                            {/* Stats Grid - Only show if there are stats */}
+                            {dynamicStats.length > 0 && (
+                                <motion.div variants={itemVariants}>
+                                    <div className={`grid grid-cols-2 ${dynamicStats.length >= 4 ? 'md:grid-cols-4' : dynamicStats.length === 3 ? 'md:grid-cols-3' : 'md:grid-cols-2'} gap-4`}>
+                                        {dynamicStats.map((stat, index) => (
+                                            <motion.div
+                                                key={index}
+                                                whileHover={{ scale: 1.05, y: -5 }}
+                                                className="bg-gradient-to-b from-slate-800/60 to-slate-900/60 backdrop-blur-xl rounded-2xl p-5 border border-white/10 hover:border-white/20 transition-all group"
+                                            >
+                                                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform`}>
+                                                    <stat.icon className="w-5 h-5 text-white" />
+                                                </div>
+                                                <p className="text-3xl font-bold text-white mb-1">{stat.value}</p>
+                                                <p className="text-sm text-slate-400">{stat.label}</p>
+                                            </motion.div>
+                                        ))}
                                     </div>
-
-                                    <div className="space-y-4 text-slate-300 leading-relaxed relative z-10">
-                                        <p>
-                                            {member.name} is a distinguished {member.designation} in the Department of {member.department} at Daffodil Institute of IT (DIIT). With a passion for teaching and research, they have been instrumental in shaping the academic landscape of the institution.
-                                        </p>
-                                        <p>
-                                            Their dedication to student success, combined with extensive industry experience, makes them a valuable mentor for aspiring professionals. They actively contribute to curriculum development and maintain strong industry connections to ensure students receive practical, relevant education.
-                                        </p>
-                                    </div>
-
-                                    {/* Quote */}
-                                    <div className="mt-6 p-5 rounded-2xl bg-gradient-to-r from-brandColor/10 to-cyan-500/10 border border-brandColor/20 relative">
-                                        <Quote className="w-8 h-8 text-brandColor/30 absolute top-3 left-3" />
-                                        <p className="text-slate-300 italic pl-10 text-lg">
-                                            "Education is not the filling of a pail, but the lighting of a fire."
-                                        </p>
-                                        <p className="text-cyan-400 text-sm mt-2 pl-10 font-medium">— Teaching Philosophy</p>
-                                    </div>
-                                </div>
-                            </motion.div>
+                                </motion.div>
+                            )}
 
                             {/* Education & Achievements Grid */}
                             <motion.div variants={itemVariants}>
-                                <div className="grid md:grid-cols-2 gap-6">
+                                <div className="grid md:grid-cols-1 gap-6">
                                     {/* Education */}
                                     {member.education && (
                                         <div className="bg-gradient-to-b from-slate-800/60 to-slate-900/60 backdrop-blur-xl rounded-3xl p-8 border border-white/10 hover:border-purple-500/30 transition-all group">
@@ -373,7 +317,7 @@ const FacultyDetailsPage = () => {
                                     )}
 
                                     {/* Achievements */}
-                                    {member.achievements && (
+                                    {/* {member.achievements && (
                                         <div className="bg-gradient-to-b from-slate-800/60 to-slate-900/60 backdrop-blur-xl rounded-3xl p-8 border border-white/10 hover:border-amber-500/30 transition-all group">
                                             <div className="flex items-center gap-3 mb-6">
                                                 <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-400 flex items-center justify-center shadow-lg shadow-amber-500/20 group-hover:scale-110 transition-transform">
@@ -385,7 +329,7 @@ const FacultyDetailsPage = () => {
                                                 <p className="text-white whitespace-pre-wrap text-sm leading-relaxed">{member.achievements}</p>
                                             </div>
                                         </div>
-                                    )}
+                                    )} */}
                                 </div>
                             </motion.div>
 

@@ -18,7 +18,6 @@ import {
   Upload,
   Eye,
 } from "lucide-react";
-import Image from "next/image";
 
 const departmentOptions = [
   { value: "CSE", label: "CSE" },
@@ -224,7 +223,7 @@ export default function FacultySection() {
         </div>
         <button
           onClick={handleAddNew}
-          className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+          className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-medium cursor-pointer"
         >
           <Plus className="w-4 h-4" /> Add Faculty
         </button>
@@ -238,8 +237,8 @@ export default function FacultySection() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             className={`flex items-center gap-2 p-4 rounded-lg ${message.type === "success"
-                ? "bg-green-50 text-green-700 border border-green-200"
-                : "bg-red-50 text-red-700 border border-red-200"
+              ? "bg-green-50 text-green-700 border border-green-200"
+              : "bg-red-50 text-red-700 border border-red-200"
               }`}
           >
             {message.type === "success" ? (
@@ -259,8 +258,8 @@ export default function FacultySection() {
             key={dept}
             onClick={() => setFilterDept(dept)}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${filterDept === dept
-                ? "bg-blue-600 text-white"
-                : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+              ? "bg-blue-600 text-white"
+              : "bg-slate-100 text-slate-700 hover:bg-slate-200"
               }`}
           >
             {dept}
@@ -393,7 +392,7 @@ export default function FacultySection() {
                   </div>
                   {formData.image ? (
                     <div className="mt-3">
-                      <Image
+                      <img
                         src={formData.image}
                         alt="Preview"
                         className="max-h-40 rounded-lg border border-slate-200"

@@ -10,7 +10,8 @@ import {
     ChevronRight,
     Pin,
     Loader2,
-    AlertCircle
+    AlertCircle,
+    GraduationCap
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -36,86 +37,14 @@ const momentDate = (dateStr) => {
 
 const NoticesPage = () => {
     const categories = ['All', 'Academic', 'Exam', 'Admission', 'Event', 'General'];
+    const departments = ['All', 'BBA', 'CSE', 'BTHM', 'MBA', 'MTHM'];
     const [filter, setFilter] = useState('All');
+    const [departmentFilter, setDepartmentFilter] = useState('All');
     const [searchQuery, setSearchQuery] = useState('');
     const [showMobileFilters, setShowMobileFilters] = useState(false);
     const [notices, setNotices] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
-    // Default fallback data
-    const defaultNotices = [
-        {
-            id: 1,
-            title: "Result Publication of Honours 1st Year Final Examination 2024",
-            date: "12 Jan, 2026",
-            category: "Exam",
-            pinned: true,
-            file: "result_h1_2024.pdf",
-            image: "/noticeImg.jpg"
-        },
-        {
-            id: 2,
-            title: "Class Suspension Notice: Saraswati Puja",
-            date: "10 Jan, 2026",
-            category: "General",
-            pinned: false,
-            file: null,
-            image: "/noticeImg.jpg"
-        },
-        {
-            id: 3,
-            title: "Schedule for Mid-Term Examination - Spring 2026",
-            date: "08 Jan, 2026",
-            category: "Academic",
-            pinned: false,
-            file: "schedule_mid_spring26.pdf",
-            image: "/noticeImg.jpg"
-        },
-        {
-            id: 4,
-            title: "Scholarship Application Deadline Extended",
-            date: "05 Jan, 2026",
-            category: "Admission",
-            pinned: true,
-            file: "scholarship_notice.pdf",
-            image: "/noticeImg.jpg"
-        },
-        {
-            id: 5,
-            title: "Guest Seminar on 'Future of AI' by Google Engineer",
-            date: "02 Jan, 2026",
-            category: "Event",
-            pinned: false,
-            file: null,
-            image: "/noticeImg.jpg"
-        },
-        {
-            id: 6,
-            title: "Library Maintenance Notice: Closed for 2 Days",
-            date: "28 Dec, 2025",
-            category: "General",
-            pinned: false,
-            file: null,
-            image: "/noticeImg.jpg"
-        },
-        {
-            id: 7,
-            title: "Form Fill-up Notice for MBA Last Semester",
-            date: "25 Dec, 2025",
-            category: "Exam",
-            pinned: false,
-            file: "mba_form_fillup.pdf"
-        },
-        {
-            id: 8,
-            title: "New Transport Route Added (Route #5 - Uttara)",
-            date: "20 Dec, 2025",
-            category: "General",
-            pinned: false,
-            file: "transport_route_5.pdf"
-        }
-    ];
 
     useEffect(() => {
         fetchNotices();
@@ -130,13 +59,11 @@ const NoticesPage = () => {
             if (result.success && result.data.length > 0) {
                 setNotices(result.data);
             } else {
-                // Use default notices if API returns empty
-                setNotices(defaultNotices);
+                setNotices([]);
             }
         } catch (err) {
             console.error("Error fetching notices:", err);
-            // Fallback to default notices on error
-            setNotices(defaultNotices);
+            setNotices([]);
         } finally {
             setLoading(false);
         }
@@ -144,8 +71,20 @@ const NoticesPage = () => {
 
     const filteredNotices = notices.filter(notice => {
         const matchesCategory = filter === 'All' || notice.category === filter;
+
+        // Department filter logic:
+        // - If departmentFilter is 'All', show all notices
+        // - If notice has no department or department is 'All', show to everyone
+        // - Otherwise, must match the specific department
+        let matchesDepartment = false;
+        if (departmentFilter === 'All') {
+            matchesDepartment = true;
+        } else {
+            matchesDepartment = notice.department === departmentFilter;
+        }
+
         const matchesSearch = notice.title.toLowerCase().includes(searchQuery.toLowerCase());
-        return matchesCategory && matchesSearch;
+        return matchesCategory && matchesDepartment && matchesSearch;
     });
 
     const getCategoryColor = (cat) => {
@@ -155,6 +94,17 @@ const NoticesPage = () => {
             case 'Admission': return 'bg-emerald-100 text-emerald-700 border-emerald-200';
             case 'Event': return 'bg-purple-100 text-purple-700 border-purple-200';
             default: return 'bg-slate-100 text-slate-700 border-slate-200';
+        }
+    };
+
+    const getDepartmentColor = (dept) => {
+        switch (dept) {
+            case 'BBA': return 'bg-orange-100 text-orange-700 border-orange-200';
+            case 'CSE': return 'bg-cyan-100 text-cyan-700 border-cyan-200';
+            case 'BTHM': return 'bg-pink-100 text-pink-700 border-pink-200';
+            case 'MBA': return 'bg-violet-100 text-violet-700 border-violet-200';
+            case 'MTHM': return 'bg-teal-100 text-teal-700 border-teal-200';
+            default: return 'bg-indigo-100 text-indigo-700 border-indigo-200';
         }
     };
 
@@ -227,25 +177,48 @@ const NoticesPage = () => {
                                     exit={{ height: 0, opacity: 0 }}
                                     className="overflow-hidden md:hidden"
                                 >
-                                    <div className="bg-white rounded-2xl p-4 border border-slate-100 shadow-lg mb-6">
-                                        <div className="flex justify-between items-center mb-3">
-                                            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Select Category</h4>
+                                    <div className="bg-white rounded-2xl p-4 border border-slate-100 shadow-lg mb-6 space-y-4">
+                                        <div className="flex justify-between items-center">
+                                            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Filters</h4>
                                             <button onClick={() => setShowMobileFilters(false)} className="text-xs text-brandColor font-bold">Close</button>
                                         </div>
-                                        <div className="flex flex-wrap gap-2">
-                                            {categories.map((cat) => (
-                                                <button
-                                                    key={cat}
-                                                    onClick={() => { setFilter(cat); setShowMobileFilters(false); }}
-                                                    className={`px-4 py-2 rounded-lg text-sm font-bold transition-all border ${filter === cat
-                                                        ? 'bg-brandColor text-white border-brandColor shadow-md shadow-blue-900/20'
-                                                        : 'bg-slate-50 text-slate-500 border-slate-100 hover:bg-slate-100'
-                                                        }`}
-                                                >
-                                                    {cat}
-                                                </button>
-                                            ))}
+                                        {/* Department Filter */}
+                                        <div>
+                                            <h5 className="text-xs font-semibold text-slate-500 mb-2">Department</h5>
+                                            <div className="flex flex-wrap gap-2">
+                                                {departments.map((dept) => (
+                                                    <button
+                                                        key={dept}
+                                                        onClick={() => { setDepartmentFilter(dept); setShowMobileFilters(false); }}
+                                                        className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border ${departmentFilter === dept
+                                                            ? 'bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-900/20'
+                                                            : 'bg-slate-50 text-slate-500 border-slate-100 hover:bg-slate-100'
+                                                            }`}
+                                                    >
+                                                        {dept === 'All' ? 'All Depts' : dept}
+                                                    </button>
+                                                ))}
+                                            </div>
                                         </div>
+                                        {/* Category Filter */}
+                                        <div>
+                                            <h5 className="text-xs font-semibold text-slate-500 mb-2">Category</h5>
+                                            <div className="flex flex-wrap gap-2">
+                                                {categories.map((cat) => (
+                                                    <button
+                                                        key={cat}
+                                                        onClick={() => { setFilter(cat); setShowMobileFilters(false); }}
+                                                        className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border ${filter === cat
+                                                            ? 'bg-brandColor text-white border-brandColor shadow-md shadow-blue-900/20'
+                                                            : 'bg-slate-50 text-slate-500 border-slate-100 hover:bg-slate-100'
+                                                            }`}
+                                                    >
+                                                        {cat}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+
                                     </div>
                                 </motion.div>
                             )}
@@ -254,7 +227,7 @@ const NoticesPage = () => {
                         <AnimatePresence mode="popLayout">
                             {filteredNotices.length > 0 ? (
                                 filteredNotices.map((notice) => (
-                                    <Link href={`/notices/${notice.id}`} key={notice.id} className="block">
+                                    <Link href={`/notices/${notice._id}`} key={notice._id} className="block">
                                         <motion.div
                                             layout
                                             initial={{ opacity: 0, y: 10 }}
@@ -280,11 +253,16 @@ const NoticesPage = () => {
 
                                             <div className="flex-1 min-w-0 py-1">
                                                 <div className="flex items-start justify-between gap-4 mb-2">
-                                                    <div className="flex items-center gap-2">
+                                                    <div className="flex items-center gap-2 flex-wrap">
                                                         {notice.pinned && <Pin className="w-4 h-4 text-amber-500 fill-amber-500 rotate-45" />}
                                                         <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${getCategoryColor(notice.category)}`}>
                                                             {notice.category}
                                                         </span>
+                                                        {notice.department && notice.department !== 'All' && (
+                                                            <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${getDepartmentColor(notice.department)}`}>
+                                                                {notice.department}
+                                                            </span>
+                                                        )}
                                                         <span className="sm:hidden text-xs text-slate-400 font-medium">{notice.date}</span>
                                                     </div>
                                                 </div>
@@ -337,11 +315,32 @@ const NoticesPage = () => {
                                 />
                             </div>
                         </div>
+                        {/* Filter Departments Widget */}
+                        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-lg shadow-slate-200/50">
+                            <h3 className="font-bold text-slate-800 mb-4 flex items-center gap-2">
+                                <GraduationCap className="w-5 h-5 text-indigo-500" /> Filter by Department
+                            </h3>
+                            <div className="space-y-2">
+                                {departments.map((dept) => (
+                                    <button
+                                        key={dept}
+                                        onClick={() => setDepartmentFilter(dept)}
+                                        className={`w-full text-left px-4 py-3 rounded-xl text-sm font-bold flex justify-between items-center transition-all ${departmentFilter === dept
+                                            ? 'bg-indigo-600 text-white shadow-md shadow-indigo-900/20'
+                                            : 'bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-slate-700'
+                                            }`}
+                                    >
+                                        {dept === 'All' ? 'All Departments' : dept}
+                                        {departmentFilter === dept && <ChevronRight className="w-4 h-4" />}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
 
                         {/* Filter Categories Widget */}
                         <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-lg shadow-slate-200/50">
                             <h3 className="font-bold text-slate-800 mb-4 flex items-center gap-2">
-                                <Filter className="w-5 h-5 text-brandColor" /> Filter Category
+                                <Filter className="w-5 h-5 text-brandColor" /> Filter by Category
                             </h3>
                             <div className="space-y-2">
                                 {categories.map((cat) => (
@@ -359,6 +358,8 @@ const NoticesPage = () => {
                                 ))}
                             </div>
                         </div>
+
+
 
                         {/* Recent Events Widget */}
                         <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-lg shadow-slate-200/50">
