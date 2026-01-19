@@ -31,14 +31,16 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 
+
+
 const DynamicProgramPage = () => {
     const params = useParams();
     const { id } = params;
     const [program, setProgram] = useState(null);
     const [loading, setLoading] = useState(true);
     const [openFaq, setOpenFaq] = useState(null);
-    const [facultyIndex, setFacultyIndex] = useState(0);
-    const [alumniIndex, setAlumniIndex] = useState(0);
+    const [facultyIndex, setFacultyIndex] = useState(0); // Initialize with 0
+    const [alumniIndex, setAlumniIndex] = useState(0); // Initialize with 0
     const [departmentFaculty, setDepartmentFaculty] = useState([]);
     const [departmentCareers, setDepartmentCareers] = useState([]);
     const [departmentFaqs, setDepartmentFaqs] = useState([]);
@@ -46,26 +48,49 @@ const DynamicProgramPage = () => {
     useEffect(() => {
         const fetchProgram = async () => {
             try {
-                const response = await fetch('/api/admin/data/ProgramsData');
-                if (!response.ok) throw new Error('Failed to fetch programs');
-                const result = await response.json();
-                const programs = result.data?.programsData || result.data || [];
+                // 1. Try fetching from API
+                let found = null;
+                try {
+                    const response = await fetch('/api/admin/data/ProgramsData');
+                    if (response.ok) {
+                        const result = await response.json();
+                        let programs = result.data?.programsData || result.data;
 
-                // Find program by ID (supports both numeric and string IDs)
-                const found = programs.find(p =>
-                    String(p.id) === String(id) || p.shortName?.toLowerCase() === String(id).toLowerCase()
-                );
+                        // Handle if programs is an object (convert to array or lookup)
+                        if (programs && typeof programs === 'object' && !Array.isArray(programs)) {
+                            // If it's the structure like { cse: {...}, bba: {...} }
+                            // Try direct lookup
+                            if (programs[id]) {
+                                found = programs[id];
+                            } else {
+                                // Convert to array and search
+                                programs = Object.values(programs);
+                            }
+                        }
+
+                        if (!found && Array.isArray(programs)) {
+                            found = programs.find(p =>
+                                String(p.id) === String(id) ||
+                                p.shortName?.toLowerCase() === String(id).toLowerCase() ||
+                                p.active_path === String(id) // Support custom paths if added
+                            );
+                        }
+                    }
+                } catch (err) {
+                    console.warn("API fetch failed, falling back to local data");
+                }
+
+
 
                 if (found) {
                     setProgram(found);
-
                     // Fetch department-specific data based on category
                     fetchDepartmentData(found.category || found.department || "engineering");
                 } else {
                     setProgram(null);
                 }
             } catch (error) {
-                console.error("Error fetching program:", error);
+                console.error("Error processing program data:", error);
                 setProgram(null);
             } finally {
                 setLoading(false);

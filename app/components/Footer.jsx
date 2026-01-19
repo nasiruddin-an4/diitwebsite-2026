@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Link from "next/link";
 import {
     Facebook,
@@ -15,6 +15,7 @@ import {
     ExternalLink
 } from "lucide-react";
 import Image from "next/image";
+import useCachedFetch from "@/hooks/useCachedFetch";
 
 const quickLinks = [
     { label: "About DIIT", href: "/about" },
@@ -40,29 +41,23 @@ const socialIcons = {
     youtube: Youtube
 };
 
+const defaultSiteInfo = {
+    phone: [],
+    email: [],
+    address: [],
+    socialMedia: {}
+};
+
 export default function Footer() {
-    const [siteInfo, setSiteInfo] = useState({
-        phone: [],
-        email: [],
-        address: [],
-        socialMedia: {}
-    });
-
-    useEffect(() => {
-        fetchSiteInfo();
-    }, []);
-
-    const fetchSiteInfo = async () => {
-        try {
-            const res = await fetch("/api/site-info");
-            const result = await res.json();
-            if (result.success) {
-                setSiteInfo(result.data);
-            }
-        } catch (error) {
-            console.error("Failed to fetch site info:", error);
+    // Use cached fetch for instant loading
+    const { data: siteInfo } = useCachedFetch(
+        "site_info",
+        "/api/site-info",
+        {
+            fallback: defaultSiteInfo,
+            maxAge: 10 * 60 * 1000 // 10 minutes cache
         }
-    };
+    );
 
     // Build social links array from siteInfo
     const socialLinks = Object.entries(siteInfo.socialMedia || {})

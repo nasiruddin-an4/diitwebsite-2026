@@ -11,8 +11,60 @@ import {
     ChevronDown,
     ArrowRight
 } from "lucide-react";
-import navigationData from "@/public/Data/NavigationData.json";
 import Image from "next/image";
+import useCachedFetch from "@/hooks/useCachedFetch";
+
+// Fallback navigation data (used when API is unavailable)
+const fallbackNavigationItems = [
+    {
+        name: "Admissions",
+        dropdown: [
+            { name: "Admission Eligibility", path: "/admissionEligibility" },
+            { name: "Online Admission", path: "/admission/online" },
+            { name: "Tuition Fees", path: "/admission/fees" },
+            { name: "Scholarships & Waivers", path: "/admission/scholarships" },
+            { name: "Facilities", path: "/campus/facilities" }
+        ]
+    },
+    {
+        name: "Academics",
+        dropdown: [
+            { name: "Academic Calendar", path: "/academics/calendar" },
+            { name: "DIIT Notices", path: "/notices" },
+            { name: "NU Notices", path: "https://www.nu.ac.bd/recent-news-notice.php", target: "_blank", external: true },
+            { name: "Faculty Members", path: "/faculty" },
+            { name: "Administrative", path: "/administrative" },
+            { name: "Alumni", path: "/alumni" }
+        ]
+    },
+    {
+        name: "Programs",
+        path: "/programs",
+        dropdown: [
+            { name: "B.Sc. in Computer Science and Engineering", path: "/programs/cse" },
+            { name: "Bachelor of Business Administration (BBA)", path: "/programs/bba" },
+            { name: "BBA in Tourism and Hospitality Management", path: "/programs/bthm" },
+            { name: "Master of Business Administration (MBA)", path: "/programs/mba" },
+            { name: "MBA in Tourism and Hospitality Management", path: "/programs/mthm" }
+        ]
+    },
+    {
+        name: "News & Events",
+        dropdown: [
+            { name: "News & Events", path: "/news" },
+            { name: "Campus Activities", path: "/campus-activities" }
+        ]
+    },
+    {
+        name: "About",
+        dropdown: [
+            { name: "About Us", path: "/about" },
+            { name: "FAQ", path: "/faq" },
+            { name: "Career", path: "/career" },
+            { name: "Contact", path: "/contact" }
+        ]
+    }
+];
 
 const Header = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -23,22 +75,47 @@ const Header = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const searchInputRef = useRef(null);
     const pathname = usePathname();
-    const [navigationItems, setNavigationItems] = useState(navigationData.navigationItems || []);
 
-    useEffect(() => {
-        const fetchNavData = async () => {
-            try {
-                const response = await fetch('/api/admin/data/NavigationData');
-                const result = await response.json();
-                if (result.success && result.data.navigationItems) {
-                    setNavigationItems(result.data.navigationItems);
-                }
-            } catch (error) {
-                console.warn("Header fetching failed, using default navigation items", error);
+    // 1. Fetch Navigation Structure
+    const { data: navData } = useCachedFetch(
+        "navigation_data",
+        "/api/admin/data/NavigationData",
+        {
+            fallback: { navigationItems: fallbackNavigationItems },
+            maxAge: 10 * 60 * 1000,
+            transform: (data) => data
+        }
+    );
+
+    // 2. Fetch Programs Data to make the dropdown dynamic
+    const { data: programsDataResult } = useCachedFetch(
+        "all_programs_nav",
+        "/api/admin/data/ProgramsData",
+        {
+            fallback: [],
+            maxAge: 5 * 60 * 1000,
+            transform: (data) => {
+                // Programs could be an array or an object
+                const programsArr = data?.programsData || data || [];
+                return Array.isArray(programsArr) ? programsArr : Object.values(programsArr);
             }
-        };
-        fetchNavData();
-    }, []);
+        }
+    );
+
+    // 3. Process navigation items and inject dynamic programs
+    const navigationItems = (navData?.navigationItems || fallbackNavigationItems).map(item => {
+        if (item.name === "Programs" && programsDataResult && programsDataResult.length > 0) {
+            return {
+                ...item,
+                dropdown: programsDataResult.map(prog => ({
+                    name: prog.title || prog.shortName,
+                    path: `/programs/${prog.id}`,
+                    // Carry over any other properties if needed
+                }))
+            };
+        }
+        return item;
+    });
 
     useEffect(() => {
         const handleScroll = () => {
@@ -194,7 +271,7 @@ const Header = () => {
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             onClick={() => setSearchOpen(false)}
-                            className="fixed inset-0 bg-slate-900/40 backdrop-blur-md z-[100]"
+                            className="fixed inset-0 bg-slate-900/40 backdrop-blur-md z-100"
                         />
                         {/* Search Box */}
                         <motion.div
@@ -202,7 +279,7 @@ const Header = () => {
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.98, y: -10 }}
                             transition={{ duration: 0.2 }}
-                            className="fixed top-[100px] left-1/2 -translate-x-1/2 w-full max-w-3xl px-4 z-[110]"
+                            className="fixed top-[100px] left-1/2 -translate-x-1/2 w-full max-w-3xl px-4 z-110"
                         >
                             <div className="bg-white rounded-2xl shadow-2xl overflow-hidden ring-1 ring-black/10">
                                 <div className="relative border-b border-gray-100 flex items-center p-4">
@@ -287,15 +364,31 @@ const Header = () => {
                                 <div key={idx} className="border-b border-gray-50 last:border-0">
                                     {item.dropdown ? (
                                         <div>
-                                            <button
-                                                onClick={() => toggleMobileSubmenu(item.name)}
-                                                className="w-full flex items-center justify-between py-4 text-[18px] font-medium text-slate-800 hover:text-brandColor"
-                                            >
-                                                {item.name}
-                                                <ChevronDown
-                                                    className={`w-6 h-6 text-slate-400 transition-transform ${mobileExpanded[item.name] ? 'rotate-180' : ''}`}
-                                                />
-                                            </button>
+                                            <div className="flex items-center justify-between py-4">
+                                                {/* Main item - Link if has path, otherwise just text */}
+                                                {item.path ? (
+                                                    <Link
+                                                        href={item.path}
+                                                        onClick={closeMenu}
+                                                        className="text-[18px] font-medium text-slate-800 hover:text-brandColor flex-1"
+                                                    >
+                                                        {item.name}
+                                                    </Link>
+                                                ) : (
+                                                    <span className="text-[18px] font-medium text-slate-800 flex-1">
+                                                        {item.name}
+                                                    </span>
+                                                )}
+                                                {/* Chevron to toggle dropdown */}
+                                                <button
+                                                    onClick={() => toggleMobileSubmenu(item.name)}
+                                                    className="p-2 -mr-2 text-slate-400 hover:text-brandColor"
+                                                >
+                                                    <ChevronDown
+                                                        className={`w-6 h-6 transition-transform ${mobileExpanded[item.name] ? 'rotate-180' : ''}`}
+                                                    />
+                                                </button>
+                                            </div>
                                             <AnimatePresence>
                                                 {mobileExpanded[item.name] && (
                                                     <motion.div
