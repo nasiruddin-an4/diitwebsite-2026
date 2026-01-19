@@ -510,7 +510,7 @@ export default function AdminDashboard() {
         {/* Scrollable Content Area */}
         <div className="flex-1 overflow-y-auto p-6 custom-scrollbar scroll-smooth">
           <div className="w-full space-y-6 pb-10">
-            {activeSection === "overview" && <OverviewSection data={data} />}
+            {activeSection === "overview" && <OverviewSection data={data} setActiveSection={setActiveSection} />}
             {activeSection === "site-info" && <SiteInfoSection />}
             {activeSection === "hero" && <HeroSection data={data} updateField={updateField} addItem={addItem} deleteItem={deleteItem} onSave={saveData} saving={saving} />}
             {activeSection === "stats" && <StatsSection data={data} updateField={updateField} onSave={saveData} saving={saving} />}
