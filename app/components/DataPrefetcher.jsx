@@ -13,8 +13,9 @@ export default function DataPrefetcher() {
         const prefetchCriticalData = async () => {
             // Run prefetches in parallel for faster loading
             await Promise.allSettled([
-                prefetchAndCache("site_info", "/api/site-info"),
-                prefetchAndCache("navigation", "/api/admin/navigation"),
+                prefetchAndCache("site-info", "/api/site-info"),
+                prefetchAndCache("navigation_data", "/api/admin/data/NavigationData"),
+                prefetchAndCache("campus_facilities", "/api/admin/data/CampusData"),
                 // Add more endpoints as needed
             ]);
         };

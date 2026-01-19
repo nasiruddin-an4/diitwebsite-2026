@@ -163,7 +163,7 @@ export default function Footer() {
                             {/* Address */}
                             {siteInfo.address?.length > 0 && (
                                 <div className="flex items-start gap-4 group">
-                                    <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center group-hover:bg-blue-500/20 transition-colors">
+                                    <div className="shrink-0 w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center group-hover:bg-blue-500/20 transition-colors">
                                         <MapPin className="w-5 h-5 text-blue-400" />
                                     </div>
                                     <p className="text-gray-400 text-sm leading-relaxed">
@@ -177,7 +177,7 @@ export default function Footer() {
                             {/* Phone */}
                             {siteInfo.phone?.length > 0 && (
                                 <div className="flex items-center gap-4 group">
-                                    <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center group-hover:bg-blue-500/20 transition-colors">
+                                    <div className="shrink-0 w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center group-hover:bg-blue-500/20 transition-colors">
                                         <Phone className="w-5 h-5 text-blue-400" />
                                     </div>
                                     <div>
@@ -193,7 +193,7 @@ export default function Footer() {
                             {/* Email */}
                             {siteInfo.email?.length > 0 && (
                                 <div className="flex items-center gap-4 group">
-                                    <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center group-hover:bg-blue-500/20 transition-colors">
+                                    <div className="shrink-0 w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center group-hover:bg-blue-500/20 transition-colors">
                                         <Mail className="w-5 h-5 text-blue-400" />
                                     </div>
                                     <div>

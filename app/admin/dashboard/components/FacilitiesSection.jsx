@@ -73,9 +73,7 @@ export default function FacilitiesSection() {
     setData([...data, {
       title: "New Facility",
       description: "",
-      icon: "Monitor",
       stat: "New",
-      color: "from-blue-500 to-blue-600",
       span: "md:col-span-1",
       image: ""
     }]);
@@ -159,7 +157,7 @@ export default function FacilitiesSection() {
         <button
           onClick={saveData}
           disabled={saving}
-          className="flex items-center gap-2 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-medium transition-all disabled:opacity-50 text-sm shadow-md shadow-slate-900/20"
+          className="flex items-center gap-2 px-4 py-2 bg-blue-900 hover:bg-blue-800 text-white rounded-md cursor-pointer font-medium transition-all disabled:opacity-50 text-sm"
         >
           {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
           Save Changes
@@ -173,19 +171,14 @@ export default function FacilitiesSection() {
               <Trash2 className="w-4 h-4" />
             </button>
 
-            <div className="flex gap-4">
-              <div className={`w-12 h-12 rounded-xl bg-linear-to-br ${item.color || "bg-slate-200"} flex-shrink-0`} />
-              <div className="flex-1 space-y-2">
-                <InputField label="Title" value={item.title} onChange={(v) => updateItem(index, "title", v)} />
-                <InputField label="Description" value={item.description} onChange={(v) => updateItem(index, "description", v)} textarea />
-              </div>
+            <div className="space-y-4">
+              <InputField label="Title" value={item.title} onChange={(v) => updateItem(index, "title", v)} />
+              <InputField label="Description" value={item.description} onChange={(v) => updateItem(index, "description", v)} textarea />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
-              <InputField label="Icon (Lucide)" value={item.icon} onChange={(v) => updateItem(index, "icon", v)} />
               <InputField label="Stat Badge" value={item.stat} onChange={(v) => updateItem(index, "stat", v)} />
               <InputField label="Grid Span" value={item.span} onChange={(v) => updateItem(index, "span", v)} />
-              <InputField label="Gradient Color" value={item.color} onChange={(v) => updateItem(index, "color", v)} />
             </div>
 
             <div className="space-y-1.5 pt-2 border-t border-slate-100">
