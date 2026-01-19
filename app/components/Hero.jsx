@@ -83,7 +83,7 @@ const Hero = () => {
     const slide = heroSlides[currentSlide];
 
     return (
-        <div className="relative h-[90vh] w-full overflow-hidden">
+        <div className="relative h-[60vh] md:h-[90vh] w-full overflow-hidden">
             {/* Background Image Container with Cross-fade */}
             <div className="absolute inset-0">
                 <AnimatePresence initial={false}>

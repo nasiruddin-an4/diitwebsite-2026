@@ -164,14 +164,14 @@ const Header = () => {
             <header
                 className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${isScrolled
                     ? "bg-white/95 backdrop-blur-md shadow-sm h-[70px] lg:h-[80px]"
-                    : "bg-white/90 backdrop-blur-sm h-[80px] lg:h-[90px] border-b border-gray-100"
+                    : "bg-white/90 backdrop-blur-sm h-[80px] lg:h-[90px]"
                     }`}
             >
                 <div className="max-w-[1400px] mx-auto px-4 sm:px-6 h-full flex items-center justify-between">
 
                     {/* Logo (Aligned Left) */}
                     <Link href="/" className="flex items-center group relative z-50 mr-8 lg:mr-12">
-                        <div className="relative w-12 h-12 lg:w-24 lg:h-24">
+                        <div className="relative w-20 h-20 lg:w-24 lg:h-24">
                             <Image
                                 src="/diitLogo.png"
                                 alt="DIIT Logo"

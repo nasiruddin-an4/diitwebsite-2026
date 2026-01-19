@@ -58,11 +58,11 @@ const AdmissionEligibilityPage = () => {
                         <span className="inline-block py-1 px-3 rounded-full bg-white/10 border border-white/20 text-sm font-medium tracking-wider mb-4">
                             ADMISSIONS OPEN 2026
                         </span>
-                        <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+                        <h1 className="text-4xl md:text-6xl font-bold mb-4 leading-tight">
                             Admission <span className="text-blue-400">Eligibility</span>
                         </h1>
-                        <p className="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto mb-8">
-                            Affiliated with National University. Join DIIT to pursue professional degrees in BBA, CSE, and THM.
+                        <p className="text-lg md:text-2xl text-slate-300 max-w-2xl mx-auto mb-8">
+                            Affiliated with National University.
                         </p>
                     </motion.div>
 
@@ -71,18 +71,48 @@ const AdmissionEligibilityPage = () => {
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: 0.2, duration: 0.5 }}
-                        className="inline-flex items-center gap-4 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 shadow-2xl"
+                        className="
+    inline-flex flex-col sm:flex-row items-center gap-4
+    bg-white/5 backdrop-blur-md border border-white/10
+    rounded-2xl p-4 sm:p-6 shadow-2xl
+  "
                     >
-                        <div className="text-right border-r border-white/20 pr-4">
-                            <span className="block text-xs text-slate-400 uppercase tracking-widest">Programs</span>
-                            <span className="block font-bold text-xl">Undergraduate</span>
+                        {/* Left Info */}
+                        <div
+                            className="
+      text-center sm:text-right
+      sm:border-r border-white/20
+      border-b sm:border-b-0
+      pb-3 sm:pb-0 sm:pr-4
+      w-full sm:w-auto
+    "
+                        >
+                            <span className="block text-xs text-slate-400 uppercase tracking-widest">
+                                Professional
+                            </span>
+                            <span className="block font-bold text-lg sm:text-2xl">
+                                Programs
+                            </span>
                         </div>
-                        <div className="text-3xl md:text-5xl font-extrabold tracking-tight text-white flex gap-3">
+
+                        {/* Program List */}
+                        <div
+                            className="
+      flex flex-wrap justify-center sm:justify-start
+      gap-x-2 gap-y-1
+      text-xl sm:text-3xl md:text-5xl
+      font-extrabold tracking-tight text-white
+    "
+                        >
                             <span>BBA</span>
                             <span className="text-blue-500">.</span>
                             <span>CSE</span>
                             <span className="text-blue-500">.</span>
                             <span>THM</span>
+                            <span className="text-blue-500">.</span>
+                            <span>MBA</span>
+                            <span className="text-blue-500">.</span>
+                            <span>MTHM</span>
                         </div>
                     </motion.div>
                 </div>
