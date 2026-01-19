@@ -11,6 +11,7 @@ import {
 
 import OverviewSection from "./components/OverviewSection";
 import HeroSection from "./components/HeroSection";
+import GeneralPagesSection from "./components/GeneralPagesSection";
 import StatsSection from "./components/StatsSection";
 import ProgramsSection from "./components/ProgramsSection";
 import NewsSection from "./components/NewsSection";
@@ -24,12 +25,26 @@ import FacilitiesSection from "./components/FacilitiesSection";
 import AcademicCalendarSection from "./components/AcademicCalendarSection";
 import NoticesSection from "./components/NoticesSection";
 import FacultySection from "./components/FacultySection";
+import AdministrativeSection from "./components/AdministrativeSection";
+import AlumniSection from "./components/AlumniSection";
+import CampusActivitiesSection from "./components/CampusActivitiesSection";
+import SiteInfoSection from "./components/SiteInfoSection";
 import Image from "next/image";
 
 const menuItems = [
   { id: "overview", label: "Overview", icon: LayoutDashboard },
+  { id: "site-info", label: "Site Information", icon: FileText },
   { id: "hero", label: "Hero Slides", icon: Home },
-
+  {
+    id: "general",
+    label: "General Pages",
+    icon: FileText,
+    children: [
+      { id: "about", label: "About Us" },
+      { id: "contact", label: "Contact Us" },
+      { id: "faq", label: "FAQ" },
+    ]
+  },
   {
     id: "academics",
     label: "Academics",
@@ -52,6 +67,7 @@ const menuItems = [
   { id: "programs", label: "Programs", icon: BookOpen },
   { id: "news", label: "News & Events", icon: FileText },
   { id: "testimonials", label: "Testimonials", icon: MessageSquare },
+  { id: "campus-activities", label: "Campus Activities", icon: Building2 },
 
 ];
 
@@ -493,11 +509,14 @@ export default function AdminDashboard() {
         <div className="flex-1 overflow-y-auto p-6 custom-scrollbar scroll-smooth">
           <div className="w-full space-y-6 pb-10">
             {activeSection === "overview" && <OverviewSection data={data} />}
+            {activeSection === "site-info" && <SiteInfoSection />}
             {activeSection === "hero" && <HeroSection data={data} updateField={updateField} addItem={addItem} deleteItem={deleteItem} onSave={saveData} saving={saving} />}
             {activeSection === "stats" && <StatsSection data={data} updateField={updateField} onSave={saveData} saving={saving} />}
             {activeSection === "academic-calendar" && <AcademicCalendarSection />}
             {activeSection === "diit-notices" && <NoticesSection />}
             {activeSection === "faculty-members" && <FacultySection />}
+            {activeSection === "administrative" && <AdministrativeSection />}
+            {activeSection === "alumni" && <AlumniSection />}
             {activeSection === "eligibility" && <AdmissionEligibilitySection />}
             {activeSection === "online" && <OnlineAdmissionSection />}
             {activeSection === "fees" && <TuitionFeesSection />}
@@ -507,6 +526,8 @@ export default function AdminDashboard() {
             {activeSection === "news" && <NewsSection data={data} updateField={updateField} addItem={addItem} deleteItem={deleteItem} onSave={saveData} saving={saving} />}
             {activeSection === "testimonials" && <TestimonialsSection data={data} updateField={updateField} onSave={saveData} saving={saving} />}
             {activeSection === "partners" && <PartnersSection data={data} updateField={updateField} addItem={addItem} deleteItem={deleteItem} onSave={saveData} saving={saving} />}
+            {activeSection === "campus-activities" && <CampusActivitiesSection />}
+            {["about", "contact", "faq"].includes(activeSection) && <GeneralPagesSection pageType={activeSection} />}
           </div>
         </div>
       </main>

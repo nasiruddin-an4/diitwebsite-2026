@@ -1,3 +1,4 @@
+import { getData } from "@/lib/data-service";
 import AboutClient from "./AboutClient";
 
 export const metadata = {
@@ -5,6 +6,11 @@ export const metadata = {
     description: "Learn about Daffodil Institute of Information Technology (DIIT), our mission, vision, and history of excellence since 2000.",
 };
 
-export default function AboutPage() {
-    return <AboutClient />;
+async function getAboutData() {
+    return await getData("AboutData");
+}
+
+export default async function AboutPage() {
+    const data = await getAboutData();
+    return <AboutClient data={data} />;
 }

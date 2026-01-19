@@ -1,12 +1,13 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import {
     Facebook,
     Twitter,
     Instagram,
     Linkedin,
+    Youtube,
     MapPin,
     Phone,
     Mail,
@@ -31,15 +32,46 @@ const admissionLinks = [
     { label: "Brochure", href: "/brochure" },
 ];
 
-const campusLinks = [
-    { label: "Campus Overview", href: "/campus" },
-    { label: "Facilities", href: "/campus/facilities" },
-    { label: "Labs", href: "/campus/labs" },
-    { label: "Library", href: "/campus/library" },
-    { label: "Student Life", href: "/campus/student-life" },
-];
+const socialIcons = {
+    facebook: Facebook,
+    twitter: Twitter,
+    linkedin: Linkedin,
+    instagram: Instagram,
+    youtube: Youtube
+};
 
 export default function Footer() {
+    const [siteInfo, setSiteInfo] = useState({
+        phone: [],
+        email: [],
+        address: [],
+        socialMedia: {}
+    });
+
+    useEffect(() => {
+        fetchSiteInfo();
+    }, []);
+
+    const fetchSiteInfo = async () => {
+        try {
+            const res = await fetch("/api/site-info");
+            const result = await res.json();
+            if (result.success) {
+                setSiteInfo(result.data);
+            }
+        } catch (error) {
+            console.error("Failed to fetch site info:", error);
+        }
+    };
+
+    // Build social links array from siteInfo
+    const socialLinks = Object.entries(siteInfo.socialMedia || {})
+        .filter(([_, url]) => url && url.trim() !== "")
+        .map(([platform, url]) => ({
+            icon: socialIcons[platform] || Facebook,
+            href: url
+        }));
+
     return (
         <footer className="bg-[#001229] border-t border-white/5 font-sans relative overflow-hidden">
             {/* Background Decoration */}
@@ -64,33 +96,32 @@ export default function Footer() {
                             </p>
                         </div>
 
-                        {/* Affiliation Badge */}
-                        {/* <div className="inline-flex items-center gap-3 bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10 hover:border-blue-500/30 transition-colors">
-                            <div className="flex-shrink-0 w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center">
-                                <span className="text-xl">🎓</span>
-                            </div>
-                            <div>
-                                <p className="text-[10px] uppercase tracking-wider text-gray-400 font-semibold mb-0.5">Affiliated With</p>
-                                <p className="text-sm font-bold text-white">National University</p>
-                            </div>
-                        </div> */}
-
                         {/* Social Links */}
                         <div className="flex items-center gap-3">
-                            {[
-                                { icon: Facebook, href: "#" },
-                                { icon: Twitter, href: "#" },
-                                { icon: Linkedin, href: "#" },
-                                { icon: Instagram, href: "#" },
-                            ].map((social, idx) => (
-                                <a
-                                    key={idx}
-                                    href={social.href}
-                                    className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:bg-blue-600 hover:text-white transition-all duration-300 transform hover:-translate-y-1"
-                                >
-                                    <social.icon className="w-5 h-5" />
-                                </a>
-                            ))}
+                            {socialLinks.length > 0 ? (
+                                socialLinks.map((social, idx) => (
+                                    <a
+                                        key={idx}
+                                        href={social.href}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:bg-blue-600 hover:text-white transition-all duration-300 transform hover:-translate-y-1"
+                                    >
+                                        <social.icon className="w-5 h-5" />
+                                    </a>
+                                ))
+                            ) : (
+                                // Fallback if no social links configured
+                                [Facebook, Twitter, Linkedin, Instagram].map((Icon, idx) => (
+                                    <a
+                                        key={idx}
+                                        href="#"
+                                        className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:bg-blue-600 hover:text-white transition-all duration-300 transform hover:-translate-y-1"
+                                    >
+                                        <Icon className="w-5 h-5" />
+                                    </a>
+                                ))
+                            )}
                         </div>
                     </div>
 
@@ -134,35 +165,51 @@ export default function Footer() {
                     <div className="lg:col-span-3">
                         <h3 className="text-white font-bold text-lg mb-6">Contact Us</h3>
                         <div className="space-y-6">
-                            <div className="flex items-start gap-4 group">
-                                <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center group-hover:bg-blue-500/20 transition-colors">
-                                    <MapPin className="w-5 h-5 text-blue-400" />
+                            {/* Address */}
+                            {siteInfo.address?.length > 0 && (
+                                <div className="flex items-start gap-4 group">
+                                    <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center group-hover:bg-blue-500/20 transition-colors">
+                                        <MapPin className="w-5 h-5 text-blue-400" />
+                                    </div>
+                                    <p className="text-gray-400 text-sm leading-relaxed">
+                                        {siteInfo.address.map((line, i) => (
+                                            <span key={i}>{line}{i < siteInfo.address.length - 1 && <br />}</span>
+                                        ))}
+                                    </p>
                                 </div>
-                                <p className="text-gray-400 text-sm leading-relaxed">
-                                    House #54, Road #4/A, <br />
-                                    Dhanmondi, Dhaka-1209
-                                </p>
-                            </div>
+                            )}
 
-                            <div className="flex items-center gap-4 group">
-                                <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center group-hover:bg-blue-500/20 transition-colors">
-                                    <Phone className="w-5 h-5 text-blue-400" />
+                            {/* Phone */}
+                            {siteInfo.phone?.length > 0 && (
+                                <div className="flex items-center gap-4 group">
+                                    <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center group-hover:bg-blue-500/20 transition-colors">
+                                        <Phone className="w-5 h-5 text-blue-400" />
+                                    </div>
+                                    <div>
+                                        {siteInfo.phone.map((ph, i) => (
+                                            <a key={i} href={`tel:${ph.replace(/\s/g, '')}`} className="text-gray-400 text-sm hover:text-white transition-colors block">
+                                                {ph}
+                                            </a>
+                                        ))}
+                                    </div>
                                 </div>
-                                <div>
-                                    <a href="tel:+88029116774" className="text-gray-400 text-sm hover:text-white transition-colors block">
-                                        +880 2-9116774
-                                    </a>
-                                </div>
-                            </div>
+                            )}
 
-                            <div className="flex items-center gap-4 group">
-                                <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center group-hover:bg-blue-500/20 transition-colors">
-                                    <Mail className="w-5 h-5 text-blue-400" />
+                            {/* Email */}
+                            {siteInfo.email?.length > 0 && (
+                                <div className="flex items-center gap-4 group">
+                                    <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center group-hover:bg-blue-500/20 transition-colors">
+                                        <Mail className="w-5 h-5 text-blue-400" />
+                                    </div>
+                                    <div>
+                                        {siteInfo.email.map((em, i) => (
+                                            <a key={i} href={`mailto:${em}`} className="text-gray-400 text-sm hover:text-white transition-colors block">
+                                                {em}
+                                            </a>
+                                        ))}
+                                    </div>
                                 </div>
-                                <a href="mailto:info@diit.edu.bd" className="text-gray-400 text-sm hover:text-white transition-colors">
-                                    info@diit.edu.bd
-                                </a>
-                            </div>
+                            )}
                         </div>
                     </div>
 
@@ -193,3 +240,4 @@ export default function Footer() {
         </footer>
     );
 }
+

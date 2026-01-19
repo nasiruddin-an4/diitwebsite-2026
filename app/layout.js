@@ -15,7 +15,7 @@ const manrope = Manrope({
 
 export default function RootLayout({ children }) {
   const pathname = usePathname();
-  const isAdminRoute = pathname?.startsWith("/admin");
+  const isAdminRoute = pathname === "/admin" || pathname?.startsWith("/admin/");
 
   return (
     <html lang="en">

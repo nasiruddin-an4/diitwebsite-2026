@@ -11,10 +11,35 @@ import {
     Facebook,
     Twitter,
     Linkedin,
-    Instagram
+    Instagram,
+    Youtube
 } from "lucide-react";
 
-export default function ContactClient() {
+const socialIcons = {
+    facebook: Facebook,
+    twitter: Twitter,
+    linkedin: Linkedin,
+    instagram: Instagram,
+    youtube: Youtube
+};
+
+export default function ContactClient({ data }) {
+    const {
+        hero = {},
+        info = {},
+        mapUrl = "",
+        officeHours = "",
+        socialMedia = {}
+    } = data || {};
+
+    // Build social links array
+    const socialLinks = Object.entries(socialMedia)
+        .filter(([_, url]) => url && url.trim() !== "")
+        .map(([platform, url]) => ({
+            icon: socialIcons[platform] || Facebook,
+            href: url
+        }));
+
     const fadeInUp = {
         initial: { opacity: 0, y: 20 },
         whileInView: { opacity: 1, y: 0 },
@@ -22,13 +47,33 @@ export default function ContactClient() {
         transition: { duration: 0.5 }
     };
 
+    const contactCards = [
+        {
+            icon: Phone,
+            title: "Call Us",
+            lines: info.phone || [],
+            color: "bg-blue-50 text-blue-600"
+        },
+        {
+            icon: Mail,
+            title: "Email Us",
+            lines: info.email || [],
+            color: "bg-pink-50 text-pink-600"
+        },
+        {
+            icon: MapPin,
+            title: "Visit Us",
+            lines: info.address || [],
+            color: "bg-indigo-50 text-indigo-600"
+        }
+    ];
+
     return (
         <div className="bg-neutral-50 min-h-screen font-sans">
 
             {/* 1. Hero Section */}
             <section className="relative bg-slate-900 py-24 px-4 overflow-hidden">
                 <div className="absolute inset-0">
-                    <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10" />
                     <div className="absolute right-0 top-0 w-[500px] h-[500px] bg-indigo-600/30 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
                 </div>
 
@@ -38,9 +83,9 @@ export default function ContactClient() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6 }}
                     >
-                        <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">Get in Touch</h1>
-                        <p className="text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed">
-                            Have questions about admissions, academics, or campus life? We're here to help. Reach out to us through any of the channels below.
+                        <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">{hero.title || "Get in Touch"}</h1>
+                        <p className="text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed whitespace-pre-wrap">
+                            {hero.description || "Have questions about admissions, academics, or campus life? We're here to help. Reach out to us through any of the channels below."}
                         </p>
                     </motion.div>
                 </div>
@@ -49,26 +94,7 @@ export default function ContactClient() {
             {/* 2. Contact Info Cards */}
             <section className="py-16 px-4 -mt-10 relative z-20">
                 <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {[
-                        {
-                            icon: Phone,
-                            title: "Call Us",
-                            lines: ["+880 2-9116774", "+880 1713-493163"],
-                            color: "bg-blue-50 text-blue-600"
-                        },
-                        {
-                            icon: Mail,
-                            title: "Email Us",
-                            lines: ["info@diit.edu.bd", "admissions@diit.edu.bd"],
-                            color: "bg-pink-50 text-pink-600"
-                        },
-                        {
-                            icon: MapPin,
-                            title: "Visit Us",
-                            lines: ["House #54, Road #4/A", "Dhanmondi, Dhaka-1209"],
-                            color: "bg-indigo-50 text-indigo-600"
-                        }
-                    ].map((item, idx) => (
+                    {contactCards.filter(card => card.lines.length > 0).map((item, idx) => (
                         <motion.div
                             key={idx}
                             initial={{ opacity: 0, y: 20 }}
@@ -143,13 +169,13 @@ export default function ContactClient() {
                         {/* Decorative Map Image (or Embed) */}
                         <div className="h-full min-h-[400px] w-full relative">
                             <iframe
-                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3651.848483785162!2d90.37525287602324!3d23.752778888686644!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755b8ada2664e21%3A0x3c872fd17bc11ddb!2sDaffodil%20International%20Professional%20Training%20Institute%20(DIPTI)!5e0!3m2!1sen!2sbd!4v1705000000000!5m2!1sen!2sbd"
+                                src={mapUrl || "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2848.205521765621!2d90.3763857!3d23.754888899999997!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755b8adf797a677%3A0x70ebff41575242f8!2sDaffodil%20Institute%20of%20IT%20(DIIT)!5e1!3m2!1sen!2sbd!4v1768807662511!5m2!1sen!2sbd"}
                                 width="100%"
                                 height="100%"
                                 style={{ border: 0 }}
                                 allowFullScreen=""
                                 loading="lazy"
-                                className="absolute inset-0 grayscale hover:grayscale-0 transition-all duration-500"
+                                className="absolute inset-0 transition-all duration-500"
                             />
                         </div>
 
@@ -160,20 +186,32 @@ export default function ContactClient() {
                                     <Clock className="w-5 h-5 text-indigo-600 mt-1" />
                                     <div>
                                         <h4 className="font-bold text-gray-900">Office Hours</h4>
-                                        <p className="text-gray-500 text-sm">Sun - Thu: 9:00 AM - 6:00 PM</p>
-                                        <p className="text-gray-500 text-sm">Fri: Closed</p>
-                                        <p className="text-gray-500 text-sm">Sat: 10:00 AM - 4:00 PM</p>
+                                        <p className="text-gray-500 text-sm whitespace-pre-wrap">{officeHours || "Sun - Thu: 09:00 AM - 06:00 PM\nFri: Closed\nSat: 09:00 AM - 05:00 PM"}</p>
                                     </div>
                                 </div>
 
                                 <div className="flex items-center gap-4 pt-4 border-t border-gray-100">
                                     <p className="font-bold text-gray-900">Follow Us:</p>
                                     <div className="flex gap-3">
-                                        {[Facebook, Twitter, Linkedin, Instagram].map((Icon, i) => (
-                                            <a key={i} href="#" className="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 hover:bg-indigo-600 hover:text-white transition-colors">
-                                                <Icon className="w-4 h-4" />
-                                            </a>
-                                        ))}
+                                        {socialLinks.length > 0 ? (
+                                            socialLinks.map((social, i) => (
+                                                <a
+                                                    key={i}
+                                                    href={social.href}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 hover:bg-indigo-600 hover:text-white transition-colors"
+                                                >
+                                                    <social.icon className="w-4 h-4" />
+                                                </a>
+                                            ))
+                                        ) : (
+                                            [Facebook, Twitter, Linkedin, Instagram].map((Icon, i) => (
+                                                <a key={i} href="#" className="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 hover:bg-indigo-600 hover:text-white transition-colors">
+                                                    <Icon className="w-4 h-4" />
+                                                </a>
+                                            ))
+                                        )}
                                     </div>
                                 </div>
                             </div>

@@ -32,10 +32,10 @@ export async function POST(request) {
 
     const client = await clientPromise;
     const db = client.db("diit_admin");
-    const collection = db.collection("campus_activities_data");
+    const collection = db.collection("campusActivities");
 
     await collection.updateOne(
-      { _id: "campus_activities" },
+      { _id: "activities" },
       { $set: { ...data, updatedAt: new Date(), updatedBy: user.email } },
       { upsert: true }
     );

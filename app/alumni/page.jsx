@@ -4,55 +4,75 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Search,
-    Briefcase,
     MapPin,
     Linkedin,
     Mail,
+    Phone,
     ChevronLeft,
     ChevronRight,
     Users,
-    Globe,
-    Building2,
-    GraduationCap,
-    Sparkles,
-    Filter,
-    X
+    Sparkles
 } from 'lucide-react';
-import { alumniData } from './alumniData';
 
 const ITEMS_PER_PAGE = 8;
 
 const AlumniPage = () => {
+    const [mounted, setMounted] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedDept, setSelectedDept] = useState('All');
     const [currentPage, setCurrentPage] = useState(1);
     const [isScrolled, setIsScrolled] = useState(false);
-    const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
+    const [alumni, setAlumni] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-    const departments = ['All', 'CSE', 'BBA', 'MBA', 'THM'];
+    const departments = ['All', 'BBA', 'MBA', 'CSE', 'BTHM', 'Others'];
 
-    // Stats for Hero Section
-    const stats = [
-        { label: "Active Alumni", value: "2,500+", icon: Users },
-        { label: "Global Companies", value: "300+", icon: Building2 },
-        { label: "Countries Reach", value: "25+", icon: Globe },
-    ];
-
-    // Handle Scroll for sticky filter bar effect
+    // Handle mounting to prevent hydration errors
     useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    // Fetch Alumni Data
+    useEffect(() => {
+        if (!mounted) return;
+        const fetchAlumni = async () => {
+            try {
+                setLoading(true);
+                const res = await fetch('/api/admin/alumni');
+                const result = await res.json();
+                if (result.success) {
+                    setAlumni(result.data);
+                }
+            } catch (error) {
+                console.error("Failed to fetch alumni:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchAlumni();
+    }, [mounted]);
+
+    // Handle Scroll for sticky effect
+    useEffect(() => {
+        if (!mounted) return;
         const handleScroll = () => {
             setIsScrolled(window.scrollY > 400);
         };
         window.addEventListener('scroll', handleScroll);
+        // Set initial state
+        handleScroll();
         return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
+    }, [mounted]);
 
     // Filter Logic
-    const filteredAlumni = alumniData.filter(alumnus => {
+    const filteredAlumni = alumni.filter(alumnus => {
+        const searchLower = searchQuery.toLowerCase();
         const matchesSearch =
-            alumnus.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            alumnus.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            alumnus.designation.toLowerCase().includes(searchQuery.toLowerCase());
+            alumnus.name.toLowerCase().includes(searchLower) ||
+            alumnus.company.toLowerCase().includes(searchLower) ||
+            alumnus.designation.toLowerCase().includes(searchLower) ||
+            alumnus.location.toLowerCase().includes(searchLower);
 
         const matchesDept = selectedDept === 'All' || alumnus.department === selectedDept;
 
@@ -72,119 +92,84 @@ const AlumniPage = () => {
     const handlePageChange = (page) => {
         if (page >= 1 && page <= totalPages) {
             setCurrentPage(page);
-            window.scrollTo({ top: 500, behavior: 'smooth' });
+            window.scrollTo({ top: 450, behavior: 'smooth' });
         }
     };
 
+    // Before mounting, render a consistent shell to prevent hydration mismatch
+    if (!mounted || loading) {
+        return (
+            <div className="min-h-screen bg-[#f8fafc] flex flex-col items-center justify-center gap-4">
+                <div className="relative">
+                    <div className="w-16 h-16 border-4 border-slate-100 rounded-full animate-spin border-t-brandColor" />
+                    <Sparkles className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 text-brandColor animate-pulse" />
+                </div>
+                <p className="text-slate-500 font-medium animate-pulse">Establishing Network...</p>
+            </div>
+        );
+    }
+
     return (
-        <div className="min-h-screen bg-slate-50 font-sans selection:bg-blue-100 selection:text-blue-900">
-            {/* Modern Hero Section */}
-            <div className="relative bg-[#0b0f19] pt-32 pb-32 px-4 overflow-hidden">
-                {/* Advanced Background Gradients */}
-                <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                    <div className="absolute -top-[20%] -right-[10%] w-[800px] h-[800px] bg-linear-to-br from-blue-600/20 to-purple-600/20 rounded-full blur-[100px] animate-pulse-slow" />
-                    <div className="absolute top-[20%] -left-[10%] w-[600px] h-[600px] bg-linear-to-tr from-cyan-500/10 to-emerald-500/10 rounded-full blur-[80px]" />
+        <div className="min-h-screen bg-[#f8fafc] font-sans selection:bg-brandColor/10 selection:text-brandColor overflow-x-hidden">
+            {/* --- Hero Section --- */}
+            <div className="relative bg-[#020617] pt-32 pb-44 px-4 overflow-hidden">
+                <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-50">
+                    <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(circle_at_50%_-20%,#1e293b,transparent)]" />
+                    <motion.div
+                        animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
+                        transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+                        className="absolute -top-[10%] -right-[10%] w-[800px] h-[800px] bg-blue-600/20 rounded-full blur-[120px]"
+                    />
                     <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-soft-light" />
                 </div>
 
-                <div className="max-w-7xl mx-auto relative z-10">
-                    <div className="flex flex-col items-center text-center">
-                        <motion.div
-                            initial={{ opacity: 0, y: 30 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.8, ease: "easeOut" }}
-                            className="max-w-4xl"
-                        >
-                            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-800/50 text-cyan-400 text-xs font-bold uppercase tracking-widest mb-8 backdrop-blur-md border border-slate-700/50 shadow-lg glow-cyan">
-                                <Sparkles className="w-3.5 h-3.5" /> Alumni Network
-                            </div>
-
-                            <h1 className="text-5xl md:text-7xl font-extrabold text-white mb-8 leading-tight tracking-tight">
-                                Connecting <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-cyan-400 to-emerald-400 animate-gradient-x">Dreams</span> <br />
-                                Across the Globe
-                            </h1>
-
-                            <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed mb-12">
-                                Discover the success stories of DIIT graduates who are leading innovation and shaping industries worldwide.
-                            </p>
-                        </motion.div>
-
-                        {/* Interactive Stats Cards */}
-                        <motion.div
-                            initial={{ opacity: 0, y: 40 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.8, delay: 0.2 }}
-                            className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8 w-full max-w-4xl"
-                        >
-                            {stats.map((stat, idx) => (
-                                <div key={idx} className="bg-white/5 backdrop-blur-sm border border-white/10 p-6 rounded-2xl hover:bg-white/10 transition-colors group">
-                                    <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-blue-500/20 text-blue-400 mb-4 mx-auto group-hover:scale-110 transition-transform">
-                                        <stat.icon className="w-6 h-6" />
-                                    </div>
-                                    <h3 className="text-3xl font-bold text-white mb-1">{stat.value}</h3>
-                                    <p className="text-slate-400 text-sm font-medium uppercase tracking-wider">{stat.label}</p>
-                                </div>
-                            ))}
-                        </motion.div>
-                    </div>
+                <div className="max-w-7xl mx-auto relative z-10 text-center">
+                    <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
+                        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-blue-300 text-xs font-bold uppercase tracking-[0.2em] mb-8 backdrop-blur-xl">
+                            <Sparkles className="w-3.5 h-3.5" /> DIIT Excellence
+                        </div>
+                        <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-white mb-6 leading-[1.1] tracking-tight">
+                            Global <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-300 to-cyan-300">Impact</span>
+                        </h1>
+                        <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed font-medium">
+                            Meet the professionals who are shaping the future and leading industries across the globe.
+                        </p>
+                    </motion.div>
                 </div>
             </div>
 
-            {/* Filter & Content Section */}
-            <div className="max-w-7xl mx-auto px-4 -mt-10 relative z-20 pb-20">
-                {/* Floating Filter Bar */}
+            {/* --- Main Content --- */}
+            <div className="max-w-7xl mx-auto px-4 -mt-24 relative z-20 pb-32">
+                {/* Search & Filter Bar */}
                 <motion.div
-                    initial={{ y: 20, opacity: 0 }}
+                    initial={{ y: 40, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
-                    className={`bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl shadow-slate-200/50 p-4 mb-12 border border-white/50 sticky top-16 z-40 transition-all duration-300 ${isScrolled ? 'shadow-2xl translate-y-2' : ''}`}
+                    transition={{ delay: 0.2 }}
+                    className={`bg-white border border-slate-100 rounded-[2rem] p-3 mb-10 shadow-[0_20px_50px_rgba(0,0,0,0.03)] sticky top-20 z-40 transition-all duration-500 ${isScrolled ? 'mx-4 lg:mx-0 shadow-[0_25px_60px_rgba(0,0,0,0.08)]' : ''}`}
                 >
-                    <div className="flex flex-col lg:flex-row gap-4 justify-between">
-
-                        {/* Search Input & Mobile Toggle (Order 1 on mobile, 2 on desktop) */}
-                        <div className="flex gap-3 w-full lg:w-96 order-1 lg:order-2">
-                            <div className="relative flex-1 group">
-                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-blue-600 transition-colors" />
-                                <input
-                                    type="text"
-                                    placeholder="Search alumni..."
-                                    value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="w-full pl-11 pr-4 py-3 rounded-xl bg-slate-50/50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-slate-900 font-medium placeholder:text-slate-400 group-hover:bg-white"
-                                />
-                            </div>
-
-                            <button
-                                onClick={() => setIsMobileFilterOpen(!isMobileFilterOpen)}
-                                className={`lg:hidden p-3 rounded-xl border transition-colors flex items-center justify-center ${isMobileFilterOpen
-                                    ? 'bg-blue-50 border-blue-200 text-blue-600'
-                                    : 'bg-slate-50 border-slate-200 text-slate-500 hover:bg-slate-100'
-                                    }`}
-                            >
-                                {isMobileFilterOpen ? <X className="w-5 h-5" /> : <Filter className="w-5 h-5" />}
-                            </button>
+                    <div className="flex flex-col lg:flex-row items-center gap-3">
+                        <div className="relative w-full lg:w-[400px] group">
+                            <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-brandColor transition-colors" />
+                            <input
+                                type="text"
+                                placeholder="Search alumni..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className="w-full pl-14 pr-6 py-4 rounded-2xl bg-slate-50 border-none outline-none ring-1 ring-slate-100 focus:ring-2 focus:ring-brandColor transition-all text-slate-800 font-semibold placeholder:text-slate-400"
+                            />
                         </div>
-
-                        {/* Department Tabs (Order 2 on mobile, 1 on desktop) */}
-                        <div className={`
-                            ${isMobileFilterOpen ? 'flex' : 'hidden'} 
-                            lg:flex flex-col lg:flex-row flex-wrap gap-1.5 justify-center lg:justify-start w-full lg:w-auto bg-slate-100/50 p-1.5 rounded-xl order-2 lg:order-1 transition-all
-                        `}>
-                            {departments.map(dept => (
+                        <div className="w-px h-8 bg-slate-100 hidden lg:block mx-1" />
+                        <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto overflow-x-auto no-scrollbar pb-2 lg:pb-0">
+                            {departments.map((dept) => (
                                 <button
                                     key={dept}
-                                    onClick={() => {
-                                        setSelectedDept(dept);
-                                        setIsMobileFilterOpen(false);
-                                    }}
-                                    className={`px-6 py-2.5 rounded-lg text-sm font-bold transition-all duration-300 relative overflow-hidden text-center ${selectedDept === dept
-                                        ? 'text-white shadow-lg shadow-blue-500/25'
-                                        : 'text-slate-500 hover:text-slate-700 hover:bg-white'
-                                        }`}
+                                    onClick={() => setSelectedDept(dept)}
+                                    className={`px-6 py-3.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap relative ${selectedDept === dept ? 'text-white' : 'text-slate-500 hover:text-brandColor hover:bg-slate-50'}`}
                                 >
                                     {selectedDept === dept && (
                                         <motion.div
-                                            layoutId="activeTab"
-                                            className="absolute inset-0 bg-blue-600 rounded-lg"
+                                            layoutId="activeFilter"
+                                            className="absolute inset-0 bg-brandColor rounded-xl shadow-[0_8px_20px_rgba(0,38,82,0.2)]"
                                             transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                                         />
                                     )}
@@ -195,136 +180,98 @@ const AlumniPage = () => {
                     </div>
                 </motion.div>
 
-                {/* Results Count & Sort (Optional placeholder) */}
-                <div className="flex items-center justify-between px-2 mb-6">
-                    <p className="text-slate-500 text-sm font-medium">
-                        Showing results for <span className="text-slate-900 font-bold">"All Alumni"</span>
-                    </p>
-                    <span className="text-slate-400 text-xs font-bold uppercase tracking-widest">{filteredAlumni.length} Found</span>
-                </div>
-
-                {/* Modern Alumni Grid */}
+                {/* Alumni Cards Grid */}
                 {paginatedItems.length > 0 ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                        <AnimatePresence mode="popLayout">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-16">
+                        <AnimatePresence mode="popLayout" initial={false}>
                             {paginatedItems.map((alumnus, index) => (
                                 <motion.div
                                     layout
-                                    initial={{ opacity: 0, y: 20 }}
+                                    initial={{ opacity: 0, y: 30 }}
                                     animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, scale: 0.95 }}
-                                    transition={{ duration: 0.4, delay: index * 0.05 }}
-                                    key={alumnus.id}
-                                    className="group relative bg-white rounded-3xl overflow-hidden hover:shadow-2xl hover:shadow-blue-900/10 transition-all duration-500 border border-slate-100 flex flex-col h-full"
+                                    exit={{ opacity: 0, transition: { duration: 0.2 } }}
+                                    transition={{ duration: 0.6, delay: index * 0.05, ease: [0.215, 0.61, 0.355, 1] }}
+                                    key={alumnus._id || alumnus.id}
+                                    className="group flex flex-col h-full bg-transparent"
                                 >
-                                    {/* Image Section with Overlay */}
-                                    <div className="relative h-64 overflow-hidden bg-slate-100">
-                                        <div className="absolute inset-0 bg-linear-to-t from-slate-900 via-slate-900/20 to-transparent opacity-60 z-10 transition-opacity duration-300 group-hover:opacity-40" />
+                                    {/* Image Section */}
+                                    <div className="relative aspect-[1/1.1] overflow-hidden mb-4 bg-slate-100 rounded-sm">
                                         <img
                                             src={alumnus.image}
                                             alt={alumnus.name}
-                                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 group-hover:rotate-1"
+                                            className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
                                         />
-
-                                        {/* Floating Badge */}
-                                        <div className="absolute top-4 right-4 z-20">
-                                            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/20 backdrop-blur-md border border-white/20 text-white text-xs font-bold shadow-lg">
-                                                <GraduationCap className="w-3 h-3" /> {alumnus.batch}
+                                        <div className="absolute top-4 left-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <span className="bg-white/90 backdrop-blur-sm px-3 py-1 text-[10px] font-black text-brandColor uppercase tracking-widest shadow-sm">
+                                                {alumnus.batch} Batch
                                             </span>
                                         </div>
-
-                                        {/* Hover Socials */}
-                                        <div className="absolute top-4 left-4 z-20 flex flex-col gap-2 -translate-x-10 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-300 delay-100">
-                                            <a href={alumnus.linkedin} className="w-9 h-9 rounded-full bg-white text-blue-600 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-colors shadow-lg">
-                                                <Linkedin className="w-4 h-4" />
-                                            </a>
-                                            <a href={`mailto:${alumnus.email}`} className="w-9 h-9 rounded-full bg-white text-slate-700 flex items-center justify-center hover:bg-slate-800 hover:text-white transition-colors shadow-lg">
-                                                <Mail className="w-4 h-4" />
-                                            </a>
-                                        </div>
-
-                                        {/* Name & Dept positioned on Image */}
-                                        <div className="absolute bottom-0 left-0 right-0 p-5 z-20 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-                                            <div className="flex items-center gap-2 mb-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-75 transform translate-y-4 group-hover:translate-y-0">
-                                                <span className="px-2 py-0.5 rounded bg-blue-500 text-white text-[10px] font-bold uppercase tracking-wider">
-                                                    {alumnus.department}
-                                                </span>
-                                            </div>
-                                            <h3 className="text-xl font-bold text-white mb-0.5 leading-tight group-hover:text-blue-200 transition-colors">
-                                                {alumnus.name}
-                                            </h3>
+                                        {/* Tooltip-style Social Actions */}
+                                        <div className="absolute bottom-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                                            {alumnus.linkedin && (
+                                                <a href={alumnus.linkedin} target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white text-brandColor flex items-center justify-center shadow-xl hover:bg-brandColor hover:text-white transition-colors">
+                                                    <Linkedin className="w-5 h-5" />
+                                                </a>
+                                            )}
+                                            {alumnus.email && (
+                                                <a href={`mailto:${alumnus.email}`} className="w-10 h-10 bg-white text-brandColor flex items-center justify-center shadow-xl hover:bg-brandColor hover:text-white transition-colors">
+                                                    <Mail className="w-5 h-5" />
+                                                </a>
+                                            )}
+                                            {alumnus.phone && (
+                                                <a href={`tel:${alumnus.phone}`} className="w-10 h-10 bg-white text-brandColor flex items-center justify-center shadow-xl hover:bg-brandColor hover:text-white transition-colors">
+                                                    <Phone className="w-5 h-5" />
+                                                </a>
+                                            )}
                                         </div>
                                     </div>
 
-                                    {/* Content Body */}
-                                    <div className="p-5 flex-1 flex flex-col bg-white relative z-10 transition-colors group-hover:bg-blue-50/10">
-                                        <div className="mb-4">
-                                            <p className="text-blue-600 font-semibold text-sm mb-1">{alumnus.designation}</p>
-                                            <p className="text-slate-500 text-sm font-medium">{alumnus.company}</p>
-                                        </div>
-
-                                        <div className="mt-auto pt-4 border-t border-slate-100 flex items-center gap-2 text-slate-400 text-xs font-medium">
-                                            <MapPin className="w-3.5 h-3.5" />
-                                            <span>{alumnus.location}</span>
+                                    {/* Info Section */}
+                                    <div className="flex flex-col text-left">
+                                        <h3 className="text-[20px] font-bold text-[#020617] leading-tight mb-1.5 group-hover:text-brandColor transition-colors">
+                                            {alumnus.name}
+                                        </h3>
+                                        <div className="space-y-1">
+                                            <p className="text-[15px] font-medium text-slate-500 leading-snug">
+                                                {alumnus.designation}
+                                            </p>
+                                            {alumnus.company && (
+                                                <p className="text-[14px] font-medium text-slate-400">
+                                                    {alumnus.company}
+                                                </p>
+                                            )}
                                         </div>
                                     </div>
-
-                                    {/* Bottom highlight bar */}
-                                    <div className="h-1 w-full bg-gradient-to-r from-blue-500 to-purple-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
                                 </motion.div>
                             ))}
                         </AnimatePresence>
                     </div>
                 ) : (
-                    <div className="text-center py-32 bg-white rounded-[2rem] border border-slate-100 shadow-sm relative overflow-hidden">
-                        <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-5" />
-                        <div className="relative z-10">
-                            <div className="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-200">
-                                <Search className="w-10 h-10" />
-                            </div>
-                            <h3 className="text-2xl font-bold text-slate-900 mb-2">No alumni found</h3>
-                            <p className="text-slate-500 max-w-md mx-auto">
-                                We couldn't find any alumni matching your current filters. Try searching for something else.
-                            </p>
-                        </div>
+                    <div className="text-center py-40 border-2 border-dashed border-slate-100 rounded-[3rem]">
+                        <Users className="w-16 h-16 text-slate-100 mx-auto mb-4" />
+                        <h3 className="text-xl font-bold text-slate-400">No matching alumni found</h3>
                     </div>
                 )}
 
-                {/* Modern Pagination controls */}
+                {/* Pagination */}
                 {totalPages > 1 && (
-                    <div className="mt-20 flex flex-col md:flex-row items-center justify-between gap-6 bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
-                        <p className="text-slate-500 text-sm font-medium">Page {currentPage} of {totalPages}</p>
-
+                    <div className="mt-20 flex flex-col md:flex-row items-center justify-between gap-8 bg-white/50 backdrop-blur-sm p-6 rounded-[2rem] border border-white">
+                        <span className="px-4 py-2 bg-white rounded-xl text-xs font-bold text-slate-400 uppercase shadow-xs border border-slate-50">
+                            Page {currentPage} of {totalPages}
+                        </span>
                         <div className="flex items-center gap-2">
-                            <button
-                                onClick={() => handlePageChange(currentPage - 1)}
-                                disabled={currentPage === 1}
-                                className="w-10 h-10 rounded-xl border border-slate-200 text-slate-600 flex items-center justify-center hover:bg-slate-50 hover:border-slate-300 disabled:opacity-30 disabled:hover:bg-white transition-all"
-                            >
-                                <ChevronLeft className="w-5 h-5" />
+                            <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1} className="w-12 h-12 rounded-2xl bg-white shadow-sm text-slate-600 flex items-center justify-center hover:bg-brandColor hover:text-white disabled:opacity-20 transition-all cursor-pointer">
+                                <ChevronLeft className="w-6 h-6" />
                             </button>
-
-                            <div className="flex items-center gap-1">
+                            <div className="flex items-center gap-2">
                                 {[...Array(totalPages)].map((_, i) => (
-                                    <button
-                                        key={i}
-                                        onClick={() => handlePageChange(i + 1)}
-                                        className={`w-10 h-10 rounded-xl text-sm font-bold transition-all ${currentPage === i + 1
-                                            ? 'bg-slate-900 text-white shadow-lg'
-                                            : 'text-slate-500 hover:bg-slate-50'
-                                            }`}
-                                    >
+                                    <button key={i} onClick={() => handlePageChange(i + 1)} className={`w-12 h-12 rounded-2xl text-sm font-bold transition-all ${currentPage === i + 1 ? 'bg-brandColor text-white shadow-lg' : 'text-slate-400 bg-white hover:bg-slate-50'}`}>
                                         {i + 1}
                                     </button>
                                 ))}
                             </div>
-
-                            <button
-                                onClick={() => handlePageChange(currentPage + 1)}
-                                disabled={currentPage === totalPages}
-                                className="w-10 h-10 rounded-xl border border-slate-200 text-slate-600 flex items-center justify-center hover:bg-slate-50 hover:border-slate-300 disabled:opacity-30 disabled:hover:bg-white transition-all"
-                            >
-                                <ChevronRight className="w-5 h-5" />
+                            <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages} className="w-12 h-12 rounded-2xl bg-white shadow-sm text-slate-600 flex items-center justify-center hover:bg-brandColor hover:text-white disabled:opacity-20 transition-all cursor-pointer">
+                                <ChevronRight className="w-6 h-6" />
                             </button>
                         </div>
                     </div>
