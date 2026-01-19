@@ -27,7 +27,7 @@ On your VPS, clone your repository and install dependencies.
 
 ```bash
 # Clone the repository
-git clone <YOUR_GITHUB_REPO_URL>
+git clone <YOUR_GITHUB_REPO_URL_HERE>
 cd diit-nextjs2026
 
 # Install dependencies
@@ -71,14 +71,14 @@ pm2 startup
 Configure Nginx to route traffic from your domain to the Next.js app.
 
 ```bash
-sudo nano /etc/nginx/sites-available/yourdomain.com
+sudo nano /etc/nginx/sites-available/diit.edu.bd
 ```
 
 Paste this configuration:
 ```nginx
 server {
     listen 80;
-    server_name yourdomain.com www.yourdomain.com;
+    server_name diit.edu.bd www.diit.edu.bd;
 
     location / {
         proxy_pass http://localhost:3000;
@@ -93,7 +93,7 @@ server {
 
 Enable the configuration:
 ```bash
-sudo ln -s /etc/nginx/sites-available/yourdomain.com /etc/nginx/sites-enabled/
+sudo ln -s /etc/nginx/sites-available/diit.edu.bd /etc/nginx/sites-enabled/
 sudo nginx -t
 sudo systemctl restart nginx
 ```
@@ -103,7 +103,7 @@ Secure your site with a free SSL certificate from Let's Encrypt.
 
 ```bash
 sudo apt install certbot python3-certbot-nginx -y
-sudo certbot --nginx -d yourdomain.com -d www.yourdomain.com
+sudo certbot --nginx -d diit.edu.bd -d www.diit.edu.bd
 ```
 
 ---
