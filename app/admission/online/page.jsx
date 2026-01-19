@@ -11,10 +11,67 @@ import {
 import Swal from 'sweetalert2';
 import { uploadFile } from '@/lib/upload-utils';
 
+const SectionHeader = ({ icon: Icon, title }) => (
+    <div className="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100 text-brandColor">
+        <div className="p-2.5 rounded-xl bg-brandColor text-white shadow-lg shadow-brandColor/20">
+            <Icon className="w-5 h-5" />
+        </div>
+        <h2 className="text-xl font-bold text-slate-800">
+            {title}
+        </h2>
+    </div>
+);
+
+const InputGroup = ({ label, icon: Icon, required, children }) => (
+    <div className="group">
+        <label className="block text-sm font-bold text-slate-700 mb-2">
+            {label} {required && <span className="text-red-500">*</span>}
+        </label>
+        <div className="relative">
+            {Icon && (
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brandColor transition-colors z-10 pointer-events-none">
+                    <Icon className="w-5 h-5" />
+                </div>
+            )}
+            {children}
+        </div>
+    </div>
+);
+
 
 const OnlineAdmissionForm = () => {
     const [photoUrl, setPhotoUrl] = useState("");
+    const [paymentScreenshot, setPaymentScreenshot] = useState("");
     const [isUploading, setIsUploading] = useState(false);
+    const [isPaymentUploading, setIsPaymentUploading] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [formData, setFormData] = useState({
+        program: "",
+        fullName: "",
+        phone: "",
+        dob: "",
+        email: "",
+        sscInstitute: "",
+        sscGpa: "",
+        sscYear: "",
+        hscInstitute: "",
+        hscGpa: "",
+        hscYear: "",
+        presentAddress: "",
+        guardianName: "",
+        guardianPhone: "",
+        transactionId: "",
+        session: "Session 2025-26",
+        agreeToTerms: false
+    });
+
+    const handleInputChange = (e) => {
+        const { name, value, type, checked } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: type === 'checkbox' ? checked : value
+        }));
+    };
 
     const handlePhotoUpload = async (e) => {
         const file = e.target.files?.[0];
@@ -48,40 +105,109 @@ const OnlineAdmissionForm = () => {
         }
     };
 
+    const handleScreenshotUpload = async (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
 
-    const SectionHeader = ({ icon: Icon, title }) => (
-        <div className="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100 text-brandColor">
-            <div className="p-2.5 rounded-xl bg-brandColor text-white shadow-lg shadow-brandColor/20">
-                <Icon className="w-5 h-5" />
-            </div>
-            <h2 className="text-xl font-bold text-slate-800">
-                {title}
-            </h2>
-        </div>
-    );
+        if (file.size > 2 * 1024 * 1024) {
+            Swal.fire({ icon: 'error', title: 'File Too Large', text: 'Screenshot must be less than 2MB.' });
+            return;
+        }
 
-    const InputGroup = ({ label, icon: Icon, required, children }) => (
-        <div className="group">
-            <label className="block text-sm font-bold text-slate-700 mb-2">
-                {label} {required && <span className="text-red-500">*</span>}
-            </label>
-            <div className="relative">
-                {Icon && (
-                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brandColor transition-colors z-10 pointer-events-none">
-                        <Icon className="w-5 h-5" />
-                    </div>
-                )}
-                {children}
-            </div>
-        </div>
-    );
+        setIsPaymentUploading(true);
+        try {
+            const result = await uploadFile(file, "payments");
+            if (result.success) {
+                setPaymentScreenshot(result.url);
+                Swal.fire({ icon: 'success', title: 'Screenshot Uploaded', text: 'Payment verification image saved.', toast: true, position: 'top-end', timer: 3000 });
+            }
+        } catch (error) {
+            console.error("Payment upload error:", error);
+            Swal.fire({ icon: 'error', title: 'Upload Failed', text: 'Could not upload payment screenshot' });
+        } finally {
+            setIsPaymentUploading(false);
+        }
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        // Validation
+        if (!photoUrl) {
+            Swal.fire({ icon: 'warning', title: 'Photo Required', text: 'Please upload your photo before submitting.' });
+            return;
+        }
+
+        if (!formData.agreeToTerms) {
+            Swal.fire({ icon: 'warning', title: 'Agreement Required', text: 'You must agree to the admission conditions.' });
+            return;
+        }
+
+        // Check required fields (manually since we use custom input groups)
+        const requiredFields = [
+            'program', 'fullName', 'phone', 'dob', 'email',
+            'sscInstitute', 'sscGpa', 'sscYear',
+            'hscInstitute', 'hscGpa', 'hscYear',
+            'presentAddress', 'guardianName', 'guardianPhone',
+            'transactionId', 'session'
+        ];
+
+        for (const field of requiredFields) {
+            if (!formData[field]) {
+                Swal.fire({ icon: 'warning', title: 'Missing Info', text: `Please fill in all required fields.` });
+                return;
+            }
+        }
+
+        if (!paymentScreenshot) {
+            Swal.fire({ icon: 'warning', title: 'Payment Required', text: 'Please upload a screenshot of your payment.' });
+            return;
+        }
+
+        setIsSubmitting(true);
+        try {
+            const res = await fetch("/api/admission/submit", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    ...formData,
+                    photoUrl,
+                    paymentScreenshot
+                })
+            });
+
+            const result = await res.json();
+
+            if (result.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Application Submitted!',
+                    text: 'Your application has been received. We will contact you soon.',
+                    confirmButtonColor: '#002652'
+                }).then(() => {
+                    window.location.reload(); // Reset form
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Submission Failed',
+                    text: result.message || 'Something went wrong.'
+                });
+            }
+        } catch (error) {
+            console.error("Submission error:", error);
+            Swal.fire({ icon: 'error', title: 'Error', text: 'Could not connect to the server.' });
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
 
     return (
         <div className="min-h-screen bg-[#F8FAFC] pb-20">
             {/* Standard Header */}
             <div className="bg-[#001229] pt-28 pb-32 px-4 relative overflow-hidden">
                 <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-10" />
-                <div className="absolute right-0 top-0 w-1/2 h-full bg-gradient-to-l from-brandColor/20 to-transparent blur-3xl" />
+                <div className="absolute right-0 top-0 w-1/2 h-full bg-linear-to-l from-brandColor/20 to-transparent blur-3xl" />
 
                 <div className="max-w-6xl mx-auto relative z-10 text-center">
                     <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }}>
@@ -100,7 +226,7 @@ const OnlineAdmissionForm = () => {
 
                     {/* Left: Main Form */}
                     <div className="lg:col-span-8 space-y-6">
-                        <form className="space-y-6"> {/* Removed onSubmit for static behavior */}
+                        <form onSubmit={handleSubmit} className="space-y-6">
 
                             {/* Section 1: Program */}
                             <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-slate-200">
@@ -110,6 +236,9 @@ const OnlineAdmissionForm = () => {
                                         <div className="relative">
                                             <select
                                                 name="program"
+                                                value={formData.program}
+                                                onChange={handleInputChange}
+                                                required
                                                 className="w-full px-5 py-4 rounded-xl border border-slate-300 bg-white text-slate-700 font-medium focus:border-brandColor focus:ring-4 focus:ring-brandColor/10 outline-none transition-all appearance-none cursor-pointer"
                                             >
                                                 <option value="">Choose a degree path...</option>
@@ -128,10 +257,20 @@ const OnlineAdmissionForm = () => {
                                             </div>
                                         </div>
                                     </InputGroup>
-                                    <InputGroup label="Session">
-                                        <div className="w-full px-5 py-4 rounded-xl border border-dashed border-slate-300 bg-slate-50 text-slate-600 font-semibold flex items-center justify-between cursor-not-allowed">
-                                            <span>Spring 2026</span>
-                                            <CheckCircle2 className="w-5 h-5 text-green-600" />
+                                    <InputGroup label="Session" required>
+                                        <div className="relative">
+                                            <input
+                                                type="text"
+                                                name="session"
+                                                value={formData.session}
+                                                onChange={handleInputChange}
+                                                required
+                                                placeholder="e.g., Spring 2026"
+                                                className="w-full px-5 py-4 rounded-xl border border-slate-300 focus:border-brandColor focus:ring-4 focus:ring-brandColor/10 outline-none transition-all font-semibold text-slate-700"
+                                            />
+                                            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                                                <Calendar className="w-5 h-5 text-slate-400 group-focus-within:text-brandColor" />
+                                            </div>
                                         </div>
                                     </InputGroup>
                                 </div>
@@ -194,6 +333,9 @@ const OnlineAdmissionForm = () => {
                                             <input
                                                 type="text"
                                                 name="fullName"
+                                                value={formData.fullName}
+                                                onChange={handleInputChange}
+                                                required
                                                 placeholder="As per SSC Transcript"
                                                 className="w-full pl-12 pr-4 py-4 rounded-xl border border-slate-300 focus:border-brandColor focus:ring-4 focus:ring-brandColor/10 outline-none transition-all placeholder:text-slate-400 text-slate-800 font-medium"
                                             />
@@ -203,6 +345,9 @@ const OnlineAdmissionForm = () => {
                                                 <input
                                                     type="tel"
                                                     name="phone"
+                                                    value={formData.phone}
+                                                    onChange={handleInputChange}
+                                                    required
                                                     placeholder="017..."
                                                     className="w-full pl-12 pr-4 py-4 rounded-xl border border-slate-300 focus:border-brandColor focus:ring-4 focus:ring-brandColor/10 outline-none transition-all text-slate-800 font-medium"
                                                 />
@@ -211,6 +356,9 @@ const OnlineAdmissionForm = () => {
                                                 <input
                                                     type="date"
                                                     name="dob"
+                                                    value={formData.dob}
+                                                    onChange={handleInputChange}
+                                                    required
                                                     className="w-full pl-12 pr-4 py-4 rounded-xl border border-slate-300 focus:border-brandColor focus:ring-4 focus:ring-brandColor/10 outline-none transition-all text-slate-600 font-medium"
                                                 />
                                             </InputGroup>
@@ -219,6 +367,9 @@ const OnlineAdmissionForm = () => {
                                             <input
                                                 type="email"
                                                 name="email"
+                                                value={formData.email}
+                                                onChange={handleInputChange}
+                                                required
                                                 placeholder="student@example.com"
                                                 className="w-full pl-12 pr-4 py-4 rounded-xl border border-slate-300 focus:border-brandColor focus:ring-4 focus:ring-brandColor/10 outline-none transition-all text-slate-800 font-medium"
                                             />
@@ -241,16 +392,26 @@ const OnlineAdmissionForm = () => {
                                             <div className="md:col-span-2">
                                                 <input
                                                     type="text"
+                                                    name="sscInstitute"
+                                                    value={formData.sscInstitute}
+                                                    onChange={handleInputChange}
+                                                    required
                                                     placeholder="School / Institute Name"
                                                     className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-brandColor focus:ring-2 focus:ring-brandColor/10 outline-none text-slate-800 font-medium"
                                                 />
                                             </div>
                                             <input
                                                 type="text" name="sscGpa" placeholder="GPA (5.00)"
+                                                value={formData.sscGpa}
+                                                onChange={handleInputChange}
+                                                required
                                                 className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-brandColor focus:ring-2 focus:ring-brandColor/10 outline-none text-slate-800 font-medium"
                                             />
                                             <input
                                                 type="text" name="sscYear" placeholder="Passing Year"
+                                                value={formData.sscYear}
+                                                onChange={handleInputChange}
+                                                required
                                                 className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-brandColor focus:ring-2 focus:ring-brandColor/10 outline-none text-slate-800 font-medium"
                                             />
                                         </div>
@@ -265,16 +426,26 @@ const OnlineAdmissionForm = () => {
                                             <div className="md:col-span-2">
                                                 <input
                                                     type="text"
+                                                    name="hscInstitute"
+                                                    value={formData.hscInstitute}
+                                                    onChange={handleInputChange}
+                                                    required
                                                     placeholder="College / Institute Name"
                                                     className="w-full px-4 py-3 rounded-xl border border-blue-200 focus:border-brandColor focus:ring-2 focus:ring-brandColor/10 outline-none text-slate-800 font-medium bg-white"
                                                 />
                                             </div>
                                             <input
                                                 type="text" name="hscGpa" placeholder="GPA (5.00)"
+                                                value={formData.hscGpa}
+                                                onChange={handleInputChange}
+                                                required
                                                 className="w-full px-4 py-3 rounded-xl border border-blue-200 focus:border-brandColor focus:ring-2 focus:ring-brandColor/10 outline-none text-slate-800 font-medium bg-white"
                                             />
                                             <input
                                                 type="text" name="hscYear" placeholder="Passing Year"
+                                                value={formData.hscYear}
+                                                onChange={handleInputChange}
+                                                required
                                                 className="w-full px-4 py-3 rounded-xl border border-blue-200 focus:border-brandColor focus:ring-2 focus:ring-brandColor/10 outline-none text-slate-800 font-medium bg-white"
                                             />
                                         </div>
@@ -289,20 +460,32 @@ const OnlineAdmissionForm = () => {
                                     <div className="md:col-span-2">
                                         <InputGroup label="Present Address" required>
                                             <textarea
-                                                name="presentAddress" rows="3"
+                                                name="presentAddress"
+                                                value={formData.presentAddress}
+                                                onChange={handleInputChange}
+                                                required
+                                                rows="3"
                                                 className="w-full px-5 py-4 rounded-xl border border-slate-300 focus:border-brandColor focus:ring-4 focus:ring-brandColor/10 outline-none transition-all text-slate-800 font-medium resize-none"
                                             ></textarea>
                                         </InputGroup>
                                     </div>
                                     <InputGroup label="Guardian Name" required>
                                         <input
-                                            type="text" name="guardianName"
+                                            type="text"
+                                            name="guardianName"
+                                            value={formData.guardianName}
+                                            onChange={handleInputChange}
+                                            required
                                             className="w-full px-5 py-4 rounded-xl border border-slate-300 focus:border-brandColor focus:ring-4 focus:ring-brandColor/10 outline-none transition-all text-slate-800 font-medium"
                                         />
                                     </InputGroup>
                                     <InputGroup label="Guardian Phone" required>
                                         <input
-                                            type="tel" name="guardianPhone"
+                                            type="tel"
+                                            name="guardianPhone"
+                                            value={formData.guardianPhone}
+                                            onChange={handleInputChange}
+                                            required
                                             className="w-full px-5 py-4 rounded-xl border border-slate-300 focus:border-brandColor focus:ring-4 focus:ring-brandColor/10 outline-none transition-all text-slate-800 font-medium"
                                         />
                                     </InputGroup>
@@ -314,7 +497,7 @@ const OnlineAdmissionForm = () => {
                                 <SectionHeader icon={AlertCircle} title="Payment & Conditions" />
 
                                 {/* Payment Card */}
-                                <div className="bg-gradient-to-r from-pink-600 to-rose-600 rounded-2xl p-8 text-white mb-8 relative overflow-hidden shadow-lg shadow-pink-500/20">
+                                <div className="bg-linear-to-r from-pink-600 to-rose-600 rounded-2xl p-8 text-white mb-8 relative overflow-hidden shadow-lg shadow-pink-500/20">
                                     <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-16 -mt-16" />
                                     <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
                                         <div>
@@ -335,6 +518,39 @@ const OnlineAdmissionForm = () => {
                                     <p className="text-sm text-pink-50 mt-6 font-medium max-w-lg leading-relaxed">
                                         * Please make the payment to the Merchant Number above. Keep your Transaction ID ready if required during the interview process.
                                     </p>
+                                </div>
+
+                                {/* Payment Verification Fields */}
+                                <div className="grid md:grid-cols-2 gap-6 mb-8">
+                                    <InputGroup label="Transaction ID" icon={CheckCircle2} required>
+                                        <input
+                                            type="text"
+                                            name="transactionId"
+                                            value={formData.transactionId}
+                                            onChange={handleInputChange}
+                                            required
+                                            placeholder="Enter bKash TrxID"
+                                            className="w-full px-5 py-4 pl-12 rounded-xl border border-slate-300 focus:border-brandColor focus:ring-4 focus:ring-brandColor/10 outline-none transition-all font-mono"
+                                        />
+                                    </InputGroup>
+
+                                    <InputGroup label="Payment Screenshot" icon={Camera} required>
+                                        <div className="relative">
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                onChange={handleScreenshotUpload}
+                                                className="absolute inset-0 opacity-0 cursor-pointer z-20"
+                                            />
+                                            <div className={`w-full px-5 py-4 pl-12 rounded-xl border-2 border-dashed transition-all flex items-center justify-between ${paymentScreenshot ? 'bg-green-50 border-green-300' : 'bg-slate-50 border-slate-300'}`}>
+                                                <span className={`text-sm font-medium ${paymentScreenshot ? 'text-green-700' : 'text-slate-500'}`}>
+                                                    {isPaymentUploading ? 'Uploading...' : paymentScreenshot ? 'Screenshot Uploaded!' : 'Upload Screenshot'}
+                                                </span>
+                                                {paymentScreenshot && <CheckCircle2 className="w-5 h-5 text-green-600" />}
+                                                {!paymentScreenshot && !isPaymentUploading && <div className="text-xs bg-slate-200 px-2 py-1 rounded text-slate-600 font-bold uppercase">Browse</div>}
+                                            </div>
+                                        </div>
+                                    </InputGroup>
                                 </div>
 
                                 {/* Terms List */}
@@ -368,6 +584,10 @@ const OnlineAdmissionForm = () => {
                                         <input
                                             type="checkbox"
                                             id="terms"
+                                            name="agreeToTerms"
+                                            checked={formData.agreeToTerms}
+                                            onChange={handleInputChange}
+                                            required
                                             className="w-5 h-5 rounded border-slate-300 text-brandColor focus:ring-brandColor cursor-pointer"
                                         />
                                     </div>
@@ -380,11 +600,12 @@ const OnlineAdmissionForm = () => {
                             {/* Submit Button */}
                             <div className="flex items-center justify-end pt-4">
                                 <button
-                                    type="button" // visual only
-                                    className="px-10 py-4 rounded-xl font-bold text-lg text-white shadow-xl shadow-blue-900/20 flex items-center gap-3 bg-brandColor hover:bg-blue-800 hover:-translate-y-1 transition-all active:scale-95"
+                                    type="submit"
+                                    disabled={isSubmitting}
+                                    className="px-10 py-4 rounded-xl font-bold text-lg text-white shadow-xl shadow-blue-900/20 flex items-center gap-3 bg-brandColor hover:bg-blue-800 hover:-translate-y-1 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                                 >
-                                    Submit Application
-                                    <Send className="w-5 h-5" />
+                                    {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Submit Application'}
+                                    {!isSubmitting && <Send className="w-5 h-5" />}
                                 </button>
                             </div>
 
@@ -395,7 +616,7 @@ const OnlineAdmissionForm = () => {
                     <div className="lg:col-span-4 pl-0 lg:pl-4 hidden lg:block">
                         <div className="sticky top-[120px] space-y-6">
                             {/* Need Help Card */}
-                            <div className="bg-gradient-to-br from-brandColor to-blue-900 rounded-2xl p-8 text-white shadow-lg relative overflow-hidden">
+                            <div className="bg-linear-to-br from-brandColor to-blue-900 rounded-2xl p-8 text-white shadow-lg relative overflow-hidden">
                                 <div className="relative z-10">
                                     <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center mb-6 backdrop-blur-sm">
                                         <HelpCircle className="w-6 h-6 text-white" />
@@ -408,7 +629,7 @@ const OnlineAdmissionForm = () => {
                                     <div className="space-y-3">
                                         <div className="flex items-center gap-3 p-3 bg-white/10 rounded-lg backdrop-blur-sm">
                                             <Phone className="w-5 h-5 text-blue-300" />
-                                            <span className="font-bold">01713-493187</span>
+                                            <span className="font-bold">+880 1713-493287</span>
                                         </div>
                                         <div className="flex items-center gap-3 p-3 bg-white/10 rounded-lg backdrop-blur-sm">
                                             <Mail className="w-5 h-5 text-blue-300" />
@@ -422,8 +643,8 @@ const OnlineAdmissionForm = () => {
                             </div>
                         </div>
                     </div>
-
                 </div>
+
             </div>
         </div>
     );
