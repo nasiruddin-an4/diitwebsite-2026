@@ -38,9 +38,9 @@ const FacultyPage = () => {
         }
     };
 
-    // separate Principal (id 1 in default data or first with appropriate title)
-    const principal = faculty.find(m => m.id === 1 || m.designation === "Principal");
-    const otherFaculty = faculty.filter(m => m.id !== 1 && m.designation !== "Principal");
+    // The first member in our sorted list (by serial) will be our featured Head
+    const principal = faculty.length > 0 ? faculty[0] : null;
+    const otherFaculty = faculty.length > 0 ? faculty.slice(1) : [];
 
     const filteredFaculty = otherFaculty.filter(member => {
         const matchesSearch = member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||

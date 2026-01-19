@@ -7,11 +7,20 @@ export async function GET() {
     const client = await clientPromise;
     const db = client.db("diit_admin");
 
-    // Fetch faculty sorted by department and designation
+    // Fetch faculty sorted by serial, department and designation
+    // Use aggregation to handle missing serials by defaulting them to 999
     const faculty = await db
       .collection("faculty")
-      .find({})
-      .sort({ department: 1, designation: 1, _id: -1 })
+      .aggregate([
+        {
+          $addFields: {
+            sortSerial: { $ifNull: ["$serial", 999] },
+          },
+        },
+        {
+          $sort: { sortSerial: 1, department: 1, designation: 1, _id: -1 },
+        },
+      ])
       .toArray();
 
     return NextResponse.json({ success: true, data: faculty });
@@ -19,7 +28,7 @@ export async function GET() {
     console.error("Error fetching faculty:", error);
     return NextResponse.json(
       { success: false, message: "Failed to fetch faculty" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -48,7 +57,7 @@ export async function POST(request) {
     console.error("Error creating faculty:", error);
     return NextResponse.json(
       { success: false, message: "Failed to create faculty member" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -60,7 +69,7 @@ export async function PUT(request) {
     if (!_id) {
       return NextResponse.json(
         { success: false, message: "Faculty ID is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -77,13 +86,13 @@ export async function PUT(request) {
           ...updateData,
           updatedAt: new Date(),
         },
-      }
+      },
     );
 
     if (result.matchedCount === 0) {
       return NextResponse.json(
         { success: false, message: "Faculty member not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -95,7 +104,7 @@ export async function PUT(request) {
     console.error("Error updating faculty:", error);
     return NextResponse.json(
       { success: false, message: "Failed to update faculty member" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -108,7 +117,7 @@ export async function DELETE(request) {
     if (!id) {
       return NextResponse.json(
         { success: false, message: "Faculty ID is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -122,7 +131,7 @@ export async function DELETE(request) {
     if (result.deletedCount === 0) {
       return NextResponse.json(
         { success: false, message: "Faculty member not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -134,7 +143,7 @@ export async function DELETE(request) {
     console.error("Error deleting faculty:", error);
     return NextResponse.json(
       { success: false, message: "Failed to delete faculty member" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

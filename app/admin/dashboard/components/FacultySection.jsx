@@ -88,13 +88,14 @@ export default function FacultySection() {
       facebook: "",
       linkedin: "",
       twitter: "",
+      serial: "",
     });
     setEditingId(null);
     setIsAdding(true);
   };
 
   const handleEdit = (member) => {
-    setFormData({ ...member });
+    setFormData({ ...member, serial: member.serial === 999 ? "" : member.serial });
     setEditingId(member._id);
     setIsAdding(true);
   };
@@ -149,7 +150,11 @@ export default function FacultySection() {
     setSaving(true);
     try {
       const method = editingId ? "PUT" : "POST";
-      const payload = editingId ? { ...formData, _id: editingId } : formData;
+      const payloadData = {
+        ...formData,
+        serial: (formData.serial && formData.serial !== "") ? parseInt(formData.serial) : 999
+      };
+      const payload = editingId ? { ...payloadData, _id: editingId } : payloadData;
 
       const res = await fetch("/api/admin/academics/faculty", {
         method,
@@ -280,7 +285,7 @@ export default function FacultySection() {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+              className="bg-white rounded-xl shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto"
             >
               <div className="sticky top-0 bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between">
                 <h3 className="text-xl font-bold text-slate-800">
@@ -295,18 +300,34 @@ export default function FacultySection() {
               </div>
 
               <div className="p-6 space-y-6">
-                {/* Name */}
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Full Name
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.name}
-                    onChange={(e) => handleFieldChange("name", e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="e.g., Prof. Dr. John Doe"
-                  />
+                <div className="grid grid-cols-2 gap-4">
+                  {/* Name */}
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                      Full Name
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.name}
+                      onChange={(e) => handleFieldChange("name", e.target.value)}
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="e.g., Prof. Dr. John Doe"
+                    />
+                  </div>
+
+                  {/* Serial Number */}
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                      Serial Number (for ordering)
+                    </label>
+                    <input
+                      type="number"
+                      value={formData.serial || ""}
+                      onChange={(e) => handleFieldChange("serial", e.target.value)}
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="e.g., 1, 2, 3"
+                    />
+                  </div>
                 </div>
 
                 {/* Designation and Department */}
@@ -604,7 +625,7 @@ export default function FacultySection() {
                   <img
                     src={member.image}
                     alt={member.name}
-                    className="w-20 h-20 rounded-lg object-cover flex-shrink-0"
+                    className="w-20 h-20 rounded-lg object-cover shrink-0"
                   />
                 )}
 
@@ -612,7 +633,10 @@ export default function FacultySection() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-4 mb-2">
                     <div>
-                      <h3 className="text-lg font-bold text-slate-800">{member.name}</h3>
+                      <h3 className="text-lg font-bold text-slate-800">
+                        {member.serial && <span className="text-blue-600 mr-2 text-sm font-normal">#{member.serial}</span>}
+                        {member.name}
+                      </h3>
                       <p className="text-sm text-slate-600">{member.designation}</p>
                     </div>
                     <div className="flex gap-2 shrink-0">
@@ -673,17 +697,17 @@ export default function FacultySection() {
 
       {/* Summary Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
-        <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-lg border border-blue-200">
+        <div className="bg-linear-to-br from-blue-50 to-blue-100 p-4 rounded-lg border border-blue-200">
           <p className="text-sm text-blue-600 font-medium">Total Faculty</p>
           <p className="text-2xl font-bold text-blue-900 mt-1">{faculty.length}</p>
         </div>
-        <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 p-4 rounded-lg border border-emerald-200">
+        <div className="bg-linear-to-br from-emerald-50 to-emerald-100 p-4 rounded-lg border border-emerald-200">
           <p className="text-sm text-emerald-600 font-medium">Departments</p>
           <p className="text-2xl font-bold text-emerald-900 mt-1">
             {new Set(faculty.map(f => f.department)).size}
           </p>
         </div>
-        <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-4 rounded-lg border border-purple-200">
+        <div className="bg-linear-to-br from-purple-50 to-purple-100 p-4 rounded-lg border border-purple-200">
           <p className="text-sm text-purple-600 font-medium">Designations</p>
           <p className="text-2xl font-bold text-purple-900 mt-1">
             {new Set(faculty.map(f => f.designation)).size}

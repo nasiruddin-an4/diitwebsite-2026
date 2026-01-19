@@ -175,7 +175,7 @@ export default function AdminLogin() {
 
         {/* Footer */}
         <p className="text-center text-slate-500 text-sm mt-6">
-          © 2026 Dhaka International Institute of Technology
+          © 2026 Daffodil Institute of IT (DIIT)
         </p>
       </motion.div>
     </div>
