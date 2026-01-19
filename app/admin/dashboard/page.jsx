@@ -29,6 +29,7 @@ import AdministrativeSection from "./components/AdministrativeSection";
 import AlumniSection from "./components/AlumniSection";
 import CampusActivitiesSection from "./components/CampusActivitiesSection";
 import SiteInfoSection from "./components/SiteInfoSection";
+import CallToActionSection from "./components/CallToActionSection";
 import Image from "next/image";
 
 const menuItems = [
@@ -68,6 +69,7 @@ const menuItems = [
   { id: "news", label: "News & Events", icon: FileText },
   { id: "testimonials", label: "Testimonials", icon: MessageSquare },
   { id: "campus-activities", label: "Campus Activities", icon: Building2 },
+  { id: "cta-settings", label: "CTA Settings", icon: Monitor },
 
 ];
 
@@ -290,10 +292,10 @@ export default function AdminDashboard() {
     <div className="h-screen bg-slate-50 flex overflow-hidden font-sans text-slate-900">
       {/* Fixed Sidebar */}
       <aside
-        className={`${sidebarOpen ? "w-64" : "w-20"} bg-slate-900 border-r border-slate-800 flex-shrink-0 transition-all duration-300 ease-in-out flex flex-col z-20 shadow-xl`}
+        className={`${sidebarOpen ? "w-64" : "w-20"} bg-slate-900 border-r border-slate-800 shrink-0 transition-all duration-300 ease-in-out flex flex-col z-20 shadow-xl`}
       >
         <div className="h-16 flex items-center gap-3 px-6 border-b border-slate-800">
-          <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center flex-shrink-0 shadow-lg shadow-blue-600/20">
+          <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center shrink-0 shadow-lg shadow-blue-600/20">
             <GraduationCap className="w-5 h-5 text-white" />
           </div>
           {sidebarOpen && (
@@ -324,7 +326,7 @@ export default function AdminDashboard() {
                   <div className="absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full" />
                 )}
 
-                <item.icon className={`w-4 h-4 flex-shrink-0 relative z-10 ${activeSection === item.id ? "text-white" : "text-slate-500 group-hover:text-slate-300"}`} />
+                <item.icon className={`w-4 h-4 shrink-0 relative z-10 ${activeSection === item.id ? "text-white" : "text-slate-500 group-hover:text-slate-300"}`} />
 
                 {sidebarOpen && (
                   <span className={`relative z-10 font-medium text-sm flex-1 text-left ${activeSection === item.id ? "font-semibold" : ""}`}>
@@ -361,7 +363,7 @@ export default function AdminDashboard() {
       {/* Main Content Wrapper */}
       <main className="flex-1 flex flex-col h-full overflow-hidden bg-slate-50 relative">
         {/* Sticky Header */}
-        <header className="h-16 bg-white/80 backdrop-blur-md border-b border-slate-200 flex items-center justify-between px-6 sticky top-0 z-30 flex-shrink-0">
+        <header className="h-16 bg-white/80 backdrop-blur-md border-b border-slate-200 flex items-center justify-between px-6 sticky top-0 z-30 shrink-0">
           <div className="flex items-center gap-4">
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -418,7 +420,7 @@ export default function AdminDashboard() {
                       className="w-8 h-8 rounded-full object-cover border-2 border-blue-600"
                     />
                   ) : (
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold text-sm border-2 border-blue-600">
+                    <div className="w-8 h-8 rounded-full bg-linear-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold text-sm border-2 border-blue-600">
                       {adminInfo.name.charAt(0).toUpperCase()}
                     </div>
                   )}
@@ -440,7 +442,7 @@ export default function AdminDashboard() {
                       className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden z-50"
                     >
                       {/* Profile Info */}
-                      <div className="p-4 border-b border-slate-100 bg-gradient-to-br from-slate-50 to-slate-100">
+                      <div className="p-4 border-b border-slate-100 bg-linear-to-br from-slate-50 to-slate-100">
                         <div className="flex items-center gap-3">
                           {adminInfo.image ? (
                             <Image
@@ -449,7 +451,7 @@ export default function AdminDashboard() {
                               className="w-10 h-10 rounded-full object-cover border-2 border-blue-600"
                             />
                           ) : (
-                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold border-2 border-blue-600">
+                            <div className="w-10 h-10 rounded-full bg-linear-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold border-2 border-blue-600">
                               {adminInfo.name.charAt(0).toUpperCase()}
                             </div>
                           )}
@@ -527,6 +529,7 @@ export default function AdminDashboard() {
             {activeSection === "testimonials" && <TestimonialsSection data={data} updateField={updateField} onSave={saveData} saving={saving} />}
             {activeSection === "partners" && <PartnersSection data={data} updateField={updateField} addItem={addItem} deleteItem={deleteItem} onSave={saveData} saving={saving} />}
             {activeSection === "campus-activities" && <CampusActivitiesSection />}
+            {activeSection === "cta-settings" && <CallToActionSection />}
             {["about", "contact", "faq"].includes(activeSection) && <GeneralPagesSection pageType={activeSection} />}
           </div>
         </div>

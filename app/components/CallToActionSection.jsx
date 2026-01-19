@@ -3,8 +3,19 @@
 import React from "react";
 import Link from "next/link";
 import { ArrowRight, Download, Phone, Calendar, Sparkles } from "lucide-react";
+import useCachedFetch from "@/hooks/useCachedFetch";
 
 const CallToActionSection = () => {
+    const { data: ctaData } = useCachedFetch("cta_settings", "/api/cta", {
+        fallback: {
+            admissionOpenText: "Admissions Open 2026",
+            admissionLastDate: "25th January",
+            prospectusUrl: "/prospectus",
+            contactNumber: "+880 1234-567890",
+            applyNowUrl: "/admission/online"
+        }
+    });
+
     return (
         <section className="relative py-24 lg:py-32 overflow-hidden">
             <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-0">
@@ -17,33 +28,31 @@ const CallToActionSection = () => {
                     <div className="flex-1 text-center lg:text-left">
                         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-400/20 text-blue-200 mb-6 backdrop-blur-sm">
                             <Sparkles className="w-4 h-4 text-blue-400" />
-                            <span className="text-sm font-semibold tracking-wide uppercase">Admissions Open 2026</span>
+                            <span className="text-sm font-semibold tracking-wide uppercase">{ctaData?.admissionOpenText}</span>
                         </div>
 
                         <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-[1.1] tracking-tight">
                             Ready to <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-200 via-white to-blue-200">Shape the Future?</span>
                         </h2>
 
-                        {/* <p className="text-blue-100/80 text-lg md:text-xl max-w-xl mx-auto lg:mx-0 mb-8 leading-relaxed font-light">
-                            Join a community of innovators and leaders. Your journey towards excellence starts here at DIIT.
-                        </p> */}
-
                         <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                             <Link
-                                href="/admission/online"
+                                href={ctaData?.applyNowUrl || "/admission/online"}
                                 className="group relative inline-flex items-center justify-center gap-3 px-8 py-4 bg-white text-[#002652] rounded-full font-bold text-lg transition-all duration-300 hover:shadow-[0_0_30px_rgba(255,255,255,0.4)] hover:scale-105 active:scale-95"
                             >
                                 Apply Now
                                 <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" />
                             </Link>
 
-                            <Link
-                                href="/prospectus"
+                            <a
+                                href={ctaData?.prospectusUrl || "#"}
+                                target="_blank"
+                                rel="noopener noreferrer"
                                 className="group inline-flex items-center justify-center gap-3 px-8 py-4 bg-transparent border border-white/30 text-white rounded-full font-semibold text-lg hover:bg-white/10 hover:border-white/50 transition-all duration-300"
                             >
                                 <Download className="w-5 h-5 group-hover:animate-bounce" />
                                 Prospectus
-                            </Link>
+                            </a>
                         </div>
                     </div>
 
@@ -56,7 +65,7 @@ const CallToActionSection = () => {
                                 <div className="p-3 bg-blue-500/20 w-fit rounded-lg mb-4">
                                     <Calendar className="w-6 h-6 text-blue-400" />
                                 </div>
-                                <h4 className="text-white font-bold text-lg mb-1">25th January</h4>
+                                <h4 className="text-white font-bold text-lg mb-1">{ctaData?.admissionLastDate}</h4>
                                 <p className="text-blue-200/70 text-sm">Application Deadline</p>
                             </div>
 
@@ -66,7 +75,7 @@ const CallToActionSection = () => {
                                     <Phone className="w-6 h-6 text-purple-400" />
                                 </div>
                                 <h4 className="text-white font-bold text-lg mb-1">Start Today</h4>
-                                <p className="text-blue-200/70 text-sm">Call: +880 1234-567890</p>
+                                <p className="text-blue-200/70 text-sm">Call: {ctaData?.contactNumber}</p>
                             </div>
                         </div>
 
