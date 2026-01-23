@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Link from 'next/link';
 import {
     Search,
     MapPin,
@@ -196,12 +197,14 @@ const AlumniPage = () => {
                                 >
                                     {/* Image Section */}
                                     <div className="relative aspect-[1/1.1] overflow-hidden mb-4 bg-slate-100 rounded-sm">
-                                        <img
-                                            src={alumnus.image}
-                                            alt={alumnus.name}
-                                            className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
-                                        />
-                                        <div className="absolute top-4 left-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <Link href={`/alumni/${alumnus._id || alumnus.id}`} className="block w-full h-full">
+                                            <img
+                                                src={alumnus.image}
+                                                alt={alumnus.name}
+                                                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                                            />
+                                        </Link>
+                                        <div className="absolute top-4 left-4 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
                                             <span className="bg-white/90 backdrop-blur-sm px-3 py-1 text-[10px] font-black text-brandColor uppercase tracking-widest shadow-sm">
                                                 {alumnus.batch} Batch
                                             </span>
@@ -229,7 +232,9 @@ const AlumniPage = () => {
                                     {/* Info Section */}
                                     <div className="flex flex-col text-left">
                                         <h3 className="text-[20px] font-bold text-[#020617] leading-tight mb-1.5 group-hover:text-brandColor transition-colors">
-                                            {alumnus.name}
+                                            <Link href={`/alumni/${alumnus._id || alumnus.id}`}>
+                                                {alumnus.name}
+                                            </Link>
                                         </h3>
                                         <div className="space-y-1">
                                             <p className="text-[15px] font-medium text-slate-500 leading-snug">

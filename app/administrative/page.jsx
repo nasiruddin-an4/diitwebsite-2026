@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 import {
     Mail,
     Phone,
@@ -68,8 +69,8 @@ const AdministrativePage = () => {
         <div className="min-h-screen bg-slate-50 relative font-sans text-slate-900">
             {/* Background Decorations - Subtle for Light Mode */}
             <div className="fixed inset-0 overflow-hidden pointer-events-none">
-                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-bl from-blue-100/60 to-purple-100/60 rounded-full blur-3xl opacity-60" />
-                <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-gradient-to-tr from-amber-100/60 to-orange-100/60 rounded-full blur-3xl opacity-60" />
+                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-bl from-blue-100/60 to-green-100/60 rounded-full blur-3xl opacity-60" />
+                <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-gradient-to-tr from-slate-100/60 to-blue-100/60 rounded-full blur-3xl opacity-60" />
             </div>
 
             {/* Hero Section */}
@@ -87,7 +88,7 @@ const AdministrativePage = () => {
 
                         <h1 className="text-4xl md:text-6xl font-extrabold text-slate-900 mb-6 leading-tight tracking-tight">
                             Meet Our{' '}
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-green-600">
                                 Administration
                             </span>
                         </h1>
@@ -119,18 +120,20 @@ const AdministrativePage = () => {
                                     {/* Chairman Image */}
                                     <div className="w-full md:w-80 shrink-0">
                                         <div className="block relative aspect-[4/5] rounded-2xl overflow-hidden bg-slate-100 shadow-lg group-hover:shadow-2xl transition-all duration-500">
-                                            {member.image ? (
-                                                <img
-                                                    src={member.image}
-                                                    alt={member.name}
-                                                    className="w-full h-full object-cover object-top transform group-hover:scale-105 transition-transform duration-700"
-                                                />
-                                            ) : (
-                                                <div className="w-full h-full flex items-center justify-center bg-slate-200">
-                                                    <User className="w-20 h-20 text-slate-400" />
-                                                </div>
-                                            )}
-                                            <div className="absolute inset-0 ring-1 ring-inset ring-black/10 rounded-2xl" />
+                                            <Link href={`/administrative/${member._id}`} className="block w-full h-full">
+                                                {member.image ? (
+                                                    <img
+                                                        src={member.image}
+                                                        alt={member.name}
+                                                        className="w-full h-full object-cover object-top transform group-hover:scale-105 transition-transform duration-700"
+                                                    />
+                                                ) : (
+                                                    <div className="w-full h-full flex items-center justify-center bg-slate-200">
+                                                        <User className="w-20 h-20 text-slate-400" />
+                                                    </div>
+                                                )}
+                                                <div className="absolute inset-0 ring-1 ring-inset ring-black/10 rounded-2xl" />
+                                            </Link>
                                         </div>
                                     </div>
 
@@ -140,11 +143,11 @@ const AdministrativePage = () => {
                                             Leadership
                                         </div>
                                         <h2 className="text-3xl md:text-4xl font-bold text-slate-800 mb-2">
-                                            {member.name}
+                                            <Link href={`/administrative/${member._id}`}>{member.name}</Link>
                                         </h2>
                                         <p className="text-xl text-slate-500 font-medium mb-6">{member.designation}</p>
 
-                                        <div className="w-20 h-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full mb-8 mx-auto md:mx-0" />
+                                        <div className="w-20 h-1 bg-gradient-to-r from-blue-600 to-green-600 rounded-full mb-8 mx-auto md:mx-0" />
 
                                         <div className="flex flex-wrap items-center justify-center md:justify-start gap-4">
                                             {member.email && (
@@ -202,20 +205,22 @@ const AdministrativePage = () => {
                                 >
                                     {/* Image Card */}
                                     <div className="block relative mb-4 overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-100 group-hover:shadow-xl group-hover:ring-blue-600/20 transition-all duration-300 aspect-[3/4]">
-                                        {member.image ? (
-                                            <img
-                                                src={member.image}
-                                                alt={member.name}
-                                                className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-110"
-                                            />
-                                        ) : (
-                                            <div className="w-full h-full flex items-center justify-center bg-slate-200">
-                                                <User className="w-16 h-16 text-slate-400" />
-                                            </div>
-                                        )}
+                                        <Link href={`/administrative/${member._id}`} className="block w-full h-full">
+                                            {member.image ? (
+                                                <img
+                                                    src={member.image}
+                                                    alt={member.name}
+                                                    className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-110"
+                                                />
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center bg-slate-200">
+                                                    <User className="w-16 h-16 text-slate-400" />
+                                                </div>
+                                            )}
+                                        </Link>
                                         {/* Social Overlay */}
-                                        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
-                                            <div className="flex gap-2 justify-center translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-100">
+                                        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4 pointer-events-none">
+                                            <div className="flex gap-2 justify-center translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-100 pointer-events-auto">
                                                 {member.email && (
                                                     <a href={`mailto:${member.email}`} className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-white hover:bg-white hover:text-slate-900 transition-colors">
                                                         <Mail className="w-4 h-4" />
@@ -244,9 +249,9 @@ const AdministrativePage = () => {
                                     {/* Content Info */}
                                     <div className="text-center px-2">
                                         <h3 className="text-lg font-bold text-slate-800 mb-1 leading-tight group-hover:text-brandColor transition-colors">
-                                            {member.name}
+                                            <Link href={`/administrative/${member._id}`}>{member.name}</Link>
                                         </h3>
-                                        <p className="text-slate-800/80 text-sm font-semibold tracking-wide mb-3 line-clamp-2 min-h-[1.5rem]">{member.designation}</p>
+                                        <p className="text-slate-800/80 text-sm font-semibold tracking-wide mb-2 line-clamp-2 min-h-6">{member.designation}</p>
                                     </div>
                                 </motion.div>
                             ))}
@@ -265,7 +270,7 @@ const AdministrativePage = () => {
                 >
                     <div className="max-w-7xl mx-auto">
                         <motion.div variants={itemVariants} className="mb-16 text-center">
-                            <span className="px-4 py-1.5 rounded-full bg-purple-100 text-purple-700 text-sm font-semibold mb-3 inline-block">Management</span>
+                            <span className="px-4 py-1.5 rounded-full bg-green-100 text-green-700 text-sm font-semibold mb-3 inline-block">Management</span>
                             <h2 className="text-3xl md:text-4xl font-bold text-slate-900">Administration</h2>
                             <p className="text-slate-500 mt-4 max-w-2xl mx-auto">Meet the dedicated support staff who ensure smooth operations and student success at DIIT.</p>
                         </motion.div>
@@ -279,21 +284,23 @@ const AdministrativePage = () => {
                                 >
                                     {/* Image Card */}
                                     <div className="block relative mb-4 overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-100 group-hover:shadow-xl group-hover:ring-blue-600/20 transition-all duration-300 aspect-[3/4]">
-                                        {staff.image ? (
-                                            <img
-                                                src={staff.image}
-                                                alt={staff.name}
-                                                className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-110"
-                                            />
-                                        ) : (
-                                            <div className="w-full h-full flex items-center justify-center bg-slate-100">
-                                                <User className="w-20 h-20 text-slate-300" />
-                                            </div>
-                                        )}
+                                        <Link href={`/administrative/${staff._id}`} className="block w-full h-full">
+                                            {staff.image ? (
+                                                <img
+                                                    src={staff.image}
+                                                    alt={staff.name}
+                                                    className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-110"
+                                                />
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center bg-slate-100">
+                                                    <User className="w-20 h-20 text-slate-300" />
+                                                </div>
+                                            )}
+                                        </Link>
 
                                         {/* Social Overlay */}
-                                        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
-                                            <div className="flex gap-2 justify-center translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-100">
+                                        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4 pointer-events-none">
+                                            <div className="flex gap-2 justify-center translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-100 pointer-events-auto">
                                                 {staff.email && (
                                                     <a
                                                         href={`mailto:${staff.email}`}
@@ -335,9 +342,9 @@ const AdministrativePage = () => {
                                     {/* Content Info */}
                                     <div className="text-center px-2">
                                         <h3 className="text-lg font-bold text-slate-800 mb-1 leading-tight group-hover:text-brandColor transition-colors">
-                                            {staff.name}
+                                            <Link href={`/administrative/${staff._id}`}>{staff.name}</Link>
                                         </h3>
-                                        <p className="text-brandColor/80 text-sm font-semibold tracking-wide mb-3 line-clamp-2 min-h-6">{staff.designation}</p>
+                                        <p className="text-brandColor/80 text-sm font-semibold tracking-wide mb-2 line-clamp-2 min-h-6">{staff.designation}</p>
                                     </div>
                                 </motion.div>
                             ))}

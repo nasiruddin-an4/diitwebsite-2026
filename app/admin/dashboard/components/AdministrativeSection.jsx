@@ -63,6 +63,7 @@ export default function AdministrativeSection() {
             email: "",
             phone: "",
             image: "",
+            message: "",
             facebook: "",
             linkedin: "",
             twitter: "",
@@ -437,6 +438,20 @@ export default function AdministrativeSection() {
                                         </div>
                                     </div>
                                 </div>
+
+                                {/* Message/Bio */}
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                                        Message/Short Bio
+                                    </label>
+                                    <textarea
+                                        value={formData.message || ""}
+                                        onChange={(e) => handleFieldChange("message", e.target.value)}
+                                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                                        placeholder="Enter a short message or about DIIT..."
+                                        rows={4}
+                                    />
+                                </div>
                             </div>
 
                             {/* Footer */}
@@ -490,10 +505,10 @@ export default function AdministrativeSection() {
                                     <img
                                         src={member.image}
                                         alt={member.name}
-                                        className="w-20 h-20 rounded-lg object-cover flex-shrink-0"
+                                        className="w-20 h-20 rounded-lg object-cover shrink-0"
                                     />
                                 ) : (
-                                    <div className="w-20 h-20 rounded-lg bg-slate-100 flex items-center justify-center flex-shrink-0">
+                                    <div className="w-20 h-20 rounded-lg bg-slate-100 flex items-center justify-center shrink-0">
                                         <User className="w-8 h-8 text-slate-300" />
                                     </div>
                                 )}

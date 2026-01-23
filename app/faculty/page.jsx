@@ -56,7 +56,7 @@ const FacultyPage = () => {
             {loading && (
                 <div className="min-h-screen flex items-center justify-center">
                     <div className="text-center">
-                        <Loader2 className="w-12 h-12 text-blue-600 animate-spin mx-auto mb-4" />
+                        <Loader2 className="w-12 h-12 text-brandColor animate-spin mx-auto mb-4" />
                         <p className="text-slate-600 font-medium">Loading faculty...</p>
                     </div>
                 </div>
@@ -72,11 +72,11 @@ const FacultyPage = () => {
 
                         <div className="max-w-6xl mx-auto text-center relative z-10">
                             <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }}>
-                                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 text-amber-300 text-sm font-medium mb-6 backdrop-blur-sm border border-white/10">
-                                    <GraduationCap className="w-4 h-4 text-amber-300" /> Academic Leadership
+                                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 text-green-400 text-sm font-medium mb-6 backdrop-blur-sm border border-white/10">
+                                    <GraduationCap className="w-4 h-4 text-green-400" /> Academic Leadership
                                 </div>
                                 <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
-                                    Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">Faculty</span>
+                                    Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-green-400">Faculty</span>
                                 </h1>
                                 <p className="text-blue-100/70 text-lg max-w-2xl mx-auto leading-relaxed">
                                     Meet the distinguished academicians and industry experts shaping the future of our students.
