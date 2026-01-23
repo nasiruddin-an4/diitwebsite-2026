@@ -112,22 +112,7 @@ const AdministrativeDetailPage = () => {
   return (
     <div className="min-h-screen bg-slate-50 font-sans">
       {/* Hero Section with Background */}
-      <div className={`relative bg-gradient-to-br ${getTypeColor(member.type)} pt-28 pb-44 overflow-hidden`}>
-        {/* Decorative Elements */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <motion.div
-            animate={{ scale: [1, 1.2, 1], opacity: [0.1, 0.2, 0.1] }}
-            transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute -top-[10%] -right-[10%] w-[600px] h-[600px] bg-white/10 rounded-full blur-[120px]"
-          />
-          <motion.div
-            animate={{ scale: [1, 1.1, 1], opacity: [0.1, 0.15, 0.1] }}
-            transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-            className="absolute bottom-0 left-[20%] w-[400px] h-[400px] bg-black/10 rounded-full blur-[100px]"
-          />
-          <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-soft-light" />
-        </div>
-
+      <div className={`relative bg-gradient-to-br ${getTypeColor(member.type)} pt-20 pb-60 md:pb-72 overflow-hidden`}>
         {/* Back Button */}
         <div className="max-w-6xl mx-auto px-4 relative z-10">
           <motion.div
@@ -147,7 +132,7 @@ const AdministrativeDetailPage = () => {
       </div>
 
       {/* Main Content Area */}
-      <div className="max-w-7xl mx-auto px-4 md:px-8 relative z-20 -mt-36 pb-20">
+      <div className="max-w-7xl mx-auto px-4 md:px-8 relative z-20 -mt-48 md:-mt-56 pb-20">
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 items-start">
 
           {/* Left Column: Sticky Profile Card */}
@@ -177,14 +162,19 @@ const AdministrativeDetailPage = () => {
                   )}
                 </div>
 
-                {/* Name & Title (Mobile & Tablet visible) */}
-                <div className="mb-6 lg:hidden text-center">
-                  <h1 className="text-3xl font-black text-slate-900 mb-2 tracking-tight">
+                {/* Name & Title (Mobile visible only) */}
+                <div className="mb-8 lg:hidden text-center border-b border-slate-100 pb-8">
+                  <h1 className="text-3xl md:text-4xl font-black text-slate-900 mb-2 tracking-tight leading-tight">
                     {member.name}
                   </h1>
-                  <p className="text-lg font-bold text-brandColor">
-                    {member.designation}
-                  </p>
+                  <div className="flex flex-col items-center gap-1">
+                    <p className="text-lg font-bold text-brandColor">
+                      {member.designation}
+                    </p>
+                    <span className="px-3 py-1 rounded-full bg-slate-100 text-[10px] font-black uppercase tracking-widest text-slate-500 border border-slate-200">
+                      {member.type}
+                    </span>
+                  </div>
                 </div>
 
                 {/* Social Actions */}
@@ -243,14 +233,17 @@ const AdministrativeDetailPage = () => {
               initial={{ y: 30, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="hidden lg:block mb-10"
+              className="hidden lg:block mb-12"
             >
-              <h1 className="text-6xl font-black text-white mb-2 tracking-tight drop-shadow-sm">
+              <h1 className="text-4xl md:text-5xl font-black text-white mb-4">
                 {member.name}
               </h1>
-              <div className="flex items-center text-2xl font-semibold text-white/90">
-                <p>{member.designation}</p>,
-                <span className='ml-2'>{member.type}</span>
+              <div className="flex items-center gap-4 text-xl font-semibold text-white/90">
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                  <span>{member.designation}</span>
+                  <span className="opacity-40 select-none">|</span>
+                  <span className="text-sm lg:text-base xl:text-lg">{member.type}</span>
+                </div>
               </div>
             </motion.div>
 
