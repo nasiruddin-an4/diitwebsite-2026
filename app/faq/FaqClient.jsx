@@ -175,7 +175,7 @@ export default function FaqClient({ data }) {
                             Contact Us
                         </Link>
                         <button className="bg-white text-gray-700 border border-gray-200 px-8 py-3 rounded-full font-bold hover:bg-gray-50 transition-colors">
-                            Call +880 2-9116774
+                            Call: +880 1847-140188
                         </button>
                     </div>
                 </div>
