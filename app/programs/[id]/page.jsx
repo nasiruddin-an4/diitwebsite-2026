@@ -551,7 +551,7 @@ const DynamicProgramPage = () => {
                             </Link>
                             <div className="mt-4 flex items-center justify-center gap-2 text-xs text-blue-200">
                                 <Phone className="w-3 h-3" />
-                                <span>Helpline: 01712345678</span>
+                                <span>Helpline: +880 1847-140188</span>
                             </div>
                         </div>
 
