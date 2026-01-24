@@ -324,8 +324,8 @@ export default function NewsSection({ data, updateField }) {
                           >
                             <option value="NEWS">General News</option>
                             <option value="EVENT">Upcoming Event</option>
-                            <option value="ACADEMIC">Academic Update</option>
-                            <option value="NOTICE">Official Notice</option>
+                            <option value="ACADEMIC">Academic News</option>
+                            <option value="BLOG">Blog</option>
                           </select>
                         </div>
                       </div>
