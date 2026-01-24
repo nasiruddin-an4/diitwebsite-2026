@@ -106,21 +106,6 @@ export default function ActivitiesClient({ data, upcomingEvents = [] }) {
                 </div>
             </section>
 
-            {/* 2. Campus Introduction */}
-            <section className="py-20 px-4 bg-white relative">
-                <div className="max-w-4xl mx-auto text-center">
-                    <motion.div {...fadeInUp}>
-                        <h2 className="text-sm font-bold tracking-widest text-indigo-600 uppercase mb-3">Welcome to DIIT</h2>
-                        <p className="text-3xl md:text-4xl font-bold text-gray-900 mb-8 leading-snug">
-                            {intro.title || "Welcome to our Campus"}
-                        </p>
-                        <p className="text-lg text-gray-600 leading-relaxed whitespace-pre-wrap">
-                            {intro.description || "Experience a vibrant ecosystem designed to nurture academic excellence and personal development."}
-                        </p>
-                    </motion.div>
-                </div>
-            </section>
-
             {/* 3. Campus Facilities */}
             {facilities.length > 0 && (
                 <section className="py-20 px-4 bg-slate-50">
