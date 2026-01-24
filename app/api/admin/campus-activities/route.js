@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import clientPromise from "@/lib/mongodb";
 import { getAuthUser } from "@/lib/auth";
 import { getData } from "@/lib/data-service";
@@ -39,6 +40,9 @@ export async function POST(request) {
       { $set: { ...data, updatedAt: new Date(), updatedBy: user.email } },
       { upsert: true }
     );
+
+    // Revalidate the campus activities page
+    revalidatePath("/campus-activities");
 
     // REMOVED: Local JSON file writing to save data only to database.
 

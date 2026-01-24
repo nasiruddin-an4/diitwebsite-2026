@@ -1,6 +1,12 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import clientPromise from "@/lib/mongodb";
 import { getAuthUser } from "@/lib/auth";
+
+// Helper function to revalidate partner-related pages
+function revalidatePartnerPages() {
+    revalidatePath("/");  // Homepage shows partners
+}
 
 // Get all Partners and Metadata from 'mou_partners' collection
 export async function GET() {
@@ -58,6 +64,10 @@ export async function POST(request) {
                 },
                 { upsert: true }
             );
+
+            // Revalidate frontend pages
+            revalidatePartnerPages();
+
             return NextResponse.json({ success: true, message: "Benefits updated successfully" });
         }
 
@@ -78,6 +88,9 @@ export async function POST(request) {
             }
 
             const result = await collection.insertOne(newPartner);
+
+            // Revalidate frontend pages
+            revalidatePartnerPages();
 
             return NextResponse.json({
                 success: true,
@@ -116,6 +129,9 @@ export async function POST(request) {
                     }
                 }
             );
+
+            // Revalidate frontend pages
+            revalidatePartnerPages();
 
             return NextResponse.json({ success: true, message: "Partner updated" });
         }
@@ -162,6 +178,9 @@ export async function DELETE(request) {
         }
 
         await collection.deleteOne(query);
+
+        // Revalidate frontend pages
+        revalidatePartnerPages();
 
         return NextResponse.json({ success: true, message: "Partner deleted" });
 

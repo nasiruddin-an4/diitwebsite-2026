@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import clientPromise from "@/lib/mongodb";
 import { getAuthUser } from "@/lib/auth";
 
@@ -51,6 +52,9 @@ export async function POST(request) {
       { $set: { ...data, updatedAt: new Date(), updatedBy: user.email } },
       { upsert: true }
     );
+
+    // Revalidate the career page
+    revalidatePath("/career");
 
     return NextResponse.json({
       success: true,

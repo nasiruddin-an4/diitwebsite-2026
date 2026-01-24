@@ -1,5 +1,13 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import clientPromise from "@/lib/mongodb";
+
+// Helper function to revalidate the relevant page
+function revalidateGeneralPage(type) {
+    if (type === "about") revalidatePath("/about");
+    else if (type === "contact") revalidatePath("/contact");
+    else if (type === "faq") revalidatePath("/faq");
+}
 
 export async function GET(request) {
     const { searchParams } = new URL(request.url);
@@ -52,9 +60,13 @@ export async function POST(request) {
             { upsert: true }
         );
 
+        // Revalidate the relevant frontend page
+        revalidateGeneralPage(type);
+
         return NextResponse.json({ success: true, message: `${type} updated successfully` });
     } catch (error) {
         console.error("Failed to update general page data:", error);
         return NextResponse.json({ success: false, message: "Internal Server Error" }, { status: 500 });
     }
 }
+

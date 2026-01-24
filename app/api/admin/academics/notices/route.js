@@ -1,6 +1,12 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import clientPromise from "@/lib/mongodb";
 import { ObjectId } from "mongodb";
+
+// Helper to revalidate notices-related pages
+function revalidateNoticesPages() {
+  revalidatePath("/notices");
+}
 
 export async function GET() {
   try {
@@ -38,6 +44,9 @@ export async function POST(request) {
     };
 
     const result = await db.collection("notices").insertOne(newNotice);
+
+    // Revalidate frontend pages
+    revalidateNoticesPages();
 
     return NextResponse.json({
       success: true,
@@ -87,6 +96,9 @@ export async function PUT(request) {
       );
     }
 
+    // Revalidate frontend pages
+    revalidateNoticesPages();
+
     return NextResponse.json({
       success: true,
       message: "Notice updated successfully",
@@ -125,6 +137,9 @@ export async function DELETE(request) {
         { status: 404 }
       );
     }
+
+    // Revalidate frontend pages
+    revalidateNoticesPages();
 
     return NextResponse.json({
       success: true,

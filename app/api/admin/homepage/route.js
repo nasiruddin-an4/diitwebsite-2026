@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import clientPromise from "@/lib/mongodb";
 import { getAuthUser } from "@/lib/auth";
 
@@ -73,6 +74,9 @@ export async function POST(request) {
       modifiedCount: result.modifiedCount,
       upsertedCount: result.upsertedCount,
     });
+
+    // Revalidate frontend pages that use homepage data
+    revalidatePath("/");
 
     return NextResponse.json({
       success: true,

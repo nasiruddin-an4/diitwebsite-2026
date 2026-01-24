@@ -1,7 +1,15 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import clientPromise from "@/lib/mongodb";
 import { getAuthUser } from "@/lib/auth";
 import { ObjectId } from "mongodb";
+
+// Helper function to revalidate news-related pages
+function revalidateNewsPages() {
+    revalidatePath("/");           // Homepage shows news
+    revalidatePath("/news");       // News listing page
+}
+
 
 export async function GET() {
     try {
@@ -42,6 +50,9 @@ export async function POST(request) {
 
             const result = await collection.insertOne(newItem);
 
+            // Revalidate frontend pages
+            revalidateNewsPages();
+
             return NextResponse.json({
                 success: true,
                 message: "Item created",
@@ -72,6 +83,9 @@ export async function POST(request) {
                     }
                 }
             );
+
+            // Revalidate frontend pages
+            revalidateNewsPages();
 
             return NextResponse.json({ success: true, message: "Item updated" });
         }
@@ -106,6 +120,9 @@ export async function DELETE(request) {
         }
 
         await collection.deleteOne(query);
+
+        // Revalidate frontend pages
+        revalidateNewsPages();
 
         return NextResponse.json({ success: true, message: "Item deleted" });
 

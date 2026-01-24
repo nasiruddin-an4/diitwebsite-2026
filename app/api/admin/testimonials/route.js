@@ -1,7 +1,13 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import clientPromise from "@/lib/mongodb";
 import { getAuthUser } from "@/lib/auth";
 import { ObjectId } from "mongodb";
+
+// Helper function to revalidate testimonials-related pages
+function revalidateTestimonialsPages() {
+  revalidatePath("/");  // Homepage shows testimonials
+}
 
 export async function GET() {
   try {
@@ -42,6 +48,9 @@ export async function POST(request) {
 
       const result = await collection.insertOne(newItem);
 
+      // Revalidate frontend pages
+      revalidateTestimonialsPages();
+
       return NextResponse.json({
         success: true,
         message: "Testimonial created",
@@ -72,6 +81,9 @@ export async function POST(request) {
           }
         }
       );
+
+      // Revalidate frontend pages
+      revalidateTestimonialsPages();
 
       return NextResponse.json({ success: true, message: "Testimonial updated" });
     }
@@ -106,6 +118,9 @@ export async function DELETE(request) {
     }
 
     await collection.deleteOne(query);
+
+    // Revalidate frontend pages
+    revalidateTestimonialsPages();
 
     return NextResponse.json({ success: true, message: "Testimonial deleted" });
 

@@ -1,9 +1,15 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { MongoClient, ObjectId } from "mongodb";
 import clientPromise from "@/lib/mongodb";
 
 const DB_NAME = "diit_admin";
 const COLLECTION_NAME = "alumni";
+
+// Helper function to revalidate alumni pages
+function revalidateAlumniPages() {
+    revalidatePath("/alumni");
+}
 
 export async function GET(request) {
     try {
@@ -43,6 +49,9 @@ export async function POST(request) {
             createdAt: new Date(),
         });
 
+        // Revalidate alumni pages
+        revalidateAlumniPages();
+
         return NextResponse.json({ success: true, data: result });
     } catch (error) {
         return NextResponse.json({ success: false, message: error.message }, { status: 500 });
@@ -65,6 +74,9 @@ export async function PUT(request) {
             { $set: { ...updateData, updatedAt: new Date() } }
         );
 
+        // Revalidate alumni pages
+        revalidateAlumniPages();
+
         return NextResponse.json({ success: true, data: result });
     } catch (error) {
         return NextResponse.json({ success: false, message: error.message }, { status: 500 });
@@ -83,6 +95,9 @@ export async function DELETE(request) {
         }
 
         const result = await db.collection(COLLECTION_NAME).deleteOne({ _id: new ObjectId(id) });
+
+        // Revalidate alumni pages
+        revalidateAlumniPages();
 
         return NextResponse.json({ success: true, data: result });
     } catch (error) {

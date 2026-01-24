@@ -1,8 +1,14 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import clientPromise from "@/lib/mongodb";
 import { ObjectId } from "mongodb";
 import fs from "fs/promises";
 import path from "path";
+
+// Helper to revalidate homepage when hero slides change
+function revalidateHeroPages() {
+  revalidatePath("/");
+}
 
 // Helper to ensure data directory exists and get file path
 const getDataFilePath = async () => {
@@ -60,6 +66,9 @@ export async function POST(request) {
 
     const result = await db.collection("hero_slides").insertOne(newSlide);
 
+    // Revalidate frontend pages
+    revalidateHeroPages();
+
     return NextResponse.json({
       success: true,
       message: "Slide created successfully",
@@ -108,6 +117,9 @@ export async function PUT(request) {
       );
     }
 
+    // Revalidate frontend pages
+    revalidateHeroPages();
+
     return NextResponse.json({
       success: true,
       message: "Slide updated successfully",
@@ -146,6 +158,9 @@ export async function DELETE(request) {
         { status: 404 }
       );
     }
+
+    // Revalidate frontend pages
+    revalidateHeroPages();
 
     return NextResponse.json({
       success: true,

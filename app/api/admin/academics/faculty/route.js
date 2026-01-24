@@ -1,6 +1,12 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import clientPromise from "@/lib/mongodb";
 import { ObjectId } from "mongodb";
+
+// Helper to revalidate faculty-related pages
+function revalidateFacultyPages() {
+  revalidatePath("/faculty");
+}
 
 export async function GET() {
   try {
@@ -47,6 +53,9 @@ export async function POST(request) {
     };
 
     const result = await db.collection("faculty").insertOne(newFaculty);
+
+    // Revalidate frontend pages
+    revalidateFacultyPages();
 
     return NextResponse.json({
       success: true,
@@ -96,6 +105,9 @@ export async function PUT(request) {
       );
     }
 
+    // Revalidate frontend pages
+    revalidateFacultyPages();
+
     return NextResponse.json({
       success: true,
       message: "Faculty member updated successfully",
@@ -134,6 +146,9 @@ export async function DELETE(request) {
         { status: 404 },
       );
     }
+
+    // Revalidate frontend pages
+    revalidateFacultyPages();
 
     return NextResponse.json({
       success: true,
