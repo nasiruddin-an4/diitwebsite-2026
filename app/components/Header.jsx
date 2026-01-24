@@ -1,15 +1,16 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
     Search,
     Menu,
     X,
     ChevronDown,
-    ArrowRight
+    ArrowRight,
+    Loader2
 } from "lucide-react";
 import Image from "next/image";
 import useCachedFetch from "@/hooks/useCachedFetch";
@@ -73,8 +74,12 @@ const Header = () => {
     const [mobileExpanded, setMobileExpanded] = useState({});
     const [searchOpen, setSearchOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
+    const [searchResults, setSearchResults] = useState([]);
+    const [isSearching, setIsSearching] = useState(false);
+    const [selectedIndex, setSelectedIndex] = useState(-1);
     const searchInputRef = useRef(null);
     const pathname = usePathname();
+    const router = useRouter();
 
     // 1. Fetch Navigation Structure
     const { data: navData } = useCachedFetch(
@@ -117,6 +122,42 @@ const Header = () => {
         return item;
     });
 
+    // Debounced search function
+    const performSearch = useCallback(async (query) => {
+        if (!query || query.length < 2) {
+            setSearchResults([]);
+            setIsSearching(false);
+            return;
+        }
+
+        setIsSearching(true);
+        try {
+            const response = await fetch(`/api/search?q=${encodeURIComponent(query)}&limit=8`);
+            const data = await response.json();
+            if (data.success) {
+                setSearchResults(data.results || []);
+            }
+        } catch (error) {
+            console.error("Search error:", error);
+            setSearchResults([]);
+        } finally {
+            setIsSearching(false);
+        }
+    }, []);
+
+    // Debounce search input
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            performSearch(searchQuery);
+        }, 300);
+        return () => clearTimeout(timer);
+    }, [searchQuery, performSearch]);
+
+    // Reset selected index when results change
+    useEffect(() => {
+        setSelectedIndex(-1);
+    }, [searchResults]);
+
     useEffect(() => {
         const handleScroll = () => {
             setIsScrolled(window.scrollY > 20);
@@ -134,14 +175,51 @@ const Header = () => {
     useEffect(() => {
         setIsMenuOpen(false);
         setSearchOpen(false);
+        setSearchQuery("");
+        setSearchResults([]);
         setActiveDropdown(null);
     }, [pathname]);
 
-    // Close search on ESC key
+    // Handle keyboard navigation in search
+    const handleSearchKeyDown = (e) => {
+        if (e.key === "Escape") {
+            setSearchOpen(false);
+            setSearchQuery("");
+            setSearchResults([]);
+        } else if (e.key === "ArrowDown") {
+            e.preventDefault();
+            setSelectedIndex(prev =>
+                prev < searchResults.length - 1 ? prev + 1 : prev
+            );
+        } else if (e.key === "ArrowUp") {
+            e.preventDefault();
+            setSelectedIndex(prev => prev > 0 ? prev - 1 : -1);
+        } else if (e.key === "Enter") {
+            e.preventDefault();
+            if (selectedIndex >= 0 && searchResults[selectedIndex]) {
+                navigateToResult(searchResults[selectedIndex]);
+            } else if (searchQuery.length >= 2) {
+                // Navigate to search results page
+                router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
+                setSearchOpen(false);
+            }
+        }
+    };
+
+    const navigateToResult = (result) => {
+        router.push(result.path);
+        setSearchOpen(false);
+        setSearchQuery("");
+        setSearchResults([]);
+    };
+
+    // Close search on ESC key (global)
     useEffect(() => {
         const handleKeyDown = (e) => {
             if (e.key === "Escape") {
                 setSearchOpen(false);
+                setSearchQuery("");
+                setSearchResults([]);
             }
         };
         window.addEventListener("keydown", handleKeyDown);
@@ -270,7 +348,11 @@ const Header = () => {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            onClick={() => setSearchOpen(false)}
+                            onClick={() => {
+                                setSearchOpen(false);
+                                setSearchQuery("");
+                                setSearchResults([]);
+                            }}
                             className="fixed inset-0 bg-slate-900/40 backdrop-blur-md z-100"
                         />
                         {/* Search Box */}
@@ -282,45 +364,186 @@ const Header = () => {
                             className="fixed top-[100px] left-1/2 -translate-x-1/2 w-full max-w-3xl px-4 z-110"
                         >
                             <div className="bg-white rounded-2xl shadow-2xl overflow-hidden ring-1 ring-black/10">
+                                {/* Search Input */}
                                 <div className="relative border-b border-gray-100 flex items-center p-4">
-                                    <Search className="w-6 h-6 text-slate-400 ml-2" />
+                                    {isSearching ? (
+                                        <Loader2 className="w-6 h-6 text-brandColor ml-2 animate-spin" />
+                                    ) : (
+                                        <Search className="w-6 h-6 text-slate-400 ml-2" />
+                                    )}
                                     <input
                                         ref={searchInputRef}
                                         type="text"
-                                        placeholder="What are you looking for?"
+                                        placeholder="Search programs, news, faculty, FAQs..."
                                         className="flex-1 py-2 px-4 text-xl text-slate-800 placeholder:text-slate-400 border-none outline-none focus:ring-0 bg-transparent font-medium"
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
+                                        onKeyDown={handleSearchKeyDown}
                                     />
                                     <div className="flex items-center gap-2">
-                                        <div className="hidden sm:block text-xs font-semibold text-slate-400 border border-slate-200 rounded px-2 py-1">
-                                            ESC
+                                        {searchQuery && (
+                                            <button
+                                                onClick={() => {
+                                                    setSearchQuery("");
+                                                    setSearchResults([]);
+                                                    searchInputRef.current?.focus();
+                                                }}
+                                                className="p-1.5 text-slate-400 hover:text-slate-600 cursor-pointer hover:bg-slate-100 rounded-full transition-colors"
+                                            >
+                                                <X className="w-4 h-4" />
+                                            </button>
+                                        )}
+                                        <div className="hidden sm:flex items-center gap-1">
+                                            <div className="text-xs font-semibold text-slate-400 border border-slate-200 rounded px-2 py-1">
+                                                ESC
+                                            </div>
                                         </div>
                                         <button
-                                            onClick={() => setSearchOpen(false)}
+                                            onClick={() => {
+                                                setSearchOpen(false);
+                                                setSearchQuery("");
+                                                setSearchResults([]);
+                                            }}
                                             className="p-2 text-slate-400 hover:text-red-500 cursor-pointer hover:bg-red-50 rounded-full transition-colors"
                                         >
                                             <X className="w-5 h-5" />
                                         </button>
                                     </div>
                                 </div>
-                                <div className="p-4 bg-slate-50 text-sm text-slate-500 font-medium">
-                                    <div className="px-2 pb-2 text-xs uppercase tracking-wider text-slate-400">Quick Links</div>
-                                    <div className="grid grid-cols-2 gap-2">
-                                        <Link href="/admissions" className="block px-3 py-2 hover:bg-white hover:shadow-sm rounded-lg transition-all text-slate-600">
-                                            Admissions Guide
-                                        </Link>
-                                        <Link href="/programs" className="block px-3 py-2 hover:bg-white hover:shadow-sm rounded-lg transition-all text-slate-600">
-                                            Academic Programs
-                                        </Link>
-                                        <Link href="/events" className="block px-3 py-2 hover:bg-white hover:shadow-sm rounded-lg transition-all text-slate-600">
-                                            Upcoming Events
-                                        </Link>
-                                        <Link href="/contact" className="block px-3 py-2 hover:bg-white hover:shadow-sm rounded-lg transition-all text-slate-600">
-                                            Contact Us
-                                        </Link>
+
+                                {/* Search Results */}
+                                {searchQuery.length >= 2 && (
+                                    <div className="max-h-[400px] overflow-y-auto">
+                                        {isSearching ? (
+                                            <div className="p-8 text-center">
+                                                <Loader2 className="w-8 h-8 text-brandColor animate-spin mx-auto mb-3" />
+                                                <p className="text-slate-500 font-medium">Searching...</p>
+                                            </div>
+                                        ) : searchResults.length > 0 ? (
+                                            <div className="py-2">
+                                                <div className="px-4 py-2 text-xs uppercase tracking-wider text-slate-400 font-semibold">
+                                                    {searchResults.length} Results Found
+                                                </div>
+                                                {searchResults.map((result, index) => (
+                                                    <button
+                                                        key={`${result.path}-${index}`}
+                                                        onClick={() => navigateToResult(result)}
+                                                        className={`w-full text-left px-4 py-3 flex items-start gap-3 transition-all cursor-pointer ${selectedIndex === index
+                                                                ? "bg-brandColor/10 border-l-4 border-brandColor"
+                                                                : "hover:bg-slate-50 border-l-4 border-transparent"
+                                                            }`}
+                                                    >
+                                                        <span className="text-2xl flex-shrink-0 mt-0.5">{result.icon}</span>
+                                                        <div className="flex-1 min-w-0">
+                                                            <div className="flex items-center gap-2">
+                                                                <h4 className="font-semibold text-slate-800 truncate">
+                                                                    {result.title}
+                                                                </h4>
+                                                                <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${result.type === 'program' ? 'bg-blue-100 text-blue-700' :
+                                                                        result.type === 'news' ? 'bg-green-100 text-green-700' :
+                                                                            result.type === 'faculty' ? 'bg-purple-100 text-purple-700' :
+                                                                                result.type === 'faq' ? 'bg-orange-100 text-orange-700' :
+                                                                                    result.type === 'notice' ? 'bg-red-100 text-red-700' :
+                                                                                        result.type === 'career' ? 'bg-indigo-100 text-indigo-700' :
+                                                                                            result.type === 'activity' ? 'bg-pink-100 text-pink-700' :
+                                                                                                'bg-slate-100 text-slate-600'
+                                                                    }`}>
+                                                                    {result.type}
+                                                                </span>
+                                                            </div>
+                                                            {result.description && (
+                                                                <p className="text-sm text-slate-500 mt-0.5 line-clamp-1">
+                                                                    {result.description}
+                                                                </p>
+                                                            )}
+                                                        </div>
+                                                        <ArrowRight className={`w-5 h-5 text-slate-400 flex-shrink-0 transition-transform ${selectedIndex === index ? "translate-x-1 text-brandColor" : ""
+                                                            }`} />
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <div className="p-8 text-center">
+                                                <div className="text-4xl mb-3">🔍</div>
+                                                <p className="text-slate-600 font-medium">No results found for "{searchQuery}"</p>
+                                                <p className="text-slate-400 text-sm mt-1">Try different keywords or browse our quick links below</p>
+                                            </div>
+                                        )}
                                     </div>
-                                </div>
+                                )}
+
+                                {/* Quick Links - Show when no search query */}
+                                {searchQuery.length < 2 && (
+                                    <div className="p-4 bg-slate-50 text-sm text-slate-500 font-medium">
+                                        <div className="px-2 pb-2 text-xs uppercase tracking-wider text-slate-400">Quick Links</div>
+                                        <div className="grid grid-cols-2 gap-2">
+                                            <Link
+                                                href="/admissionEligibility"
+                                                onClick={() => setSearchOpen(false)}
+                                                className="block px-3 py-2 hover:bg-white hover:shadow-sm rounded-lg transition-all text-slate-600"
+                                            >
+                                                📝 Admissions Guide
+                                            </Link>
+                                            <Link
+                                                href="/programs"
+                                                onClick={() => setSearchOpen(false)}
+                                                className="block px-3 py-2 hover:bg-white hover:shadow-sm rounded-lg transition-all text-slate-600"
+                                            >
+                                                📚 Academic Programs
+                                            </Link>
+                                            <Link
+                                                href="/news"
+                                                onClick={() => setSearchOpen(false)}
+                                                className="block px-3 py-2 hover:bg-white hover:shadow-sm rounded-lg transition-all text-slate-600"
+                                            >
+                                                📰 News & Events
+                                            </Link>
+                                            <Link
+                                                href="/contact"
+                                                onClick={() => setSearchOpen(false)}
+                                                className="block px-3 py-2 hover:bg-white hover:shadow-sm rounded-lg transition-all text-slate-600"
+                                            >
+                                                📞 Contact Us
+                                            </Link>
+                                            <Link
+                                                href="/faculty"
+                                                onClick={() => setSearchOpen(false)}
+                                                className="block px-3 py-2 hover:bg-white hover:shadow-sm rounded-lg transition-all text-slate-600"
+                                            >
+                                                👨‍🏫 Faculty Members
+                                            </Link>
+                                            <Link
+                                                href="/faq"
+                                                onClick={() => setSearchOpen(false)}
+                                                className="block px-3 py-2 hover:bg-white hover:shadow-sm rounded-lg transition-all text-slate-600"
+                                            >
+                                                ❓ FAQ
+                                            </Link>
+                                        </div>
+                                        <div className="mt-3 pt-3 border-t border-slate-200 text-xs text-slate-400 text-center">
+                                            Type to search • Use ↑↓ to navigate • Press Enter to select
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Keyboard hints at bottom when showing results */}
+                                {searchQuery.length >= 2 && searchResults.length > 0 && (
+                                    <div className="p-3 bg-slate-50 border-t border-slate-100 flex items-center justify-center gap-4 text-xs text-slate-400">
+                                        <span className="flex items-center gap-1">
+                                            <kbd className="px-1.5 py-0.5 bg-white rounded border border-slate-200 font-mono">↑</kbd>
+                                            <kbd className="px-1.5 py-0.5 bg-white rounded border border-slate-200 font-mono">↓</kbd>
+                                            to navigate
+                                        </span>
+                                        <span className="flex items-center gap-1">
+                                            <kbd className="px-1.5 py-0.5 bg-white rounded border border-slate-200 font-mono">Enter</kbd>
+                                            to select
+                                        </span>
+                                        <span className="flex items-center gap-1">
+                                            <kbd className="px-1.5 py-0.5 bg-white rounded border border-slate-200 font-mono">Esc</kbd>
+                                            to close
+                                        </span>
+                                    </div>
+                                )}
                             </div>
                         </motion.div>
                     </>
