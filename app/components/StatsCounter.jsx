@@ -35,22 +35,27 @@ const StatsCounter = ({ data }) => {
                     setIsVisible(true);
                 }
             },
-            { threshold: 0.3 }
+            { threshold: 0.1 }
         );
 
         if (sectionRef?.current) {
-            observer?.observe(sectionRef?.current);
+            observer.observe(sectionRef.current);
         }
 
-        return () => observer?.disconnect();
+        return () => observer.disconnect();
     }, []);
 
     useEffect(() => {
-        if (isVisible) {
+        let timers = [];
+        let timeoutId;
+
+        if (isVisible && statsData?.length > 0) {
             const animateStats = () => {
-                statsData?.forEach((stat) => {
+                const newTimers = statsData.map((stat) => {
                     let current = 0;
-                    const increment = stat?.value / 60; // 60 frames for smooth animation
+                    const steps = 60;
+                    const increment = stat?.value / steps;
+
                     const timer = setInterval(() => {
                         current += increment;
                         if (current >= stat?.value) {
@@ -62,12 +67,19 @@ const StatsCounter = ({ data }) => {
                             [stat?.id]: Math.floor(current),
                         }));
                     }, 30);
+
+                    return timer;
                 });
+                timers = newTimers;
             };
 
-            const timeout = setTimeout(animateStats, 200);
-            return () => clearTimeout(timeout);
+            timeoutId = setTimeout(animateStats, 50);
         }
+
+        return () => {
+            clearTimeout(timeoutId);
+            timers.forEach(clearInterval);
+        };
     }, [isVisible, statsData]);
 
     return (
