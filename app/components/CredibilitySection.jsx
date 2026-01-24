@@ -116,7 +116,7 @@ const CredibilitySection = ({ data }) => {
                                                 <div className="px-1">
                                                     <h4 className="font-bold text-white text-base mb-1 group-hover:text-yellow-400 transition-colors">{partner.name}</h4>
                                                     <p className="text-[14px] font-semibold text-slate-400 mb-2 tracking-wide">{partner.type}</p>
-                                                    <p className="text-xs text-slate-400/90 leading-relaxed">{partner.description}</p>
+                                                    <p className="text-xs text-slate-400/90 leading-relaxed line-clamp-5">{partner.description}</p>
                                                 </div>
                                             </div>
                                         </Link>
