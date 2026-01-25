@@ -168,7 +168,7 @@ const FacultyDetailsPage = () => {
                         transition={{ duration: 0.6, delay: 0.2 }}
                         className="flex flex-col items-center text-center gap-6"
                     >
-                        <div className="w-full max-w-4xl">
+                        <div className="w-full max-w-5xl">
                             <div className="flex flex-wrap items-center justify-center gap-3 mb-4">
                                 <span className="px-4 py-1.5 rounded-full bg-gradient-to-r from-brandColor to-cyan-600 text-white text-xs font-bold uppercase tracking-wider shadow-lg shadow-brandColor/20">
                                     {member.department}
@@ -177,11 +177,11 @@ const FacultyDetailsPage = () => {
                                     {member.designation}
                                 </span>
                             </div>
-                            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 leading-tight">
+                            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-2 leading-tight">
                                 {member.name}
                             </h1>
                             {member.about && (
-                                <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed line-clamp-3">
+                                <p className="text-lg text-gray-600 max-w-5xl mx-auto leading-relaxed line-clamp-4">
                                     {member.about}
                                 </p>
                             )}
