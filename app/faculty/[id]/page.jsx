@@ -333,10 +333,9 @@ const FacultyDetailsPage = () => {
                                         {dynamicStats.map((stat, index) => (
                                             <motion.div
                                                 key={index}
-                                                whileHover={{ scale: 1.05, y: -5 }}
                                                 className="bg-white rounded-xl p-5 border border-gray-200 hover:border-brandColor/30 transition-all group"
                                             >
-                                                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
+                                                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center mb-4 transition-transform`}>
                                                     <stat.icon className="w-5 h-5 text-white" />
                                                 </div>
                                                 <p className="text-3xl font-bold text-gray-900 mb-1">{stat.value}</p>
