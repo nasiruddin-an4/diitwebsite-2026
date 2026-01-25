@@ -18,12 +18,12 @@ export default function NewsFeed({ initialNews }) {
     return (
         <div className="min-h-screen bg-slate-50">
             {/* Header Section */}
-            <div className="bg-white border-b border-gray-100">
-                <div className="max-w-7xl mx-auto px-6 py-16 md:py-24">
-                    <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6 leading-tight">
-                        News & <span className="text-brandColor">Events</span>
+            <div className="bg-brandColor border-b border-gray-100">
+                <div className="max-w-7xl mx-auto text-center px-6 py-16 md:py-24">
+                    <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-4 leading-tight">
+                        News & <span className="text-white">Events</span>
                     </h1>
-                    <p className="text-lg text-gray-600 max-w-2xl">
+                    <p className="text-lg text-gray-300 max-w-2xl mx-auto">
                         Stay updated with the latest happenings, academic achievements, and upcoming events at DIIT.
                     </p>
                 </div>
@@ -36,16 +36,16 @@ export default function NewsFeed({ initialNews }) {
                         <Filter className="w-5 h-5" />
                         Filter by:
                     </span>
-                    {["ALL", "NEWS", "EVENT"].map((type) => (
+                    {["ALL", "NEWS", "EVENT", "BLOG"].map((type) => (
                         <button
                             key={type}
                             onClick={() => setFilter(type)}
                             className={`px-6 py-2 rounded-full text-sm font-semibold transition-all duration-300 ${filter === type
-                                ? "bg-brandColor text-white shadow-lg shadow-brandColor/30"
+                                ? "bg-brandColor text-white"
                                 : "bg-white text-gray-600 hover:bg-gray-100 border border-gray-200"
                                 }`}
                         >
-                            {type === "ALL" ? "All Updates" : type === "NEWS" ? "Latest News" : "Upcoming Events"}
+                            {type === "ALL" ? "All Updates" : type === "NEWS" ? "Latest News" : type === "BLOG" ? "Our Blogs" : "Upcoming Events"}
                         </button>
                     ))}
                 </div>

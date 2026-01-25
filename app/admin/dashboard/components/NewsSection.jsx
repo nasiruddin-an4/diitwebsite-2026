@@ -10,7 +10,7 @@ export default function NewsSection({ data, updateField }) {
   const [isCreating, setIsCreating] = useState(false);
   const [processing, setProcessing] = useState(false);
 
-  const template = { title: "", category: "NEWS", date: "", image: "", excerpt: "", content: [""] };
+  const template = { title: "", category: "NEWS", date: "", image: "", excerpt: "", content: [""], author: "", readTime: "" };
 
   const newsItems = Array.isArray(data?.newsEvents) ? data.newsEvents : [];
 
@@ -328,6 +328,21 @@ export default function NewsSection({ data, updateField }) {
                             <option value="BLOG">Blog</option>
                           </select>
                         </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <InputField
+                          label="Author Name"
+                          placeholder="e.g. John Doe"
+                          value={editingItem.author}
+                          onChange={(v) => updateLocalField("author", v)}
+                        />
+                        <InputField
+                          label="Read Time"
+                          placeholder="e.g. 5 min read"
+                          value={editingItem.readTime}
+                          onChange={(v) => updateLocalField("readTime", v)}
+                        />
                       </div>
                       <div className="space-y-2">
                         <label className="block text-[11px] font-black text-slate-400 uppercase tracking-wider">Story Headline</label>

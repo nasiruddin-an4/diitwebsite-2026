@@ -112,11 +112,11 @@ export default function ArticleView({ newsItem, recentNews }) {
                                     <div className="w-8 h-8 rounded-full bg-brandColor flex items-center justify-center border border-white/20">
                                         <User className="w-4 h-4 text-white" />
                                     </div>
-                                    <span>By <span className="text-white font-bold underline decoration-brandColor decoration-2 underline-offset-4">DIIT Media Team</span></span>
+                                    <span>By <span className="text-white font-bold underline decoration-brandColor decoration-2 underline-offset-4">{newsItem.author}</span></span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <Clock className="w-4 h-4" />
-                                    <span>5 min read</span>
+                                    <span>{newsItem.readTime}</span>
                                 </div>
                             </motion.div>
                         </motion.div>
