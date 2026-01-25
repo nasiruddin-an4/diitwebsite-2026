@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Megaphone,
@@ -8,6 +8,7 @@ import {
     Filter,
     Calendar,
     ChevronRight,
+    ChevronLeft,
     Pin,
     Loader2,
     AlertCircle,
@@ -46,6 +47,10 @@ const NoticesPage = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
+    const isFirstRun = useRef(true);
+
     useEffect(() => {
         fetchNotices();
     }, []);
@@ -69,6 +74,29 @@ const NoticesPage = () => {
         }
     };
 
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [filter, departmentFilter, searchQuery]);
+
+    useEffect(() => {
+        if (isFirstRun.current) {
+            isFirstRun.current = false;
+            return;
+        }
+
+        const feedElement = document.getElementById('notices-feed');
+        if (feedElement) {
+            const headerOffset = 150;
+            const elementPosition = feedElement.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.scrollY - headerOffset;
+
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+            });
+        }
+    }, [currentPage]);
+
     const filteredNotices = notices.filter(notice => {
         const matchesCategory = filter === 'All' || notice.category === filter;
 
@@ -86,6 +114,18 @@ const NoticesPage = () => {
         const matchesSearch = notice.title.toLowerCase().includes(searchQuery.toLowerCase());
         return matchesCategory && matchesDepartment && matchesSearch;
     });
+
+    const totalPages = Math.ceil(filteredNotices.length / itemsPerPage);
+    const paginatedNotices = filteredNotices.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+    );
+
+    const handlePageChange = (newPage) => {
+        if (newPage >= 1 && newPage <= totalPages) {
+            setCurrentPage(newPage);
+        }
+    };
 
     const getCategoryColor = (cat) => {
         switch (cat) {
@@ -146,7 +186,7 @@ const NoticesPage = () => {
                 <div className="grid md:grid-cols-[1fr_320px] gap-8 items-start">
 
                     {/* LEFT COLUMN: Main Feed */}
-                    <div className="space-y-6">
+                    <div className="space-y-6" id="notices-feed">
 
                         {/* Mobile Header: Search + Filter Toggle (Visible only on mobile) */}
                         <div className="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3 mb-2 md:hidden">
@@ -226,7 +266,7 @@ const NoticesPage = () => {
 
                         <AnimatePresence mode="popLayout">
                             {filteredNotices.length > 0 ? (
-                                filteredNotices.map((notice) => (
+                                paginatedNotices.map((notice) => (
                                     <Link href={`/notices/${notice._id}`} key={notice._id} className="block">
                                         <motion.div
                                             layout
@@ -294,6 +334,33 @@ const NoticesPage = () => {
                                 </div>
                             )}
                         </AnimatePresence>
+
+                        {/* Pagination Controls */}
+                        {totalPages > 1 && (
+                            <div className="flex justify-center items-center gap-4 mt-8 pt-6 border-t border-slate-100">
+                                <button
+                                    onClick={() => handlePageChange(currentPage - 1)}
+                                    disabled={currentPage === 1}
+                                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-600 font-bold text-sm hover:bg-slate-50 hover:text-brandColor hover:border-brandColor/30 transition-all disabled:opacity-50 disabled:hover:bg-white disabled:hover:text-slate-600 disabled:hover:border-slate-200 disabled:cursor-not-allowed"
+                                >
+                                    <ChevronLeft className="w-4 h-4" /> Previous
+                                </button>
+
+                                <div className="flex items-center gap-2">
+                                    <span className="text-sm font-bold text-slate-600 bg-slate-100 px-4 py-2 rounded-lg">
+                                        Page {currentPage} of {totalPages}
+                                    </span>
+                                </div>
+
+                                <button
+                                    onClick={() => handlePageChange(currentPage + 1)}
+                                    disabled={currentPage === totalPages}
+                                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-600 font-bold text-sm hover:bg-slate-50 hover:text-brandColor hover:border-brandColor/30 transition-all disabled:opacity-50 disabled:hover:bg-white disabled:hover:text-slate-600 disabled:hover:border-slate-200 disabled:cursor-not-allowed"
+                                >
+                                    Next <ChevronRight className="w-4 h-4" />
+                                </button>
+                            </div>
+                        )}
                     </div>
 
                     {/* RIGHT COLUMN: Sticky Sidebar (Desktop Only) */}
