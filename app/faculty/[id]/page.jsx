@@ -276,28 +276,6 @@ const FacultyDetailsPage = () => {
 
                         {/* RIGHT COLUMN - Details */}
                         <div className="space-y-8">
-
-                            {/* Stats Grid - Only show if there are stats */}
-                            {dynamicStats.length > 0 && (
-                                <motion.div variants={itemVariants}>
-                                    <div className={`grid grid-cols-2 ${dynamicStats.length >= 4 ? 'md:grid-cols-4' : dynamicStats.length === 3 ? 'md:grid-cols-3' : 'md:grid-cols-2'} gap-4`}>
-                                        {dynamicStats.map((stat, index) => (
-                                            <motion.div
-                                                key={index}
-                                                whileHover={{ scale: 1.05, y: -5 }}
-                                                className="bg-white rounded-xl p-5 border border-gray-200 hover:border-brandColor/30 transition-all group"
-                                            >
-                                                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
-                                                    <stat.icon className="w-5 h-5 text-white" />
-                                                </div>
-                                                <p className="text-3xl font-bold text-gray-900 mb-1">{stat.value}</p>
-                                                <p className="text-sm text-gray-500">{stat.label}</p>
-                                            </motion.div>
-                                        ))}
-                                    </div>
-                                </motion.div>
-                            )}
-
                             {/* Education & Achievements Grid */}
                             <motion.div variants={itemVariants}>
                                 <div className="grid md:grid-cols-1 gap-6">
@@ -348,32 +326,23 @@ const FacultyDetailsPage = () => {
                                 </motion.div>
                             )}
 
-                            {/* Years Experience */}
-                            {member.yearsExperience && (
+                            {/* Stats Grid - Only show if there are stats */}
+                            {dynamicStats.length > 0 && (
                                 <motion.div variants={itemVariants}>
-                                    <div className="bg-white rounded-xl p-8 border border-gray-200">
-                                        <div className="flex items-center gap-3 mb-6">
-                                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center">
-                                                <Calendar className="w-5 h-5 text-white" />
-                                            </div>
-                                            <h2 className="text-xl font-bold text-gray-900">Experience</h2>
-                                        </div>
-                                        <p className="text-gray-800 text-lg font-semibold">{member.yearsExperience} years</p>
-                                    </div>
-                                </motion.div>
-                            )}
-
-                            {/* Publications */}
-                            {member.publications && (
-                                <motion.div variants={itemVariants}>
-                                    <div className="bg-white rounded-xl p-8 border border-gray-200">
-                                        <div className="flex items-center gap-3 mb-6">
-                                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center">
-                                                <FileText className="w-5 h-5 text-white" />
-                                            </div>
-                                            <h2 className="text-xl font-bold text-gray-900">Publications</h2>
-                                        </div>
-                                        <p className="text-gray-600 whitespace-pre-wrap leading-relaxed">{member.publications}</p>
+                                    <div className={`grid grid-cols-2 ${dynamicStats.length >= 4 ? 'md:grid-cols-4' : dynamicStats.length === 3 ? 'md:grid-cols-3' : 'md:grid-cols-2'} gap-4`}>
+                                        {dynamicStats.map((stat, index) => (
+                                            <motion.div
+                                                key={index}
+                                                whileHover={{ scale: 1.05, y: -5 }}
+                                                className="bg-white rounded-xl p-5 border border-gray-200 hover:border-brandColor/30 transition-all group"
+                                            >
+                                                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
+                                                    <stat.icon className="w-5 h-5 text-white" />
+                                                </div>
+                                                <p className="text-3xl font-bold text-gray-900 mb-1">{stat.value}</p>
+                                                <p className="text-sm text-gray-500">{stat.label}</p>
+                                            </motion.div>
+                                        ))}
                                     </div>
                                 </motion.div>
                             )}
