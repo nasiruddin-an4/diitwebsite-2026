@@ -358,35 +358,6 @@ const NoticesPage = () => {
                                 ))}
                             </div>
                         </div>
-
-
-
-                        {/* Recent Events Widget */}
-                        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-lg shadow-slate-200/50">
-                            <h3 className="font-bold text-slate-800 mb-4 flex items-center gap-2">
-                                <Calendar className="w-5 h-5 text-blue-500" /> Upcoming
-                            </h3>
-                            <div className="space-y-4">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 bg-blue-50 text-blue-600 rounded-lg flex flex-col items-center justify-center font-bold text-xs border border-blue-100 uppercase leading-none">
-                                        <span className="text-lg">15</span> Jan
-                                    </div>
-                                    <div>
-                                        <h4 className="text-sm font-bold text-slate-700 line-clamp-1">Orientation 2026</h4>
-                                        <p className="text-xs text-slate-400">Auditorium, 10:00 AM</p>
-                                    </div>
-                                </div>
-                                <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 bg-red-50 text-red-600 rounded-lg flex flex-col items-center justify-center font-bold text-xs border border-red-100 uppercase leading-none">
-                                        <span className="text-lg">21</span> Feb
-                                    </div>
-                                    <div>
-                                        <h4 className="text-sm font-bold text-slate-700 line-clamp-1">Int'l Mother Language Day</h4>
-                                        <p className="text-xs text-slate-400">Campus Closed</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
