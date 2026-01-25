@@ -147,7 +147,7 @@ const FacultyDetailsPage = () => {
             </div>
 
             {/* Hero Header with Gradient */}
-            <div className="relative pt-8 pb-40 px-4">
+            <div className="relative pt-8 pb-46 px-4 bg-brandColor">
                 <div className="max-w-7xl mx-auto relative z-10">
                     {/* Back Button */}
                     <motion.div
@@ -155,7 +155,7 @@ const FacultyDetailsPage = () => {
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.5 }}
                     >
-                        <Link href="/faculty" className="inline-flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-brandColor transition-all group mb-8">
+                        <Link href="/faculty" className="inline-flex items-center gap-2 px-4 py-2 text-gray-300 hover:text-white transition-all group mb-8">
                             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
                             <span className="text-sm font-medium">Back to Faculty</span>
                         </Link>
@@ -169,19 +169,16 @@ const FacultyDetailsPage = () => {
                         className="flex flex-col items-center text-center gap-6"
                     >
                         <div className="w-full max-w-5xl">
-                            <div className="flex flex-wrap items-center justify-center gap-3 mb-4">
-                                <span className="px-4 py-1.5 rounded-full bg-gradient-to-r from-brandColor to-cyan-600 text-white text-xs font-bold uppercase tracking-wider shadow-lg shadow-brandColor/20">
-                                    {member.department}
-                                </span>
-                                <span className="px-4 py-1.5 rounded-full bg-white text-gray-600 text-xs font-bold uppercase tracking-wider border border-gray-200 shadow-sm">
-                                    {member.designation}
-                                </span>
-                            </div>
-                            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-2 leading-tight">
+                            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-4 leading-tight">
                                 {member.name}
                             </h1>
+                            <div className="flex flex-wrap items-center justify-center gap-3 mb-6">
+                                <span className="px-4 py-1.5 rounded-full bg-white text-gray-600 text-xs font-bold uppercase tracking-wider border border-gray-200 shadow-sm ">
+                                    {member.designation}, {member.department}
+                                </span>
+                            </div>
                             {member.about && (
-                                <p className="text-lg text-gray-600 max-w-5xl mx-auto leading-relaxed line-clamp-4">
+                                <p className="text-lg text-gray-300 max-w-5xl mx-auto leading-relaxed line-clamp-4 ">
                                     {member.about}
                                 </p>
                             )}
