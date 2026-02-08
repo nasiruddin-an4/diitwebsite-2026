@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { notFound, useParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -42,6 +42,32 @@ const DynamicProgramPage = () => {
   const [departmentFaculty, setDepartmentFaculty] = useState([]);
   const [departmentCareers, setDepartmentCareers] = useState([]);
   const [departmentFaqs, setDepartmentFaqs] = useState([]);
+  const facultyScrollRef = useRef(null);
+
+  useEffect(() => {
+    const scrollContainer = facultyScrollRef.current;
+    if (!scrollContainer) return;
+
+    const interval = setInterval(() => {
+      if (!scrollContainer) return;
+
+      const cardWidth = scrollContainer.children[0]?.offsetWidth || 0;
+      if (cardWidth === 0) return;
+
+      const gap = 24;
+      const scrollAmount = cardWidth + gap;
+      const maxScroll =
+        scrollContainer.scrollWidth - scrollContainer.clientWidth;
+
+      if (scrollContainer.scrollLeft >= maxScroll - 10) {
+        scrollContainer.scrollTo({ left: 0, behavior: "smooth" });
+      } else {
+        scrollContainer.scrollBy({ left: scrollAmount, behavior: "smooth" });
+      }
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [departmentFaculty]);
 
   useEffect(() => {
     const fetchProgram = async () => {
@@ -105,13 +131,33 @@ const DynamicProgramPage = () => {
 
   const fetchDepartmentData = async (category) => {
     try {
-      // Try to fetch department-specific data from the faculty page
-      const facultyResponse = await fetch(`/api/admin/data/FacultyData`);
+      // Fetch faculty data from the correct API endpoint
+      const facultyResponse = await fetch(`/api/admin/academics/faculty`);
       if (facultyResponse.ok) {
         const facultyResult = await facultyResponse.json();
-        const facultyData = facultyResult.data?.facultyData || [];
+        const facultyData = facultyResult.data || [];
+
+        // Map program category/shortName to department codes
+        // Programs might have category like "engineering", "business" or shortName like "CSE", "BBA"
+        const deptMapping = {
+          engineering: "CSE",
+          cse: "CSE",
+          computer: "CSE",
+          business: "BBA",
+          bba: "BBA",
+          thm: "THM",
+          bthm: "THM",
+          tourism: "THM",
+          hospitality: "THM",
+          mba: "MBA",
+          mthm: "MTHM",
+        };
+
+        const categoryLower = category.toLowerCase();
+        const mappedDept = deptMapping[categoryLower] || category.toUpperCase();
+
         const filtered = facultyData.filter(
-          (f) => f.department?.toLowerCase() === category.toLowerCase(),
+          (f) => f.department?.toUpperCase() === mappedDept.toUpperCase(),
         );
         setDepartmentFaculty(filtered);
       }
@@ -483,6 +529,60 @@ const DynamicProgramPage = () => {
             </section>
           )}
 
+          {/* Faculty Members Section - Only show if faculty exist */}
+          {safeProgram.faculty.length > 0 && (
+            <section>
+              <h2 className="text-3xl font-bold text-slate-900 mb-6 flex items-center gap-3">
+                <span className="w-2 h-8 bg-blue-600 rounded-full"></span> Our
+                Faculty
+              </h2>
+              <div
+                ref={facultyScrollRef}
+                className="flex overflow-x-auto gap-10 ml-6 md:ml-0 pb-6 px-4 sm:mx-0 sm:px-0 snap-x snap-mandatory"
+                style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+              >
+                {safeProgram.faculty.map((member, idx) => (
+                  <Link
+                    key={member._id || idx}
+                    href={`/faculty/${member._id}`}
+                    className="min-w-full sm:min-w-[calc(50%-12px)] lg:min-w-[calc(33.333%-16px)] snap-start group overflow-hidden transition-all duration-300"
+                  >
+                    <div className="aspect-[4/5] relative overflow-hidden bg-slate-100">
+                      {member.image ? (
+                        <img
+                          src={member.image}
+                          alt={member.name}
+                          className="w-full h-full object-cover group-hover:scale-105 rounded-t-md transition-transform duration-500"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-slate-100">
+                          <Users className="w-16 h-16 text-slate-300" />
+                        </div>
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </div>
+                    <div className="p-2">
+                      <h4 className="font-bold text-slate-900 text-lg group-hover:text-blue-600 transition-colors">
+                        {member.name}
+                      </h4>
+                      <p className="text-sm text-slate-500">
+                        {member.designation}
+                      </p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+              <div className="mt-4 text-center">
+                <Link
+                  href="/faculty"
+                  className="inline-flex items-center gap-2 text-blue-900 font-bold hover:underline"
+                >
+                  View All Faculty <ArrowRight className="w-4 h-4" />
+                </Link>
+              </div>
+            </section>
+          )}
+
           {/* FAQs - Only show if FAQs exist */}
           {safeProgram.faqs.length > 0 && (
             <section>
@@ -559,7 +659,7 @@ const DynamicProgramPage = () => {
 
             {/* Resources/Downloads - Only show if resources exist */}
             {safeProgram.resources && safeProgram.resources.length > 0 && (
-              <div className="bg-slate-900 rounded-2xl p-6 text-white relative overflow-hidden">
+              <div className="bg-slate-900 rounded-xl p-6 text-white relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/20 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
                 <h3 className="font-bold text-lg mb-4 relative z-10">
                   Student Resources
@@ -593,7 +693,7 @@ const DynamicProgramPage = () => {
 
             {/* Alumni Carousel Snippet - Only show if alumni data exists */}
             {alumniList.length > 0 && (
-              <div className="bg-white rounded-2xl p-6 border border-slate-100 relative overflow-hidden">
+              <div className="bg-white rounded-xl p-6 border border-slate-100 relative overflow-hidden">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="font-bold text-slate-900">Alumni Stories</h3>
                   {alumniList.length > 1 && (
@@ -664,7 +764,7 @@ const DynamicProgramPage = () => {
             )}
 
             {/* Admission CTA */}
-            <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-6 text-center text-white shadow-xl shadow-blue-900/20">
+            <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl p-6 text-center text-white">
               <h3 className="font-bold text-xl mb-2">Ready to Apply?</h3>
               <p className="text-blue-100 text-sm mb-6">
                 Take the first step towards a rewarding career.
