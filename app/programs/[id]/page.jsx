@@ -430,10 +430,10 @@ const DynamicProgramPage = () => {
                         key={idx}
                         className="hover:bg-slate-50/50 transition-colors"
                       >
-                        <td className="p-4 font-bold text-blue-600 whitespace-nowrap align-top">
+                        <td className="p-3 sm:p-4 font-bold text-blue-600 whitespace-nowrap align-middle">
                           {item.semester}
                         </td>
-                        <td className="p-4">
+                        <td className="p-3 sm:p-4 align-middle">
                           <div className="flex flex-wrap gap-2">
                             {item.subjects.map((sub, sIdx) => (
                               <span
@@ -538,7 +538,7 @@ const DynamicProgramPage = () => {
               </h2>
               <div
                 ref={facultyScrollRef}
-                className="flex overflow-x-auto gap-10 ml-6 md:ml-0 pb-6 px-4 sm:mx-0 sm:px-0 snap-x snap-mandatory"
+                className="flex overflow-x-auto gap-10 md:gap-5 ml-6 md:ml-0 pb-6 px-4 sm:mx-0 sm:px-0 snap-x snap-mandatory"
                 style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
               >
                 {safeProgram.faculty.map((member, idx) => (
