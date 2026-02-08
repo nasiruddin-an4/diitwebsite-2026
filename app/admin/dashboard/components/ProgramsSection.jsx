@@ -1,6 +1,22 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, X, BookOpen, Edit2, Trash2, Save, Loader2, Upload, Image as ImageIcon, Plus as PlusIcon, Users, Briefcase, HelpCircle, FileText, Download } from "lucide-react";
+import {
+  Plus,
+  X,
+  BookOpen,
+  Edit2,
+  Trash2,
+  Save,
+  Loader2,
+  Upload,
+  Image as ImageIcon,
+  Plus as PlusIcon,
+  Users,
+  Briefcase,
+  HelpCircle,
+  FileText,
+  Download,
+} from "lucide-react";
 import Swal from "sweetalert2";
 import { InputField } from "./InputField";
 
@@ -10,16 +26,16 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
   const [activeTab, setActiveTab] = useState("basic");
   const [curriculumInput, setCurriculumInput] = useState({
     semesterName: "",
-    subjects: ""
+    subjects: "",
   });
   const [careerInput, setCareerInput] = useState({
     area: "",
     description: "",
-    skills: ""
+    skills: "",
   });
   const [resourceInput, setResourceInput] = useState({
     name: "",
-    file: null
+    file: null,
   });
   const [uploadingResource, setUploadingResource] = useState(false);
 
@@ -55,12 +71,12 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
     // Student Resources
     studentResources: [],
     // Alumni Stories
-    alumniStories: []
+    alumniStories: [],
     // Note: Faculty and FAQs are auto-managed by department
   };
 
-  const editingProgram = programs.find(p => (p.id || p._id) === editingId);
-  const editingIndex = programs.findIndex(p => (p.id || p._id) === editingId);
+  const editingProgram = programs.find((p) => (p.id || p._id) === editingId);
+  const editingIndex = programs.findIndex((p) => (p.id || p._id) === editingId);
 
   const handleAdd = () => {
     const newProgram = { ...template, id: Date.now() };
@@ -71,7 +87,7 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
   const handleDelete = (item, index) => {
     Swal.fire({
       title: "Delete Program?",
-      html: `<p class="text-sm">Are you sure you want to delete <strong>${item.title || 'this program'}</strong>? This action cannot be undone.</p>`,
+      html: `<p class="text-sm">Are you sure you want to delete <strong>${item.title || "this program"}</strong>? This action cannot be undone.</p>`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#dc2626",
@@ -81,8 +97,8 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
       customClass: {
         popup: "rounded-2xl",
         confirmButton: "rounded-lg px-6 py-2 font-bold",
-        cancelButton: "rounded-lg px-6 py-2 font-bold"
-      }
+        cancelButton: "rounded-lg px-6 py-2 font-bold",
+      },
     }).then((result) => {
       if (result.isConfirmed) {
         const updatedPrograms = programs.filter((_, i) => i !== index);
@@ -126,8 +142,12 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
         className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6"
       >
         <div>
-          <h2 className="text-3xl font-bold text-slate-900">Academic Programs</h2>
-          <p className="text-slate-600 text-sm mt-1">Manage degrees, durations and program details</p>
+          <h2 className="text-3xl font-bold text-slate-900">
+            Academic Programs
+          </h2>
+          <p className="text-slate-600 text-sm mt-1">
+            Manage degrees, durations and program details
+          </p>
         </div>
         <div className="flex items-center gap-3">
           <button
@@ -141,7 +161,11 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
             disabled={localSaving || saving}
             className="flex items-center gap-2 px-4 py-2 bg-green-700 hover:bg-green-800 text-white rounded-md cursor-pointer font-medium transition-all disabled:opacity-50 text-sm"
           >
-            {localSaving || saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+            {localSaving || saving ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <Save className="w-4 h-4" />
+            )}
             Save All Changes
           </button>
         </div>
@@ -157,17 +181,28 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="border-b border-slate-200 bg-slate-50">
-                <th className="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider w-12">#</th>
-                <th className="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Program</th>
-                <th className="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Degree & Duration</th>
-                <th className="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-center">Actions</th>
+                <th className="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider w-12">
+                  #
+                </th>
+                <th className="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                  Program
+                </th>
+                <th className="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                  Degree & Duration
+                </th>
+                <th className="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-center">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {programs.length === 0 ? (
                 <tr>
-                  <td colSpan="4" className="p-8 text-center text-slate-500 text-sm">
-                    No programs found. Click "Add Program" to create one.
+                  <td
+                    colSpan="4"
+                    className="p-8 text-center text-slate-500 text-sm"
+                  >
+                    No programs found. Click Add Program to create one.
                   </td>
                 </tr>
               ) : (
@@ -189,7 +224,11 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
                         <div className="flex items-center gap-3">
                           <div className="w-12 h-12 rounded-lg bg-slate-100 border border-slate-200 overflow-hidden shrink-0">
                             {item.image ? (
-                              <img src={item.image} alt="" className="w-full h-full object-cover" />
+                              <img
+                                src={item.image}
+                                alt=""
+                                className="w-full h-full object-cover"
+                              />
                             ) : (
                               <div className="w-full h-full flex items-center justify-center text-slate-400">
                                 <BookOpen className="w-5 h-5" />
@@ -197,15 +236,23 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
                             )}
                           </div>
                           <div>
-                            <p className="font-semibold text-slate-900 text-sm">{item.title || "Untitled Program"}</p>
-                            <p className="text-slate-500 text-xs line-clamp-1 mt-0.5">{item.category || "General"}</p>
+                            <p className="font-semibold text-slate-900 text-sm">
+                              {item.title || "Untitled Program"}
+                            </p>
+                            <p className="text-slate-500 text-xs line-clamp-1 mt-0.5">
+                              {item.category || "General"}
+                            </p>
                           </div>
                         </div>
                       </td>
                       <td className="p-4">
                         <div className="text-sm">
-                          <p className="font-medium text-slate-700">{item.degree || "N/A"}</p>
-                          <p className="text-xs text-slate-500">{item.duration || "N/A"}</p>
+                          <p className="font-medium text-slate-700">
+                            {item.degree || "N/A"}
+                          </p>
+                          <p className="text-xs text-slate-500">
+                            {item.duration || "N/A"}
+                          </p>
                         </div>
                       </td>
                       <td className="p-4">
@@ -265,15 +312,16 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
                   { id: "head", label: "Head Message" },
                   { id: "curriculum", label: "Curriculum" },
                   { id: "extras", label: "Career" },
-                  { id: "resources", label: "Resources" }
-                ].map(tab => (
+                  { id: "resources", label: "Resources" },
+                ].map((tab) => (
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`px-4 py-3 font-medium text-sm whitespace-nowrap border-b-2 transition-colors ${activeTab === tab.id
-                      ? "border-blue-600 text-blue-600"
-                      : "border-transparent text-slate-600 hover:text-slate-900"
-                      }`}
+                    className={`px-4 py-3 font-medium text-sm whitespace-nowrap border-b-2 transition-colors ${
+                      activeTab === tab.id
+                        ? "border-blue-600 text-blue-600"
+                        : "border-transparent text-slate-600 hover:text-slate-900"
+                    }`}
                   >
                     {tab.label}
                   </button>
@@ -290,7 +338,9 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
                         label="Display Order (Serial)"
                         type="number"
                         value={editingProgram.serial || ""}
-                        onChange={(v) => handleUpdateField("serial", parseInt(v) || 0)}
+                        onChange={(v) =>
+                          handleUpdateField("serial", parseInt(v) || 0)
+                        }
                         placeholder="e.g. 1, 2, 3..."
                       />
                       <InputField
@@ -330,11 +380,17 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
 
                     {/* Image Upload Area */}
                     <div className="space-y-3">
-                      <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider">Program Image</label>
+                      <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider">
+                        Program Image
+                      </label>
                       <div className="flex flex-col sm:flex-row gap-4">
                         <div className="w-full sm:w-40 h-40 rounded-md bg-slate-100 border-2 border-slate-200 flex items-center justify-center overflow-hidden shrink-0">
                           {editingProgram.image ? (
-                            <img src={editingProgram.image} alt="Preview" className="w-full h-full object-cover" />
+                            <img
+                              src={editingProgram.image}
+                              alt="Preview"
+                              className="w-full h-full object-cover"
+                            />
                           ) : (
                             <ImageIcon className="w-10 h-10 text-slate-300" />
                           )}
@@ -343,8 +399,12 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
                           <label className="flex items-center justify-center h-40 border-2 border-dashed border-blue-200 rounded-md cursor-pointer bg-blue-50/30 hover:bg-blue-50 transition-all group">
                             <div className="text-center p-4">
                               <Upload className="w-8 h-8 text-blue-500 mx-auto mb-2 group-hover:scale-110 transition-transform" />
-                              <p className="text-sm font-semibold text-blue-700">Click to upload</p>
-                              <p className="text-xs text-slate-500 mt-1">PNG, JPG or WEBP (Max 5MB)</p>
+                              <p className="text-sm font-semibold text-blue-700">
+                                Click to upload
+                              </p>
+                              <p className="text-xs text-slate-500 mt-1">
+                                PNG, JPG or WEBP (Max 5MB)
+                              </p>
                             </div>
                             <input
                               type="file"
@@ -353,7 +413,14 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
                                 const file = e.target.files?.[0];
                                 if (file) {
                                   if (file.size > 5 * 1024 * 1024) {
-                                    Swal.fire({ icon: "error", title: "Too large", text: "Image size must be less than 5MB", toast: true, position: "top-end", timer: 3000 });
+                                    Swal.fire({
+                                      icon: "error",
+                                      title: "Too large",
+                                      text: "Image size must be less than 5MB",
+                                      toast: true,
+                                      position: "top-end",
+                                      timer: 3000,
+                                    });
                                     return;
                                   }
 
@@ -371,17 +438,32 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
 
                                     if (result.success) {
                                       handleUpdateField("image", result.url);
-                                      Swal.fire({ icon: "success", title: "Uploaded!", text: "Program image updated", toast: true, position: "top-end", timer: 2000 });
+                                      Swal.fire({
+                                        icon: "success",
+                                        title: "Uploaded!",
+                                        text: "Program image updated",
+                                        toast: true,
+                                        position: "top-end",
+                                        timer: 2000,
+                                      });
                                     } else {
                                       throw new Error(result.message);
                                     }
                                   } catch (error) {
-                                    console.error("Program upload error:", error);
-                                    Swal.fire({ icon: "error", title: "Upload Failed", text: error.message || "Could not upload image" });
+                                    console.error(
+                                      "Program upload error:",
+                                      error,
+                                    );
+                                    Swal.fire({
+                                      icon: "error",
+                                      title: "Upload Failed",
+                                      text:
+                                        error.message ||
+                                        "Could not upload image",
+                                    });
                                   }
                                 }
                               }}
-
                               className="hidden"
                             />
                           </label>
@@ -425,7 +507,12 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
                     <InputField
                       label="Program Overview"
                       value={(editingProgram.overview || []).join("\n")}
-                      onChange={(v) => handleUpdateField("overview", v.split("\n").filter(x => x.trim()))}
+                      onChange={(v) =>
+                        handleUpdateField(
+                          "overview",
+                          v.split("\n").filter((x) => x.trim()),
+                        )
+                      }
                       textarea
                       placeholder="Enter each overview point on a new line..."
                       rows={5}
@@ -433,7 +520,12 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
                     <InputField
                       label="Eligibility Criteria"
                       value={(editingProgram.eligibility || []).join("\n")}
-                      onChange={(v) => handleUpdateField("eligibility", v.split("\n").filter(x => x.trim()))}
+                      onChange={(v) =>
+                        handleUpdateField(
+                          "eligibility",
+                          v.split("\n").filter((x) => x.trim()),
+                        )
+                      }
                       textarea
                       placeholder="Enter each requirement on a new line..."
                       rows={4}
@@ -467,14 +559,22 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
                       rows={5}
                     />
                     <div className="space-y-2">
-                      <label className="block text-xs font-bold text-slate-600 uppercase">Head Image</label>
+                      <label className="block text-xs font-bold text-slate-600 uppercase">
+                        Head Image
+                      </label>
                       <div className="flex gap-4">
                         {editingProgram.headImage && (
-                          <img src={editingProgram.headImage} alt="Head" className="w-20 h-20 rounded object-cover" />
+                          <img
+                            src={editingProgram.headImage}
+                            alt="Head"
+                            className="w-20 h-20 rounded object-cover"
+                          />
                         )}
                         <label className="flex-1 flex items-center justify-center border-2 border-dashed border-blue-200 rounded cursor-pointer bg-blue-50/30 hover:bg-blue-50 p-3">
                           <Upload className="w-5 h-5 text-blue-500 mr-2" />
-                          <span className="text-sm text-blue-700">Upload Head Photo</span>
+                          <span className="text-sm text-blue-700">
+                            Upload Head Photo
+                          </span>
                           <input
                             type="file"
                             accept="image/*"
@@ -495,19 +595,33 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
 
                                   if (result.success) {
                                     handleUpdateField("headImage", result.url);
-                                    Swal.fire({ icon: "success", title: "Uploaded!", text: "Head photo updated", toast: true, position: "top-end", timer: 2000 });
+                                    Swal.fire({
+                                      icon: "success",
+                                      title: "Uploaded!",
+                                      text: "Head photo updated",
+                                      toast: true,
+                                      position: "top-end",
+                                      timer: 2000,
+                                    });
                                   } else {
                                     throw new Error(result.message);
                                   }
                                 } catch (error) {
-                                  console.error("Head image upload error:", error);
-                                  Swal.fire({ icon: "error", title: "Upload Failed", text: error.message || "Could not upload photo" });
+                                  console.error(
+                                    "Head image upload error:",
+                                    error,
+                                  );
+                                  Swal.fire({
+                                    icon: "error",
+                                    title: "Upload Failed",
+                                    text:
+                                      error.message || "Could not upload photo",
+                                  });
                                 }
                               }
                             }}
                             className="hidden"
                           />
-
                         </label>
                       </div>
                     </div>
@@ -519,19 +633,32 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
                   <div className="space-y-6">
                     {/* Curriculum List */}
                     <div className="space-y-3">
-                      <h3 className="font-semibold text-slate-900">Program Semesters</h3>
+                      <h3 className="font-semibold text-slate-900">
+                        Program Semesters
+                      </h3>
                       <div className="bg-slate-50 rounded-lg border border-slate-200 p-4 space-y-3 max-h-96 overflow-y-auto">
-                        {editingProgram.curriculum && editingProgram.curriculum.length > 0 ? (
+                        {editingProgram.curriculum &&
+                        editingProgram.curriculum.length > 0 ? (
                           editingProgram.curriculum.map((item, idx) => (
-                            <div key={idx} className="bg-white border border-slate-200 rounded-lg p-4">
+                            <div
+                              key={idx}
+                              className="bg-white border border-slate-200 rounded-lg p-4"
+                            >
                               <div className="flex justify-between items-start mb-3">
                                 <div>
-                                  <p className="font-bold text-slate-900">{item.semester}</p>
-                                  <p className="text-xs text-slate-500 mt-1">{item.subjects?.length || 0} subjects</p>
+                                  <p className="font-bold text-slate-900">
+                                    {item.semester}
+                                  </p>
+                                  <p className="text-xs text-slate-500 mt-1">
+                                    {item.subjects?.length || 0} subjects
+                                  </p>
                                 </div>
                                 <button
                                   onClick={() => {
-                                    const updated = editingProgram.curriculum.filter((_, i) => i !== idx);
+                                    const updated =
+                                      editingProgram.curriculum.filter(
+                                        (_, i) => i !== idx,
+                                      );
                                     handleUpdateField("curriculum", updated);
                                   }}
                                   className="p-2 text-red-600 hover:bg-red-50 rounded transition-colors"
@@ -541,15 +668,31 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
                               </div>
                               <div className="flex flex-wrap gap-2">
                                 {item.subjects?.map((subject, sIdx) => (
-                                  <span key={sIdx} className="inline-flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-full px-3 py-1 text-xs text-blue-700 font-medium">
+                                  <span
+                                    key={sIdx}
+                                    className="inline-flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-full px-3 py-1 text-xs text-blue-700 font-medium"
+                                  >
                                     {subject}
                                     <button
                                       onClick={() => {
-                                        const newSubjects = item.subjects.filter((_, i) => i !== sIdx);
-                                        const updated = editingProgram.curriculum.map((c, i) =>
-                                          i === idx ? { ...c, subjects: newSubjects } : c
+                                        const newSubjects =
+                                          item.subjects.filter(
+                                            (_, i) => i !== sIdx,
+                                          );
+                                        const updated =
+                                          editingProgram.curriculum.map(
+                                            (c, i) =>
+                                              i === idx
+                                                ? {
+                                                    ...c,
+                                                    subjects: newSubjects,
+                                                  }
+                                                : c,
+                                          );
+                                        handleUpdateField(
+                                          "curriculum",
+                                          updated,
                                         );
-                                        handleUpdateField("curriculum", updated);
                                       }}
                                       className="hover:text-blue-900 ml-1"
                                     >
@@ -561,24 +704,38 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
                             </div>
                           ))
                         ) : (
-                          <p className="text-center text-slate-500 text-sm py-6">No semesters added yet. Add one below.</p>
+                          <p className="text-center text-slate-500 text-sm py-6">
+                            No semesters added yet. Add one below.
+                          </p>
                         )}
                       </div>
                     </div>
 
                     {/* Add New Semester */}
                     <div className="border-t border-slate-200 pt-4 space-y-4">
-                      <h3 className="font-semibold text-slate-900">Add New Semester</h3>
+                      <h3 className="font-semibold text-slate-900">
+                        Add New Semester
+                      </h3>
                       <InputField
                         label="Semester Name"
                         value={curriculumInput.semesterName}
-                        onChange={(v) => setCurriculumInput({ ...curriculumInput, semesterName: v })}
+                        onChange={(v) =>
+                          setCurriculumInput({
+                            ...curriculumInput,
+                            semesterName: v,
+                          })
+                        }
                         placeholder="e.g. 1st Semester, 2nd Semester..."
                       />
                       <InputField
                         label="Subjects (one per line)"
                         value={curriculumInput.subjects}
-                        onChange={(v) => setCurriculumInput({ ...curriculumInput, subjects: v })}
+                        onChange={(v) =>
+                          setCurriculumInput({
+                            ...curriculumInput,
+                            subjects: v,
+                          })
+                        }
                         textarea
                         placeholder="Enter each subject on a new line&#10;e.g.&#10;Introduction to Programming&#10;Data Structures&#10;Web Development"
                         rows={5}
@@ -586,27 +743,47 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
                       <button
                         onClick={() => {
                           if (!curriculumInput.semesterName.trim()) {
-                            Swal.fire({ icon: "warning", title: "Required", text: "Please enter semester name", toast: true, position: "top-end", timer: 2000 });
+                            Swal.fire({
+                              icon: "warning",
+                              title: "Required",
+                              text: "Please enter semester name",
+                              toast: true,
+                              position: "top-end",
+                              timer: 2000,
+                            });
                             return;
                           }
                           const subjects = curriculumInput.subjects
                             .split("\n")
-                            .map(s => s.trim())
-                            .filter(s => s.length > 0);
+                            .map((s) => s.trim())
+                            .filter((s) => s.length > 0);
 
                           if (subjects.length === 0) {
-                            Swal.fire({ icon: "warning", title: "Required", text: "Please add at least one subject", toast: true, position: "top-end", timer: 2000 });
+                            Swal.fire({
+                              icon: "warning",
+                              title: "Required",
+                              text: "Please add at least one subject",
+                              toast: true,
+                              position: "top-end",
+                              timer: 2000,
+                            });
                             return;
                           }
 
                           const newSemester = {
                             semester: curriculumInput.semesterName,
-                            subjects
+                            subjects,
                           };
 
-                          const updated = [...(editingProgram.curriculum || []), newSemester];
+                          const updated = [
+                            ...(editingProgram.curriculum || []),
+                            newSemester,
+                          ];
                           handleUpdateField("curriculum", updated);
-                          setCurriculumInput({ semesterName: "", subjects: "" });
+                          setCurriculumInput({
+                            semesterName: "",
+                            subjects: "",
+                          });
 
                           Swal.fire({
                             icon: "success",
@@ -615,7 +792,7 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
                             toast: true,
                             position: "top-end",
                             timer: 2000,
-                            showConfirmButton: false
+                            showConfirmButton: false,
                           });
                         }}
                         className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md cursor-pointer font-bold transition-all text-sm"
@@ -636,26 +813,41 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
                           <Briefcase className="w-5 h-5 text-blue-600" />
                           Career Opportunities
                         </h3>
-                        <p className="text-xs text-slate-500">Define career areas and paths for program graduates</p>
+                        <p className="text-xs text-slate-500">
+                          Define career areas and paths for program graduates
+                        </p>
                       </div>
 
                       {/* Career List */}
                       <div className="space-y-3">
-                        <p className="text-xs font-semibold text-slate-600 uppercase">Career Paths</p>
+                        <p className="text-xs font-semibold text-slate-600 uppercase">
+                          Career Paths
+                        </p>
                         <div className="bg-slate-50 rounded-lg border border-slate-200 p-4 space-y-3 max-h-96 overflow-y-auto">
-                          {editingProgram.careers && editingProgram.careers.length > 0 ? (
+                          {editingProgram.careers &&
+                          editingProgram.careers.length > 0 ? (
                             editingProgram.careers.map((career, idx) => (
-                              <div key={idx} className="bg-white border border-slate-200 rounded-lg p-4 hover:shadow-sm transition-all">
+                              <div
+                                key={idx}
+                                className="bg-white border border-slate-200 rounded-lg p-4 hover:shadow-sm transition-all"
+                              >
                                 <div className="flex justify-between items-start mb-3">
                                   <div className="flex-1">
-                                    <p className="font-bold text-slate-900 text-sm">{career.area}</p>
+                                    <p className="font-bold text-slate-900 text-sm">
+                                      {career.area}
+                                    </p>
                                     {career.description && (
-                                      <p className="text-xs text-slate-600 mt-1 line-clamp-2">{career.description}</p>
+                                      <p className="text-xs text-slate-600 mt-1 line-clamp-2">
+                                        {career.description}
+                                      </p>
                                     )}
                                   </div>
                                   <button
                                     onClick={() => {
-                                      const updated = editingProgram.careers.filter((_, i) => i !== idx);
+                                      const updated =
+                                        editingProgram.careers.filter(
+                                          (_, i) => i !== idx,
+                                        );
                                       handleUpdateField("careers", updated);
                                     }}
                                     className="p-2 text-red-600 hover:bg-red-50 rounded transition-colors shrink-0 ml-2"
@@ -665,34 +857,47 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
                                 </div>
                                 {career.skills && (
                                   <div className="flex flex-wrap gap-1">
-                                    {career.skills.split(",").map((skill, sIdx) => (
-                                      <span key={sIdx} className="inline-block px-2 py-1 bg-blue-50 text-blue-700 text-[10px] font-semibold rounded border border-blue-200">
-                                        {skill.trim()}
-                                      </span>
-                                    ))}
+                                    {career.skills
+                                      .split(",")
+                                      .map((skill, sIdx) => (
+                                        <span
+                                          key={sIdx}
+                                          className="inline-block px-2 py-1 bg-blue-50 text-blue-700 text-[10px] font-semibold rounded border border-blue-200"
+                                        >
+                                          {skill.trim()}
+                                        </span>
+                                      ))}
                                   </div>
                                 )}
                               </div>
                             ))
                           ) : (
-                            <p className="text-center text-slate-500 text-sm py-6">No career paths added yet. Add one below.</p>
+                            <p className="text-center text-slate-500 text-sm py-6">
+                              No career paths added yet. Add one below.
+                            </p>
                           )}
                         </div>
                       </div>
 
                       {/* Add New Career */}
                       <div className="border-t border-slate-200 pt-4 space-y-4">
-                        <h4 className="font-semibold text-slate-900">Add Career Path</h4>
+                        <h4 className="font-semibold text-slate-900">
+                          Add Career Path
+                        </h4>
                         <InputField
                           label="Career Area"
                           value={careerInput.area}
-                          onChange={(v) => setCareerInput({ ...careerInput, area: v })}
+                          onChange={(v) =>
+                            setCareerInput({ ...careerInput, area: v })
+                          }
                           placeholder="e.g. Software Development, Data Science, Web Development..."
                         />
                         <InputField
                           label="Career Description"
                           value={careerInput.description}
-                          onChange={(v) => setCareerInput({ ...careerInput, description: v })}
+                          onChange={(v) =>
+                            setCareerInput({ ...careerInput, description: v })
+                          }
                           textarea
                           placeholder="What does a graduate in this area do? What are the responsibilities and opportunities?"
                           rows={4}
@@ -700,25 +905,41 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
                         <InputField
                           label="Key Skills (comma separated)"
                           value={careerInput.skills}
-                          onChange={(v) => setCareerInput({ ...careerInput, skills: v })}
+                          onChange={(v) =>
+                            setCareerInput({ ...careerInput, skills: v })
+                          }
                           placeholder="e.g. Problem Solving, Database Design, API Development, Leadership..."
                         />
                         <button
                           onClick={() => {
                             if (!careerInput.area.trim()) {
-                              Swal.fire({ icon: "warning", title: "Required", text: "Please enter career area", toast: true, position: "top-end", timer: 2000 });
+                              Swal.fire({
+                                icon: "warning",
+                                title: "Required",
+                                text: "Please enter career area",
+                                toast: true,
+                                position: "top-end",
+                                timer: 2000,
+                              });
                               return;
                             }
 
                             const newCareer = {
                               area: careerInput.area,
                               description: careerInput.description,
-                              skills: careerInput.skills
+                              skills: careerInput.skills,
                             };
 
-                            const updated = [...(editingProgram.careers || []), newCareer];
+                            const updated = [
+                              ...(editingProgram.careers || []),
+                              newCareer,
+                            ];
                             handleUpdateField("careers", updated);
-                            setCareerInput({ area: "", description: "", skills: "" });
+                            setCareerInput({
+                              area: "",
+                              description: "",
+                              skills: "",
+                            });
 
                             Swal.fire({
                               icon: "success",
@@ -727,7 +948,7 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
                               toast: true,
                               position: "top-end",
                               timer: 2000,
-                              showConfirmButton: false
+                              showConfirmButton: false,
                             });
                           }}
                           className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md cursor-pointer font-bold transition-all text-sm"
@@ -743,7 +964,9 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
                         <div className="w-full border-t border-slate-200"></div>
                       </div>
                       <div className="relative flex justify-center">
-                        <span className="px-2 text-xs text-slate-500 bg-white">Faculty & FAQs Managed by Department</span>
+                        <span className="px-2 text-xs text-slate-500 bg-white">
+                          Faculty & FAQs Managed by Department
+                        </span>
                       </div>
                     </div>
 
@@ -752,35 +975,59 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
                       <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-100 rounded-full mb-3">
                         <BookOpen className="w-6 h-6 text-blue-600" />
                       </div>
-                      <h3 className="font-bold text-slate-900 mb-2">Auto-Managed Content</h3>
+                      <h3 className="font-bold text-slate-900 mb-2">
+                        Auto-Managed Content
+                      </h3>
                       <p className="text-sm text-slate-600 mb-4">
-                        Faculty and FAQs are automatically managed by department. They are fetched dynamically based on the program category/department.
+                        Faculty and FAQs are automatically managed by
+                        department. They are fetched dynamically based on the
+                        program category/department.
                       </p>
                       <p className="text-xs text-slate-500 font-medium">
-                        Go to the <strong>Faculty Page</strong> or <strong>FAQ Page</strong> to manage department-specific content.
+                        Go to the <strong>Faculty Page</strong> or{" "}
+                        <strong>FAQ Page</strong> to manage department-specific
+                        content.
                       </p>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <a href="/admin/dashboard?tab=faculty" className="flex items-center gap-3 p-4 bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 rounded-lg hover:shadow-md transition-all cursor-pointer">
+                      <a
+                        href="/admin/dashboard?tab=faculty"
+                        className="flex items-center gap-3 p-4 bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 rounded-lg hover:shadow-md transition-all cursor-pointer"
+                      >
                         <Users className="w-6 h-6 text-purple-600" />
                         <div className="text-left">
-                          <p className="font-semibold text-slate-900 text-sm">Manage Faculty</p>
-                          <p className="text-xs text-slate-600">By Department</p>
+                          <p className="font-semibold text-slate-900 text-sm">
+                            Manage Faculty
+                          </p>
+                          <p className="text-xs text-slate-600">
+                            By Department
+                          </p>
                         </div>
                       </a>
-                      <a href="/admin/dashboard?tab=faq" className="flex items-center gap-3 p-4 bg-gradient-to-br from-orange-50 to-orange-100 border border-orange-200 rounded-lg hover:shadow-md transition-all cursor-pointer">
+                      <a
+                        href="/admin/dashboard?tab=faq"
+                        className="flex items-center gap-3 p-4 bg-gradient-to-br from-orange-50 to-orange-100 border border-orange-200 rounded-lg hover:shadow-md transition-all cursor-pointer"
+                      >
                         <HelpCircle className="w-6 h-6 text-orange-600" />
                         <div className="text-left">
-                          <p className="font-semibold text-slate-900 text-sm">Manage FAQs</p>
-                          <p className="text-xs text-slate-600">By Department</p>
+                          <p className="font-semibold text-slate-900 text-sm">
+                            Manage FAQs
+                          </p>
+                          <p className="text-xs text-slate-600">
+                            By Department
+                          </p>
                         </div>
                       </a>
                     </div>
 
                     <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
                       <p className="text-sm text-amber-900">
-                        <strong>💡 How it works:</strong> Career Opportunities are added per program. Faculty members and FAQs are fetched automatically from the department level, ensuring all programs in the same department show the same consistent information.
+                        <strong>💡 How it works:</strong> Career Opportunities
+                        are added per program. Faculty members and FAQs are
+                        fetched automatically from the department level,
+                        ensuring all programs in the same department show the
+                        same consistent information.
                       </p>
                     </div>
                   </div>
@@ -794,37 +1041,58 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
                         <FileText className="w-5 h-5 text-blue-600" />
                         Student Resources & Downloads
                       </h3>
-                      <p className="text-xs text-slate-500">Upload PDF documents for students to download (syllabus, handbooks, etc.)</p>
+                      <p className="text-xs text-slate-500">
+                        Upload PDF documents for students to download (syllabus,
+                        handbooks, etc.)
+                      </p>
                     </div>
 
                     {/* Current Resources List */}
                     <div className="space-y-3">
-                      <p className="text-xs font-semibold text-slate-600 uppercase">Uploaded Resources</p>
+                      <p className="text-xs font-semibold text-slate-600 uppercase">
+                        Uploaded Resources
+                      </p>
                       <div className="bg-slate-50 rounded-lg border border-slate-200 p-4 space-y-3 max-h-64 overflow-y-auto">
-                        {editingProgram.resources && editingProgram.resources.length > 0 ? (
+                        {editingProgram.resources &&
+                        editingProgram.resources.length > 0 ? (
                           editingProgram.resources.map((resource, idx) => (
-                            <div key={idx} className="bg-white border border-slate-200 rounded-lg p-4 flex items-center justify-between hover:shadow-sm transition-all">
+                            <div
+                              key={idx}
+                              className="bg-white border border-slate-200 rounded-lg p-4 flex items-center justify-between hover:shadow-sm transition-all"
+                            >
                               <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 rounded-lg bg-red-50 text-red-600 flex items-center justify-center">
                                   <FileText className="w-5 h-5" />
                                 </div>
                                 <div>
-                                  <p className="font-bold text-slate-900 text-sm">{resource.name}</p>
-                                  <p className="text-xs text-slate-500 truncate max-w-xs">{resource.url}</p>
+                                  <p className="font-bold text-slate-900 text-sm">
+                                    {resource.name}
+                                  </p>
+                                  <p className="text-xs text-slate-500 truncate max-w-xs">
+                                    {resource.url}
+                                  </p>
                                 </div>
                               </div>
                               <div className="flex items-center gap-2">
-                                <a
-                                  href={resource.url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
+                                <button
+                                  onClick={() =>
+                                    window.open(
+                                      resource.url,
+                                      "_blank",
+                                      "noopener,noreferrer",
+                                    )
+                                  }
                                   className="p-2 text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                                  title="View PDF"
                                 >
                                   <Download className="w-4 h-4" />
-                                </a>
+                                </button>
                                 <button
                                   onClick={() => {
-                                    const updated = editingProgram.resources.filter((_, i) => i !== idx);
+                                    const updated =
+                                      editingProgram.resources.filter(
+                                        (_, i) => i !== idx,
+                                      );
                                     handleUpdateField("resources", updated);
                                   }}
                                   className="p-2 text-red-600 hover:bg-red-50 rounded transition-colors"
@@ -835,24 +1103,34 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
                             </div>
                           ))
                         ) : (
-                          <p className="text-center text-slate-500 text-sm py-6">No resources uploaded yet. Add one below.</p>
+                          <p className="text-center text-slate-500 text-sm py-6">
+                            No resources uploaded yet. Add one below.
+                          </p>
                         )}
                       </div>
                     </div>
 
                     {/* Add New Resource */}
                     <div className="border-t border-slate-200 pt-4 space-y-4">
-                      <h4 className="font-semibold text-slate-900">Upload New Resource</h4>
+                      <h4 className="font-semibold text-slate-900">
+                        Upload New Resource
+                      </h4>
                       <InputField
                         label="Resource Name"
                         value={resourceInput.name}
-                        onChange={(v) => setResourceInput({ ...resourceInput, name: v })}
+                        onChange={(v) =>
+                          setResourceInput({ ...resourceInput, name: v })
+                        }
                         placeholder="e.g. Program Syllabus, Student Handbook, Academic Calendar..."
                       />
 
                       <div className="space-y-2">
-                        <label className="block text-xs font-bold text-slate-600 uppercase">PDF File</label>
-                        <label className={`flex items-center justify-center h-24 border-2 border-dashed border-blue-200 rounded-lg ${uploadingResource ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:bg-blue-50'} bg-blue-50/30 transition-all group`}>
+                        <label className="block text-xs font-bold text-slate-600 uppercase">
+                          PDF File
+                        </label>
+                        <label
+                          className={`flex items-center justify-center h-24 border-2 border-dashed border-blue-200 rounded-lg ${uploadingResource ? "cursor-not-allowed opacity-50" : "cursor-pointer hover:bg-blue-50"} bg-blue-50/30 transition-all group`}
+                        >
                           <div className="text-center">
                             {uploadingResource ? (
                               <Loader2 className="w-6 h-6 text-blue-500 mx-auto mb-1 animate-spin" />
@@ -860,9 +1138,15 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
                               <Upload className="w-6 h-6 text-blue-500 mx-auto mb-1 group-hover:scale-110" />
                             )}
                             <p className="text-xs font-bold text-blue-700">
-                              {uploadingResource ? 'Uploading...' : resourceInput.file ? resourceInput.file.name : 'Select PDF File'}
+                              {uploadingResource
+                                ? "Uploading..."
+                                : resourceInput.file
+                                  ? resourceInput.file.name
+                                  : "Select PDF File"}
                             </p>
-                            <p className="text-[10px] text-slate-400 mt-1">PDF files only, max 10MB</p>
+                            <p className="text-[10px] text-slate-400 mt-1">
+                              PDF files only, max 10MB
+                            </p>
                           </div>
                           <input
                             type="file"
@@ -871,11 +1155,25 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
                               const file = e.target.files?.[0];
                               if (file) {
                                 if (file.size > 10 * 1024 * 1024) {
-                                  Swal.fire({ icon: "error", title: "File too large", text: "PDF must be less than 10MB", toast: true, position: "top-end", timer: 3000 });
+                                  Swal.fire({
+                                    icon: "error",
+                                    title: "File too large",
+                                    text: "PDF must be less than 10MB",
+                                    toast: true,
+                                    position: "top-end",
+                                    timer: 3000,
+                                  });
                                   return;
                                 }
-                                if (file.type !== 'application/pdf') {
-                                  Swal.fire({ icon: "error", title: "Invalid file", text: "Only PDF files are allowed", toast: true, position: "top-end", timer: 3000 });
+                                if (file.type !== "application/pdf") {
+                                  Swal.fire({
+                                    icon: "error",
+                                    title: "Invalid file",
+                                    text: "Only PDF files are allowed",
+                                    toast: true,
+                                    position: "top-end",
+                                    timer: 3000,
+                                  });
                                   return;
                                 }
                                 setResourceInput({ ...resourceInput, file });
@@ -890,11 +1188,25 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
                       <button
                         onClick={async () => {
                           if (!resourceInput.name.trim()) {
-                            Swal.fire({ icon: "warning", title: "Required", text: "Please enter a resource name", toast: true, position: "top-end", timer: 2000 });
+                            Swal.fire({
+                              icon: "warning",
+                              title: "Required",
+                              text: "Please enter a resource name",
+                              toast: true,
+                              position: "top-end",
+                              timer: 2000,
+                            });
                             return;
                           }
                           if (!resourceInput.file) {
-                            Swal.fire({ icon: "warning", title: "Required", text: "Please select a PDF file", toast: true, position: "top-end", timer: 2000 });
+                            Swal.fire({
+                              icon: "warning",
+                              title: "Required",
+                              text: "Please select a PDF file",
+                              toast: true,
+                              position: "top-end",
+                              timer: 2000,
+                            });
                             return;
                           }
 
@@ -915,10 +1227,13 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
                               const newResource = {
                                 name: resourceInput.name,
                                 url: result.url,
-                                size: `${(resourceInput.file.size / 1024 / 1024).toFixed(1)} MB`
+                                size: `${(resourceInput.file.size / 1024 / 1024).toFixed(1)} MB`,
                               };
 
-                              const updated = [...(editingProgram.resources || []), newResource];
+                              const updated = [
+                                ...(editingProgram.resources || []),
+                                newResource,
+                              ];
                               handleUpdateField("resources", updated);
                               setResourceInput({ name: "", file: null });
 
@@ -929,32 +1244,50 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
                                 toast: true,
                                 position: "top-end",
                                 timer: 2000,
-                                showConfirmButton: false
+                                showConfirmButton: false,
                               });
                             } else {
                               throw new Error(result.message);
                             }
                           } catch (error) {
                             console.error("Resource upload error:", error);
-                            Swal.fire({ icon: "error", title: "Upload Failed", text: error.message || "Could not upload file", toast: true, position: "top-end", timer: 3000 });
+                            Swal.fire({
+                              icon: "error",
+                              title: "Upload Failed",
+                              text: error.message || "Could not upload file",
+                              toast: true,
+                              position: "top-end",
+                              timer: 3000,
+                            });
                           } finally {
                             setUploadingResource(false);
                           }
                         }}
-                        disabled={uploadingResource || !resourceInput.name || !resourceInput.file}
+                        disabled={
+                          uploadingResource ||
+                          !resourceInput.name ||
+                          !resourceInput.file
+                        }
                         className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md cursor-pointer font-bold transition-all text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         {uploadingResource ? (
-                          <><Loader2 className="w-4 h-4 animate-spin" /> Uploading...</>
+                          <>
+                            <Loader2 className="w-4 h-4 animate-spin" />{" "}
+                            Uploading...
+                          </>
                         ) : (
-                          <><PlusIcon className="w-4 h-4" /> Upload Resource</>
+                          <>
+                            <PlusIcon className="w-4 h-4" /> Upload Resource
+                          </>
                         )}
                       </button>
                     </div>
 
                     <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                       <p className="text-sm text-blue-900">
-                        <strong>💡 Tip:</strong> Resources uploaded here will appear in the "Student Resources" sidebar on the program detail page. Students can download these PDFs directly.
+                        <strong>💡 Tip:</strong> Resources uploaded here will
+                        appear in the Student Resources sidebar on the program
+                        detail page. Students can download these PDFs directly.
                       </p>
                     </div>
                   </div>

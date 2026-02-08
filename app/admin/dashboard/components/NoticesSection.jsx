@@ -102,7 +102,10 @@ export default function NoticesSection() {
 
   const handleSave = async () => {
     if (!formData.title || !formData.date || !formData.category) {
-      setMessage({ type: "error", text: "Title, date, and category are required" });
+      setMessage({
+        type: "error",
+        text: "Title, date, and category are required",
+      });
       return;
     }
 
@@ -122,13 +125,18 @@ export default function NoticesSection() {
       if (result.success) {
         setMessage({
           type: "success",
-          text: editingId ? "Notice updated successfully" : "Notice created successfully",
+          text: editingId
+            ? "Notice updated successfully"
+            : "Notice created successfully",
         });
         fetchNotices();
         handleCancel();
         setTimeout(() => setMessage({ type: "", text: "" }), 3000);
       } else {
-        setMessage({ type: "error", text: result.message || "Failed to save notice" });
+        setMessage({
+          type: "error",
+          text: result.message || "Failed to save notice",
+        });
       }
     } catch (error) {
       console.error("Error saving notice:", error);
@@ -175,7 +183,9 @@ export default function NoticesSection() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h2 className="text-2xl font-bold text-slate-800">Notices Board</h2>
-          <p className="text-slate-600 text-sm mt-1">Manage all official notices and announcements</p>
+          <p className="text-slate-600 text-sm mt-1">
+            Manage all official notices and announcements
+          </p>
         </div>
         <button
           onClick={handleAddNew}
@@ -192,10 +202,11 @@ export default function NoticesSection() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className={`flex items-center gap-2 p-4 rounded-lg ${message.type === "success"
-              ? "bg-green-50 text-green-700 border border-green-200"
-              : "bg-red-50 text-red-700 border border-red-200"
-              }`}
+            className={`flex items-center gap-2 p-4 rounded-lg ${
+              message.type === "success"
+                ? "bg-green-50 text-green-700 border border-green-200"
+                : "bg-red-50 text-red-700 border border-red-200"
+            }`}
           >
             {message.type === "success" ? (
               <Check className="w-5 h-5" />
@@ -258,7 +269,9 @@ export default function NoticesSection() {
                     <input
                       type="date"
                       value={formData.date}
-                      onChange={(e) => handleFieldChange("date", e.target.value)}
+                      onChange={(e) =>
+                        handleFieldChange("date", e.target.value)
+                      }
                       className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
@@ -268,7 +281,9 @@ export default function NoticesSection() {
                     </label>
                     <select
                       value={formData.category}
-                      onChange={(e) => handleFieldChange("category", e.target.value)}
+                      onChange={(e) =>
+                        handleFieldChange("category", e.target.value)
+                      }
                       className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                       {categoryOptions.map((opt) => (
@@ -284,7 +299,9 @@ export default function NoticesSection() {
                     </label>
                     <select
                       value={formData.department || "All"}
-                      onChange={(e) => handleFieldChange("department", e.target.value)}
+                      onChange={(e) =>
+                        handleFieldChange("department", e.target.value)
+                      }
                       className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                       {departmentOptions.map((opt) => (
@@ -302,7 +319,9 @@ export default function NoticesSection() {
                     <input
                       type="checkbox"
                       checked={formData.pinned}
-                      onChange={(e) => handleFieldChange("pinned", e.target.checked)}
+                      onChange={(e) =>
+                        handleFieldChange("pinned", e.target.checked)
+                      }
                       className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
                     />
                     <span className="text-sm font-medium text-slate-700 flex items-center gap-2">
@@ -318,7 +337,9 @@ export default function NoticesSection() {
                   </label>
                   <textarea
                     value={formData.description || ""}
-                    onChange={(e) => handleFieldChange("description", e.target.value)}
+                    onChange={(e) =>
+                      handleFieldChange("description", e.target.value)
+                    }
                     rows="4"
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                     placeholder="Notice description/content"
@@ -333,7 +354,9 @@ export default function NoticesSection() {
                       folder="diit_notices"
                       acceptedFileTypes="image/*"
                       maxSizeInMB={1}
-                      onUploadSuccess={(result) => handleFieldChange("image", result.url)}
+                      onUploadSuccess={(result) =>
+                        handleFieldChange("image", result.url)
+                      }
                     />
                     {formData.image && (
                       <div className="mt-2 relative group w-fit">
@@ -358,7 +381,9 @@ export default function NoticesSection() {
                     <input
                       type="text"
                       value={formData.image || ""}
-                      onChange={(e) => handleFieldChange("image", e.target.value)}
+                      onChange={(e) =>
+                        handleFieldChange("image", e.target.value)
+                      }
                       className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 hidden"
                     />
                     {formData.image && (
@@ -377,12 +402,16 @@ export default function NoticesSection() {
                       folder="diit_notices_pdfs"
                       acceptedFileTypes="application/pdf"
                       maxSizeInMB={2}
-                      onUploadSuccess={(result) => handleFieldChange("pdf", result.url)}
+                      onUploadSuccess={(result) =>
+                        handleFieldChange("pdf", result.url)
+                      }
                     />
                     {formData.pdf && (
                       <div className="mt-2 flex items-center gap-2 p-2 bg-slate-50 border border-slate-200 rounded-lg w-fit">
                         <FileText className="w-5 h-5 text-red-500" />
-                        <span className="text-sm font-medium text-slate-700 max-w-[200px] truncate">{formData.pdf}</span>
+                        <span className="text-sm font-medium text-slate-700 max-w-[200px] truncate">
+                          {formData.pdf}
+                        </span>
                         <button
                           onClick={() => handleFieldChange("pdf", "")}
                           className="p-1 hover:bg-slate-200 rounded-full transition-colors"
@@ -444,7 +473,9 @@ export default function NoticesSection() {
           <div className="text-center py-12 bg-slate-50 rounded-lg border border-slate-200">
             <AlertCircle className="w-12 h-12 text-slate-300 mx-auto mb-3" />
             <p className="text-slate-600 font-medium">No notices yet</p>
-            <p className="text-slate-500 text-sm">Add a notice to get started</p>
+            <p className="text-slate-500 text-sm">
+              Add a notice to get started
+            </p>
           </div>
         ) : (
           notices.map((notice) => (
@@ -454,8 +485,11 @@ export default function NoticesSection() {
               animate={{ opacity: 1, y: 0 }}
               className="bg-white border border-slate-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow"
             >
-              <div className={`px-6 py-4 border-b border-slate-200 flex items-center justify-between ${notice.pinned ? "bg-amber-50" : "bg-slate-50"
-                }`}>
+              <div
+                className={`px-6 py-4 border-b border-slate-200 flex items-center justify-between ${
+                  notice.pinned ? "bg-amber-50" : "bg-slate-50"
+                }`}
+              >
                 <div className="flex items-center gap-4">
                   {notice.image && (
                     <img
@@ -466,23 +500,47 @@ export default function NoticesSection() {
                   )}
                   <div>
                     <div className="flex items-center gap-2 mb-1">
-                      {notice.pinned && <Pin className="w-4 h-4 text-amber-500 fill-amber-500 rotate-45" />}
+                      {notice.pinned && (
+                        <Pin className="w-4 h-4 text-amber-500 fill-amber-500 rotate-45" />
+                      )}
                       <h3 className="text-lg font-bold text-slate-800 line-clamp-1">
                         {notice.title}
                       </h3>
+                      {/* PDF Indicator */}
+                      {notice.pdf && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            window.open(
+                              notice.pdf,
+                              "_blank",
+                              "noopener,noreferrer",
+                            );
+                          }}
+                          className="p-1.5 bg-red-100 hover:bg-red-200 text-red-600 rounded-lg transition-colors"
+                          title="View PDF"
+                        >
+                          <FileText className="w-4 h-4" />
+                        </button>
+                      )}
                     </div>
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-xs font-medium text-slate-500">{notice.date}</span>
-                      <span className={`text-xs font-bold px-2 py-1 rounded-full ${notice.category === "Exam"
-                        ? "bg-red-100 text-red-700"
-                        : notice.category === "Academic"
-                          ? "bg-blue-100 text-blue-700"
-                          : notice.category === "Admission"
-                            ? "bg-emerald-100 text-emerald-700"
-                            : notice.category === "Event"
-                              ? "bg-purple-100 text-purple-700"
-                              : "bg-slate-100 text-slate-700"
-                        }`}>
+                      <span className="text-xs font-medium text-slate-500">
+                        {notice.date}
+                      </span>
+                      <span
+                        className={`text-xs font-bold px-2 py-1 rounded-full ${
+                          notice.category === "Exam"
+                            ? "bg-red-100 text-red-700"
+                            : notice.category === "Academic"
+                              ? "bg-blue-100 text-blue-700"
+                              : notice.category === "Admission"
+                                ? "bg-emerald-100 text-emerald-700"
+                                : notice.category === "Event"
+                                  ? "bg-purple-100 text-purple-700"
+                                  : "bg-slate-100 text-slate-700"
+                        }`}
+                      >
                         {notice.category}
                       </span>
                       {notice.department && notice.department !== "All" && (
@@ -514,6 +572,6 @@ export default function NoticesSection() {
           ))
         )}
       </div>
-    </div >
+    </div>
   );
 }
