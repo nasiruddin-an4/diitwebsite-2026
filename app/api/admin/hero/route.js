@@ -4,10 +4,19 @@ import clientPromise from "@/lib/mongodb";
 import { ObjectId } from "mongodb";
 import fs from "fs/promises";
 import path from "path";
+import { getAuthUser } from "@/lib/auth";
 
 // Helper to revalidate homepage when hero slides change
 function revalidateHeroPages() {
   revalidatePath("/");
+}
+
+async function checkSuperAdmin() {
+  const user = await getAuthUser();
+  if (!user || user.role !== "super_admin") {
+    return null;
+  }
+  return user;
 }
 
 // Helper to ensure data directory exists and get file path
@@ -32,20 +41,32 @@ export async function GET() {
       // Fallback to JSON if DB is empty
       const filePath = await getDataFilePath();
       const fileContent = await fs.readFile(filePath, "utf-8");
-      return NextResponse.json({ success: true, data: JSON.parse(fileContent) });
+      return NextResponse.json({
+        success: true,
+        data: JSON.parse(fileContent),
+      });
     }
 
     return NextResponse.json({ success: true, data: slides });
   } catch (error) {
-    console.warn("MongoDB fetch failed for hero slides, falling back to JSON:", error.message);
+    console.warn(
+      "MongoDB fetch failed for hero slides, falling back to JSON:",
+      error.message,
+    );
     try {
       const filePath = await getDataFilePath();
       const fileContent = await fs.readFile(filePath, "utf-8");
-      return NextResponse.json({ success: true, data: JSON.parse(fileContent) });
+      return NextResponse.json({
+        success: true,
+        data: JSON.parse(fileContent),
+      });
     } catch (fsError) {
       return NextResponse.json(
-        { success: false, message: "Failed to fetch slides even from fallback" },
-        { status: 500 }
+        {
+          success: false,
+          message: "Failed to fetch slides even from fallback",
+        },
+        { status: 500 },
       );
     }
   }
@@ -78,7 +99,7 @@ export async function POST(request) {
     console.error("Error creating hero slide:", error);
     return NextResponse.json(
       { success: false, message: "Failed to create slide" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -90,7 +111,7 @@ export async function PUT(request) {
     if (!_id) {
       return NextResponse.json(
         { success: false, message: "Slide ID is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -107,13 +128,13 @@ export async function PUT(request) {
           ...updateData,
           updatedAt: new Date(),
         },
-      }
+      },
     );
 
     if (result.matchedCount === 0) {
       return NextResponse.json(
         { success: false, message: "Slide not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -128,7 +149,7 @@ export async function PUT(request) {
     console.error("Error updating hero slide:", error);
     return NextResponse.json(
       { success: false, message: "Failed to update slide" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -141,7 +162,7 @@ export async function DELETE(request) {
     if (!id) {
       return NextResponse.json(
         { success: false, message: "Scanning ID is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -155,7 +176,7 @@ export async function DELETE(request) {
     if (result.deletedCount === 0) {
       return NextResponse.json(
         { success: false, message: "Slide not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -170,7 +191,7 @@ export async function DELETE(request) {
     console.error("Error deleting hero slide:", error);
     return NextResponse.json(
       { success: false, message: "Failed to delete slide" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

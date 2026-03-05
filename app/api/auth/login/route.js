@@ -1,12 +1,20 @@
 import { NextResponse } from "next/server";
 import { generateToken } from "@/lib/auth";
 
-// Hardcoded admin credentials
+// Use environment variables for admin credentials
 const ADMIN_CREDENTIALS = {
-  email: "admin@diit.edu.bd",
-  password: "mangoan4",
-  name: "DIIT Admin",
-  role: "admin",
+  super: {
+    email: process.env.SUPER_ADMIN_EMAIL || "admin@diit.edu.bd",
+    password: process.env.SUPER_ADMIN_PASSWORD || "mangoan4",
+    name: "DIIT Super Admin",
+    role: "super_admin",
+  },
+  notice: {
+    email: process.env.NOTICE_ADMIN_EMAIL || "notice@diit.edu.bd",
+    password: process.env.NOTICE_ADMIN_PASSWORD || "diitnotice",
+    name: "DIIT Notice Admin",
+    role: "notice_admin",
+  },
 };
 
 export async function POST(request) {
@@ -16,27 +24,40 @@ export async function POST(request) {
     if (!email || !password) {
       return NextResponse.json(
         { success: false, message: "Email and password are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
-    // Check against hardcoded credentials
+    let user = null;
+
+    // Check against super admin credentials
     if (
-      email.toLowerCase() !== ADMIN_CREDENTIALS.email ||
-      password !== ADMIN_CREDENTIALS.password
+      email.toLowerCase() === ADMIN_CREDENTIALS.super.email.toLowerCase() &&
+      password === ADMIN_CREDENTIALS.super.password
     ) {
+      user = ADMIN_CREDENTIALS.super;
+    }
+    // Check against notice admin credentials
+    else if (
+      email.toLowerCase() === ADMIN_CREDENTIALS.notice.email.toLowerCase() &&
+      password === ADMIN_CREDENTIALS.notice.password
+    ) {
+      user = ADMIN_CREDENTIALS.notice;
+    }
+
+    if (!user) {
       return NextResponse.json(
         { success: false, message: "Invalid email or password" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
     // Generate JWT token
     const token = generateToken({
-      _id: "admin_001",
-      email: ADMIN_CREDENTIALS.email,
-      name: ADMIN_CREDENTIALS.name,
-      role: ADMIN_CREDENTIALS.role,
+      _id: user.role === "super_admin" ? "admin_001" : "admin_002",
+      email: user.email,
+      name: user.name,
+      role: user.role,
     });
 
     // Create response with cookie
@@ -44,9 +65,9 @@ export async function POST(request) {
       success: true,
       message: "Login successful",
       user: {
-        email: ADMIN_CREDENTIALS.email,
-        name: ADMIN_CREDENTIALS.name,
-        role: ADMIN_CREDENTIALS.role,
+        email: user.email,
+        name: user.name,
+        role: user.role,
       },
     });
 
@@ -64,7 +85,7 @@ export async function POST(request) {
     console.error("Login error:", error);
     return NextResponse.json(
       { success: false, message: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

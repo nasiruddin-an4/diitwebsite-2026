@@ -8,7 +8,7 @@ export async function GET() {
     if (!user) {
       return NextResponse.json(
         { success: false, authenticated: false },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -18,13 +18,14 @@ export async function GET() {
       user: {
         email: user.email,
         role: user.role,
+        name: user.name,
       },
     });
   } catch (error) {
     console.error("Auth check error:", error);
     return NextResponse.json(
       { success: false, message: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

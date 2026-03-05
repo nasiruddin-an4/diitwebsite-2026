@@ -2,14 +2,30 @@ import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import clientPromise from "@/lib/mongodb";
 import { ObjectId } from "mongodb";
+import { getAuthUser } from "@/lib/auth";
 
 // Helper to revalidate notices-related pages
 function revalidateNoticesPages() {
   revalidatePath("/notices");
 }
 
+async function checkAuth() {
+  const user = await getAuthUser();
+  if (!user || (user.role !== "super_admin" && user.role !== "notice_admin")) {
+    return null;
+  }
+  return user;
+}
+
 export async function GET() {
   try {
+    const user = await checkAuth();
+    if (!user)
+      return NextResponse.json(
+        { success: false, message: "Unauthorized" },
+        { status: 401 },
+      );
+
     const client = await clientPromise;
     const db = client.db("diit_admin");
 
@@ -25,13 +41,20 @@ export async function GET() {
     console.error("Error fetching notices:", error);
     return NextResponse.json(
       { success: false, message: "Failed to fetch notices" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function POST(request) {
   try {
+    const user = await checkAuth();
+    if (!user)
+      return NextResponse.json(
+        { success: false, message: "Unauthorized" },
+        { status: 401 },
+      );
+
     const data = await request.json();
     const client = await clientPromise;
     const db = client.db("diit_admin");
@@ -57,19 +80,26 @@ export async function POST(request) {
     console.error("Error creating notice:", error);
     return NextResponse.json(
       { success: false, message: "Failed to create notice" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function PUT(request) {
   try {
+    const user = await checkAuth();
+    if (!user)
+      return NextResponse.json(
+        { success: false, message: "Unauthorized" },
+        { status: 401 },
+      );
+
     const { _id, ...updateData } = await request.json();
 
     if (!_id) {
       return NextResponse.json(
         { success: false, message: "Notice ID is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -86,13 +116,13 @@ export async function PUT(request) {
           ...updateData,
           updatedAt: new Date(),
         },
-      }
+      },
     );
 
     if (result.matchedCount === 0) {
       return NextResponse.json(
         { success: false, message: "Notice not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -107,20 +137,27 @@ export async function PUT(request) {
     console.error("Error updating notice:", error);
     return NextResponse.json(
       { success: false, message: "Failed to update notice" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function DELETE(request) {
   try {
+    const user = await checkAuth();
+    if (!user)
+      return NextResponse.json(
+        { success: false, message: "Unauthorized" },
+        { status: 401 },
+      );
+
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
 
     if (!id) {
       return NextResponse.json(
         { success: false, message: "Notice ID is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -134,7 +171,7 @@ export async function DELETE(request) {
     if (result.deletedCount === 0) {
       return NextResponse.json(
         { success: false, message: "Notice not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -149,7 +186,7 @@ export async function DELETE(request) {
     console.error("Error deleting notice:", error);
     return NextResponse.json(
       { success: false, message: "Failed to delete notice" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

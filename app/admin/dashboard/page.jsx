@@ -5,8 +5,27 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import Swal from "sweetalert2";
 import {
-  LayoutDashboard, Home, FileText, BookOpen, Award, MessageSquare, Users,
-  LogOut, Save, Menu, Check, X, Loader2, GraduationCap, Monitor, Banknote, Gift, Building2, ChevronDown, ChevronRight, ArrowLeftToLine
+  LayoutDashboard,
+  Home,
+  FileText,
+  BookOpen,
+  Award,
+  MessageSquare,
+  Users,
+  LogOut,
+  Save,
+  Menu,
+  Check,
+  X,
+  Loader2,
+  GraduationCap,
+  Monitor,
+  Banknote,
+  Gift,
+  Building2,
+  ChevronDown,
+  ChevronRight,
+  ArrowLeftToLine,
 } from "lucide-react";
 
 import OverviewSection from "./components/OverviewSection";
@@ -44,7 +63,7 @@ const menuItems = [
       { id: "about", label: "About Us" },
       { id: "contact", label: "Contact Us" },
       { id: "faq", label: "FAQ" },
-    ]
+    ],
   },
   {
     id: "academics",
@@ -56,7 +75,7 @@ const menuItems = [
       { id: "faculty-members", label: "Faculty Members" },
       { id: "administrative", label: "Administrative" },
       { id: "alumni", label: "Alumni" },
-    ]
+    ],
   },
   { id: "eligibility", label: "Admission Eligibility", icon: GraduationCap },
   { id: "online", label: "Online Admission", icon: Monitor },
@@ -70,7 +89,6 @@ const menuItems = [
   { id: "testimonials", label: "Testimonials", icon: MessageSquare },
   { id: "campus-activities", label: "Campus Activities", icon: Building2 },
   { id: "cta-settings", label: "CTA Settings", icon: Monitor },
-
 ];
 
 export default function AdminDashboard() {
@@ -80,7 +98,12 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
-  const [adminInfo, setAdminInfo] = useState({ name: "Admin User", email: "admin@diit.edu.bd", image: null });
+  const [adminInfo, setAdminInfo] = useState({
+    name: "Admin User",
+    email: "admin@diit.edu.bd",
+    image: null,
+    role: "super_admin",
+  });
 
   // Default empty state
   const defaultData = {
@@ -89,7 +112,7 @@ export default function AdminDashboard() {
     newsEvents: [],
     testimonials: { students: [] },
     internationalPartners: [],
-    statsCounter: []
+    statsCounter: [],
   };
 
   const [data, setData] = useState(defaultData); // Initialize with defaults
@@ -97,17 +120,27 @@ export default function AdminDashboard() {
   const router = useRouter();
 
   useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const res = await fetch("/api/auth/check");
+        const result = await res.json();
+        if (!result.authenticated) {
+          router.push("/admin");
+        } else {
+          setAdminInfo({
+            name: result.user.name || "Admin User",
+            email: result.user.email,
+            role: result.user.role,
+            image: null,
+          });
+        }
+      } catch {
+        router.push("/admin");
+      }
+    };
     checkAuth();
     fetchData();
-  }, []);
-
-  const checkAuth = async () => {
-    try {
-      const res = await fetch("/api/auth/check");
-      const result = await res.json();
-      if (!result.authenticated) router.push("/admin");
-    } catch { router.push("/admin"); }
-  };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchData = async () => {
     try {
@@ -130,13 +163,19 @@ export default function AdminDashboard() {
 
       const newHeroSlides = heroResult.success ? heroResult.data : [];
       const homeData = homeResult.success ? homeResult.data : {};
-      const programsData = programsResult.success ? programsResult.data?.programsData || programsResult.data || [] : [];
-      const partnersData = partnersResult.success ? partnersResult.data : { partners: [], benefits: [] };
+      const programsData = programsResult.success
+        ? programsResult.data?.programsData || programsResult.data || []
+        : [];
+      const partnersData = partnersResult.success
+        ? partnersResult.data
+        : { partners: [], benefits: [] };
 
       // Fetch testimonials data
       const testimonialsRes = await fetch("/api/admin/testimonials");
       const testimonialsResult = await testimonialsRes.json();
-      const testimonialsData = testimonialsResult.success ? testimonialsResult.data : [];
+      const testimonialsData = testimonialsResult.success
+        ? testimonialsResult.data
+        : [];
 
       // Fetch News & Events
       const newsRes = await fetch("/api/admin/news-events");
@@ -151,13 +190,19 @@ export default function AdminDashboard() {
         internationalPartners: partnersData.partners || [],
         collaborationBenefits: partnersData.benefits || [],
         testimonials: testimonialsData || [],
-        newsEvents: newsData || []
+        newsEvents: newsData || [],
       });
 
-      if (!heroResult.success || !homeResult.success || !programsResult.success) {
-        setMessage({ type: "error", text: "Some data failed to load. Using defaults." });
+      if (
+        !heroResult.success ||
+        !homeResult.success ||
+        !programsResult.success
+      ) {
+        setMessage({
+          type: "error",
+          text: "Some data failed to load. Using defaults.",
+        });
       }
-
     } catch (err) {
       console.error(err);
       setMessage({ type: "error", text: "Failed to load data" });
@@ -201,9 +246,21 @@ export default function AdminDashboard() {
       const programsJson = await programsRes.json().catch(() => ({}));
 
       const results = {
-        hero: { ok: heroRes.ok, status: heroRes.status, message: heroJson.message },
-        home: { ok: homeRes.ok, status: homeRes.status, message: homeJson.message },
-        programs: { ok: programsRes.ok, status: programsRes.status, message: programsJson.message }
+        hero: {
+          ok: heroRes.ok,
+          status: heroRes.status,
+          message: heroJson.message,
+        },
+        home: {
+          ok: homeRes.ok,
+          status: homeRes.status,
+          message: homeJson.message,
+        },
+        programs: {
+          ok: programsRes.ok,
+          status: programsRes.status,
+          message: programsJson.message,
+        },
       };
 
       console.log("Save results:", results);
@@ -238,9 +295,9 @@ export default function AdminDashboard() {
         timer: 5000,
         timerProgressBar: true,
         didOpen: (toast) => {
-          toast.addEventListener('mouseenter', Swal.stopTimer)
-          toast.addEventListener('mouseleave', Swal.resumeTimer)
-        }
+          toast.addEventListener("mouseenter", Swal.stopTimer);
+          toast.addEventListener("mouseleave", Swal.resumeTimer);
+        },
       });
     } finally {
       setSaving(false);
@@ -271,7 +328,10 @@ export default function AdminDashboard() {
   };
 
   const addItem = (section, template) => {
-    setData({ ...data, [section]: [...data[section], { ...template, id: Date.now() }] });
+    setData({
+      ...data,
+      [section]: [...data[section], { ...template, id: Date.now() }],
+    });
   };
 
   const deleteItem = (section, index) => {
@@ -288,6 +348,35 @@ export default function AdminDashboard() {
     );
   }
 
+  // Filter menu items based on user role
+  const filteredMenuItems = menuItems
+    .filter((item) => {
+      if (adminInfo.role === "super_admin") return true;
+
+      // For notice_admin, only show Overview and DIIT Notices
+      if (adminInfo.role === "notice_admin") {
+        if (item.id === "overview") return true;
+        if (item.id === "academics") {
+          // Only DIIT Notices child should be visible
+          return true;
+        }
+        return false;
+      }
+
+      return true; // Default to showing everything for others if any
+    })
+    .map((item) => {
+      if (adminInfo.role === "notice_admin" && item.id === "academics") {
+        return {
+          ...item,
+          children: item.children.filter(
+            (child) => child.id === "diit-notices",
+          ),
+        };
+      }
+      return item;
+    });
+
   return (
     <div className="h-screen bg-slate-50 flex overflow-hidden font-sans text-slate-900">
       {/* Fixed Sidebar */}
@@ -300,14 +389,20 @@ export default function AdminDashboard() {
           </div>
           {sidebarOpen && (
             <div className="flex flex-col overflow-hidden">
-              <span className="font-bold text-white text-base tracking-tight whitespace-nowrap">DIIT Admin</span>
-              <span className="text-[10px] text-slate-400 font-medium tracking-wider">DASHBOARD</span>
+              <span className="font-bold text-white text-base tracking-tight whitespace-nowrap">
+                DIIT Admin
+              </span>
+              <span className="text-[10px] text-slate-400 font-medium tracking-wider">
+                {adminInfo.role === "super_admin"
+                  ? "SUPER ADMIN"
+                  : "NOTICE ADMIN"}
+              </span>
             </div>
           )}
         </div>
 
         <nav className="flex-1 p-3 space-y-1 overflow-y-auto custom-scrollbar">
-          {menuItems.map((item) => (
+          {filteredMenuItems.map((item) => (
             <div key={item.id}>
               <button
                 onClick={() => {
@@ -317,26 +412,36 @@ export default function AdminDashboard() {
                     setActiveSection(item.id);
                   }
                 }}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative overflow-hidden ${activeSection === item.id || (item.children && expandedMenu === item.id)
-                  ? "bg-slate-800 text-white"
-                  : "text-slate-400 hover:bg-slate-800 hover:text-white"
-                  } ${activeSection === item.id && !item.children ? "bg-blue-600 shadow-md shadow-blue-900/20" : ""}`}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative overflow-hidden ${
+                  activeSection === item.id ||
+                  (item.children && expandedMenu === item.id)
+                    ? "bg-slate-800 text-white"
+                    : "text-slate-400 hover:bg-slate-800 hover:text-white"
+                } ${activeSection === item.id && !item.children ? "bg-blue-600 shadow-md shadow-blue-900/20" : ""}`}
               >
                 {activeSection === item.id && !item.children && (
                   <div className="absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full" />
                 )}
 
-                <item.icon className={`w-4 h-4 shrink-0 relative z-10 ${activeSection === item.id ? "text-white" : "text-slate-500 group-hover:text-slate-300"}`} />
+                <item.icon
+                  className={`w-4 h-4 shrink-0 relative z-10 ${activeSection === item.id ? "text-white" : "text-slate-500 group-hover:text-slate-300"}`}
+                />
 
                 {sidebarOpen && (
-                  <span className={`relative z-10 font-medium text-sm flex-1 text-left ${activeSection === item.id ? "font-semibold" : ""}`}>
+                  <span
+                    className={`relative z-10 font-medium text-sm flex-1 text-left ${activeSection === item.id ? "font-semibold" : ""}`}
+                  >
                     {item.label}
                   </span>
                 )}
 
-                {sidebarOpen && item.children && (
-                  expandedMenu === item.id ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />
-                )}
+                {sidebarOpen &&
+                  item.children &&
+                  (expandedMenu === item.id ? (
+                    <ChevronDown className="w-4 h-4" />
+                  ) : (
+                    <ChevronRight className="w-4 h-4" />
+                  ))}
               </button>
 
               {item.children && expandedMenu === item.id && sidebarOpen && (
@@ -345,10 +450,11 @@ export default function AdminDashboard() {
                     <button
                       key={subItem.id}
                       onClick={() => setActiveSection(subItem.id)}
-                      className={`w-full flex items-center px-3 py-2 rounded-lg transition-all duration-200 text-sm ${activeSection === subItem.id
-                        ? "bg-blue-600/10 text-blue-400 font-medium"
-                        : "text-slate-500 hover:text-slate-300 hover:bg-slate-800/50"
-                        }`}
+                      className={`w-full flex items-center px-3 py-2 rounded-lg transition-all duration-200 text-sm ${
+                        activeSection === subItem.id
+                          ? "bg-blue-600/10 text-blue-400 font-medium"
+                          : "text-slate-500 hover:text-slate-300 hover:bg-slate-800/50"
+                      }`}
                     >
                       {subItem.label}
                     </button>
@@ -369,11 +475,13 @@ export default function AdminDashboard() {
               onClick={() => setSidebarOpen(!sidebarOpen)}
               className="p-2 -ml-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-all"
             >
-              <ArrowLeftToLine className={`w-5 h-5 cursor-pointer transition-transform duration-300 ${!sidebarOpen ? "rotate-180" : ""}`} />
+              <ArrowLeftToLine
+                className={`w-5 h-5 cursor-pointer transition-transform duration-300 ${!sidebarOpen ? "rotate-180" : ""}`}
+              />
             </button>
             <div className="h-6 w-px bg-slate-200 mx-2 hidden sm:block"></div>
             <h1 className="text-lg font-bold text-slate-800 capitalize tracking-tight flex items-center gap-2">
-              {activeSection.replace(/([A-Z])/g, ' $1').trim()}
+              {activeSection.replace(/([A-Z])/g, " $1").trim()}
             </h1>
           </div>
 
@@ -396,12 +504,17 @@ export default function AdminDashboard() {
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -20 }}
-                    className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium shadow-sm backdrop-blur-md ${message.type === "success"
-                      ? "bg-green-50 text-green-700 border border-green-200"
-                      : "bg-red-50 text-red-700 border border-red-200"
-                      }`}
+                    className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium shadow-sm backdrop-blur-md ${
+                      message.type === "success"
+                        ? "bg-green-50 text-green-700 border border-green-200"
+                        : "bg-red-50 text-red-700 border border-red-200"
+                    }`}
                   >
-                    {message.type === "success" ? <Check className="w-3 h-3" /> : <X className="w-3 h-3" />}
+                    {message.type === "success" ? (
+                      <Check className="w-3 h-3" />
+                    ) : (
+                      <X className="w-3 h-3" />
+                    )}
                     {message.text}
                   </motion.div>
                 )}
@@ -425,10 +538,14 @@ export default function AdminDashboard() {
                     </div>
                   )}
                   <div className="hidden sm:block text-left">
-                    <p className="text-sm font-semibold text-slate-900">{adminInfo.name}</p>
+                    <p className="text-sm font-semibold text-slate-900">
+                      {adminInfo.name}
+                    </p>
                     <p className="text-xs text-slate-500">{adminInfo.email}</p>
                   </div>
-                  <ChevronDown className={`w-4 h-4 text-slate-600 transition-transform duration-200 ${profileOpen ? "rotate-180" : ""}`} />
+                  <ChevronDown
+                    className={`w-4 h-4 text-slate-600 transition-transform duration-200 ${profileOpen ? "rotate-180" : ""}`}
+                  />
                 </button>
 
                 {/* Profile Dropdown Menu */}
@@ -456,8 +573,12 @@ export default function AdminDashboard() {
                             </div>
                           )}
                           <div>
-                            <p className="font-semibold text-slate-900">{adminInfo.name}</p>
-                            <p className="text-xs text-slate-600">{adminInfo.email}</p>
+                            <p className="font-semibold text-slate-900">
+                              {adminInfo.name}
+                            </p>
+                            <p className="text-xs text-slate-600">
+                              {adminInfo.email}
+                            </p>
                           </div>
                         </div>
                       </div>
@@ -510,11 +631,35 @@ export default function AdminDashboard() {
         {/* Scrollable Content Area */}
         <div className="flex-1 overflow-y-auto p-6 custom-scrollbar scroll-smooth">
           <div className="w-full space-y-6 pb-10">
-            {activeSection === "overview" && <OverviewSection data={data} setActiveSection={setActiveSection} />}
+            {activeSection === "overview" && (
+              <OverviewSection
+                data={data}
+                setActiveSection={setActiveSection}
+                adminInfo={adminInfo}
+              />
+            )}
             {activeSection === "site-info" && <SiteInfoSection />}
-            {activeSection === "hero" && <HeroSection data={data} updateField={updateField} addItem={addItem} deleteItem={deleteItem} onSave={saveData} saving={saving} />}
-            {activeSection === "stats" && <StatsSection data={data} updateField={updateField} onSave={saveData} saving={saving} />}
-            {activeSection === "academic-calendar" && <AcademicCalendarSection />}
+            {activeSection === "hero" && (
+              <HeroSection
+                data={data}
+                updateField={updateField}
+                addItem={addItem}
+                deleteItem={deleteItem}
+                onSave={saveData}
+                saving={saving}
+              />
+            )}
+            {activeSection === "stats" && (
+              <StatsSection
+                data={data}
+                updateField={updateField}
+                onSave={saveData}
+                saving={saving}
+              />
+            )}
+            {activeSection === "academic-calendar" && (
+              <AcademicCalendarSection />
+            )}
             {activeSection === "diit-notices" && <NoticesSection />}
             {activeSection === "faculty-members" && <FacultySection />}
             {activeSection === "administrative" && <AdministrativeSection />}
@@ -524,13 +669,51 @@ export default function AdminDashboard() {
             {activeSection === "fees" && <TuitionFeesSection />}
             {activeSection === "scholarships" && <ScholarshipsSection />}
             {activeSection === "facilities" && <FacilitiesSection />}
-            {activeSection === "programs" && <ProgramsSection data={data} updateField={updateField} addItem={addItem} deleteItem={deleteItem} onSave={saveData} saving={saving} />}
-            {activeSection === "news" && <NewsSection data={data} updateField={updateField} addItem={addItem} deleteItem={deleteItem} onSave={saveData} saving={saving} />}
-            {activeSection === "testimonials" && <TestimonialsSection data={data} updateField={updateField} onSave={saveData} saving={saving} />}
-            {activeSection === "partners" && <PartnersSection data={data} updateField={updateField} addItem={addItem} deleteItem={deleteItem} onSave={saveData} saving={saving} />}
-            {activeSection === "campus-activities" && <CampusActivitiesSection />}
+            {activeSection === "programs" && (
+              <ProgramsSection
+                data={data}
+                updateField={updateField}
+                addItem={addItem}
+                deleteItem={deleteItem}
+                onSave={saveData}
+                saving={saving}
+              />
+            )}
+            {activeSection === "news" && (
+              <NewsSection
+                data={data}
+                updateField={updateField}
+                addItem={addItem}
+                deleteItem={deleteItem}
+                onSave={saveData}
+                saving={saving}
+              />
+            )}
+            {activeSection === "testimonials" && (
+              <TestimonialsSection
+                data={data}
+                updateField={updateField}
+                onSave={saveData}
+                saving={saving}
+              />
+            )}
+            {activeSection === "partners" && (
+              <PartnersSection
+                data={data}
+                updateField={updateField}
+                addItem={addItem}
+                deleteItem={deleteItem}
+                onSave={saveData}
+                saving={saving}
+              />
+            )}
+            {activeSection === "campus-activities" && (
+              <CampusActivitiesSection />
+            )}
             {activeSection === "cta-settings" && <CallToActionSection />}
-            {["about", "contact", "faq"].includes(activeSection) && <GeneralPagesSection pageType={activeSection} />}
+            {["about", "contact", "faq"].includes(activeSection) && (
+              <GeneralPagesSection pageType={activeSection} />
+            )}
           </div>
         </div>
       </main>
