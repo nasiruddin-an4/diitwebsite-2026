@@ -122,7 +122,7 @@ const FacultyPage = () => {
                                         </Link>
 
                                         <p className="text-slate-600 leading-relaxed mb-8 max-w-2xl text-lg line-clamp-4">
-                                            {principal.about}
+                                            {principal.about ? principal.about.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim() : ''}
                                         </p>
 
                                         <div className="flex flex-wrap items-center justify-center md:justify-start gap-4">

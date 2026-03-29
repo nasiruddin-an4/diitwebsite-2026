@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Plus,
@@ -17,7 +18,16 @@ import {
   Building2,
   Upload,
   Eye,
+  Tag,
+  BookOpen,
+  Award,
+  FlaskConical,
+  GraduationCap,
 } from "lucide-react";
+
+// Dynamically import ReactQuill (SSR-incompatible)
+const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
+import "react-quill-new/dist/quill.snow.css";
 
 const departmentOptions = [
   { value: "CSE", label: "CSE" },
@@ -35,6 +45,17 @@ const designationOptions = [
   { value: "Lecturer", label: "Lecturer" },
   { value: "Teaching Assistant", label: "Teaching Assistant" },
 ];
+
+// Define Quill modules OUTSIDE the component to prevent infinite re-renders
+const quillModules = {
+  toolbar: [
+    [{ header: [3, 4, false] }],
+    ["bold", "italic", "underline"],
+    [{ list: "ordered" }, { list: "bullet" }],
+    ["link"],
+    ["clean"],
+  ],
+};
 
 export default function FacultySection() {
   const [faculty, setFaculty] = useState([]);
@@ -422,116 +443,257 @@ export default function FacultySection() {
                   ) : null}
                 </div>
 
-                {/* Education */}
+                {/* Education — Rich Text Editor */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Education/Qualifications
+                  <label className="flex items-center gap-2 text-sm font-medium text-slate-700 mb-2">
+                    <BookOpen className="w-4 h-4 text-blue-500" />
+                    Education / Qualifications
                   </label>
-                  <textarea
-                    value={formData.education || ""}
-                    onChange={(e) => handleFieldChange("education", e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                    placeholder="e.g., B.Sc in CSE, M.Tech in Software Engineering, PhD in AI"
-                    rows="3"
-                  />
+                  <div className="border border-slate-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition-all [&_.ql-toolbar]:border-b [&_.ql-toolbar]:border-slate-200 [&_.ql-toolbar]:bg-slate-50 [&_.ql-container]:border-none [&_.ql-editor]:min-h-[120px] [&_.ql-editor]:text-sm [&_.ql-editor]:leading-relaxed">
+                    <ReactQuill
+                      theme="snow"
+                      value={formData.education || ""}
+                      onChange={(value) => handleFieldChange("education", value)}
+                      placeholder="e.g., B.Sc in CSE, M.Tech in Software Engineering, PhD in AI"
+                      modules={quillModules}
+                    />
+                  </div>
                 </div>
 
-                {/* About */}
+                {/* About — Rich Text Editor */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                  <label className="flex items-center gap-2 text-sm font-medium text-slate-700 mb-2">
+                    <Edit2 className="w-4 h-4 text-violet-500" />
                     About
                   </label>
-                  <textarea
-                    value={formData.about || ""}
-                    onChange={(e) => handleFieldChange("about", e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                    placeholder="Brief biography and professional background..."
-                    rows="3"
-                  />
+                  <div className="border border-slate-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition-all [&_.ql-toolbar]:border-b [&_.ql-toolbar]:border-slate-200 [&_.ql-toolbar]:bg-slate-50 [&_.ql-container]:border-none [&_.ql-editor]:min-h-[120px] [&_.ql-editor]:text-sm [&_.ql-editor]:leading-relaxed">
+                    <ReactQuill
+                      theme="snow"
+                      value={formData.about || ""}
+                      onChange={(value) => handleFieldChange("about", value)}
+                      placeholder="Brief biography and professional background..."
+                      modules={quillModules}
+                    />
+                  </div>
                 </div>
 
-                {/* Years Experience */}
+                {/* Numeric Stats — 3-column grid */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Years of Experience
+                  <label className="block text-sm font-medium text-slate-700 mb-3">
+                    Numeric Stats
                   </label>
-                  <input
-                    type="text"
-                    value={formData.yearsExperience || ""}
-                    onChange={(e) => handleFieldChange("yearsExperience", e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="e.g., 10+, 15 years"
-                  />
+                  <div className="grid grid-cols-3 gap-4">
+                    {/* Years Experience */}
+                    <div className="relative bg-blue-50/60 border border-blue-200 rounded-lg p-3 text-center">
+                      <span className="block text-[11px] font-bold uppercase tracking-wider text-blue-500 mb-2">
+                        Years of Experience
+                      </span>
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-blue-300 text-xs font-bold select-none">#</span>
+                        <input
+                          type="number"
+                          min="0"
+                          value={formData.yearsExperience || ""}
+                          onChange={(e) => handleFieldChange("yearsExperience", e.target.value)}
+                          className="w-full pl-7 pr-3 py-2.5 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-center text-lg font-bold text-blue-900 placeholder:text-blue-300 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                          placeholder="0"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Publications */}
+                    <div className="relative bg-emerald-50/60 border border-emerald-200 rounded-lg p-3 text-center">
+                      <span className="block text-[11px] font-bold uppercase tracking-wider text-emerald-500 mb-2">
+                        Publications
+                      </span>
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-emerald-300 text-xs font-bold select-none">#</span>
+                        <input
+                          type="number"
+                          min="0"
+                          value={formData.publications || ""}
+                          onChange={(e) => handleFieldChange("publications", e.target.value)}
+                          className="w-full pl-7 pr-3 py-2.5 border border-emerald-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white text-center text-lg font-bold text-emerald-900 placeholder:text-emerald-300 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                          placeholder="0"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Awards */}
+                    <div className="relative bg-amber-50/60 border border-amber-200 rounded-lg p-3 text-center">
+                      <span className="block text-[11px] font-bold uppercase tracking-wider text-amber-500 mb-2">
+                        Awards & Recognition
+                      </span>
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-amber-300 text-xs font-bold select-none">#</span>
+                        <input
+                          type="number"
+                          min="0"
+                          value={formData.awards || ""}
+                          onChange={(e) => handleFieldChange("awards", e.target.value)}
+                          className="w-full pl-7 pr-3 py-2.5 border border-amber-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white text-center text-lg font-bold text-amber-900 placeholder:text-amber-300 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                          placeholder="0"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-xs text-slate-400 mt-2">
+                    Enter numbers only. These values are displayed on the faculty profile page.
+                  </p>
                 </div>
 
-                {/* Publications */}
+                {/* Achievements — Rich Text Editor */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Publications
-                  </label>
-                  <textarea
-                    value={formData.publications || ""}
-                    onChange={(e) => handleFieldChange("publications", e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                    placeholder="List of publications and research papers..."
-                    rows="3"
-                  />
-                </div>
-
-                {/* Awards */}
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Awards & Recognition
-                  </label>
-                  <textarea
-                    value={formData.awards || ""}
-                    onChange={(e) => handleFieldChange("awards", e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                    placeholder="Awards, honors, and recognition received..."
-                    rows="3"
-                  />
-                </div>
-
-                {/* Achievements */}
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                  <label className="flex items-center gap-2 text-sm font-medium text-slate-700 mb-2">
+                    <Award className="w-4 h-4 text-amber-500" />
                     Achievements
                   </label>
-                  <textarea
-                    value={formData.achievements || ""}
-                    onChange={(e) => handleFieldChange("achievements", e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                    placeholder="Key achievements and milestones..."
-                    rows="3"
-                  />
+                  <div className="border border-slate-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition-all [&_.ql-toolbar]:border-b [&_.ql-toolbar]:border-slate-200 [&_.ql-toolbar]:bg-slate-50 [&_.ql-container]:border-none [&_.ql-editor]:min-h-[140px] [&_.ql-editor]:text-sm [&_.ql-editor]:leading-relaxed">
+                    <ReactQuill
+                      theme="snow"
+                      value={formData.achievements || ""}
+                      onChange={(value) => handleFieldChange("achievements", value)}
+                      placeholder="Describe key achievements and milestones..."
+                      modules={quillModules}
+                    />
+                  </div>
+                  <p className="text-xs text-slate-400 mt-1.5">
+                    Use the toolbar to format text. Supports headings, bold, italic, lists, and links.
+                  </p>
                 </div>
 
-                {/* Research Interests */}
+                {/* Research Interests — Tag Input */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                  <label className="flex items-center gap-2 text-sm font-medium text-slate-700 mb-2">
+                    <FlaskConical className="w-4 h-4 text-indigo-500" />
                     Research Interests
                   </label>
-                  <textarea
-                    value={formData.researchInterests || ""}
-                    onChange={(e) => handleFieldChange("researchInterests", e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                    placeholder="e.g., AI, Machine Learning, Data Science (comma separated)"
-                    rows="3"
-                  />
+                  <div className="border border-slate-300 rounded-lg p-3 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition-all bg-white">
+                    {/* Existing tags */}
+                    <div className="flex flex-wrap gap-2 mb-2 min-h-[28px]">
+                      {(formData.researchInterests || "")
+                        .split(",")
+                        .map((t) => t.trim())
+                        .filter(Boolean)
+                        .map((tag, idx) => (
+                          <span
+                            key={idx}
+                            className="inline-flex items-center gap-1.5 pl-3 pr-1.5 py-1 rounded-full bg-indigo-50 text-indigo-700 text-xs font-semibold border border-indigo-100"
+                          >
+                            {tag}
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const tags = (formData.researchInterests || "")
+                                  .split(",")
+                                  .map((t) => t.trim())
+                                  .filter(Boolean);
+                                tags.splice(idx, 1);
+                                handleFieldChange("researchInterests", tags.join(", "));
+                              }}
+                              className="p-0.5 rounded-full hover:bg-indigo-200 transition-colors"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          </span>
+                        ))}
+                    </div>
+                    {/* Add new tag */}
+                    <input
+                      type="text"
+                      className="w-full px-0 py-1 border-none outline-none text-sm text-slate-800 placeholder:text-slate-400 bg-transparent"
+                      placeholder="Type an interest and press Enter (e.g., Machine Learning)"
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === ",") {
+                          e.preventDefault();
+                          const val = e.target.value.trim();
+                          if (val) {
+                            const existing = (formData.researchInterests || "")
+                              .split(",")
+                              .map((t) => t.trim())
+                              .filter(Boolean);
+                            if (!existing.includes(val)) {
+                              handleFieldChange(
+                                "researchInterests",
+                                [...existing, val].join(", "),
+                              );
+                            }
+                            e.target.value = "";
+                          }
+                        }
+                      }}
+                    />
+                  </div>
+                  <p className="text-xs text-slate-400 mt-1.5">
+                    Press Enter or comma to add. Click × to remove.
+                  </p>
                 </div>
 
-                {/* Courses */}
+                {/* Courses Taught — Tag Input */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                  <label className="flex items-center gap-2 text-sm font-medium text-slate-700 mb-2">
+                    <GraduationCap className="w-4 h-4 text-emerald-500" />
                     Courses Taught
                   </label>
-                  <textarea
-                    value={formData.courses || ""}
-                    onChange={(e) => handleFieldChange("courses", e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                    placeholder="e.g., CS101 - Data Structures, CS205 - Algorithms..."
-                    rows="3"
-                  />
+                  <div className="border border-slate-300 rounded-lg p-3 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition-all bg-white">
+                    {/* Existing tags */}
+                    <div className="flex flex-wrap gap-2 mb-2 min-h-[28px]">
+                      {(formData.courses || "")
+                        .split(",")
+                        .map((t) => t.trim())
+                        .filter(Boolean)
+                        .map((tag, idx) => (
+                          <span
+                            key={idx}
+                            className="inline-flex items-center gap-1.5 pl-3 pr-1.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold border border-emerald-100"
+                          >
+                            {tag}
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const tags = (formData.courses || "")
+                                  .split(",")
+                                  .map((t) => t.trim())
+                                  .filter(Boolean);
+                                tags.splice(idx, 1);
+                                handleFieldChange("courses", tags.join(", "));
+                              }}
+                              className="p-0.5 rounded-full hover:bg-emerald-200 transition-colors"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          </span>
+                        ))}
+                    </div>
+                    {/* Add new tag */}
+                    <input
+                      type="text"
+                      className="w-full px-0 py-1 border-none outline-none text-sm text-slate-800 placeholder:text-slate-400 bg-transparent"
+                      placeholder="Type a course and press Enter (e.g., Data Structures)"
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === ",") {
+                          e.preventDefault();
+                          const val = e.target.value.trim();
+                          if (val) {
+                            const existing = (formData.courses || "")
+                              .split(",")
+                              .map((t) => t.trim())
+                              .filter(Boolean);
+                            if (!existing.includes(val)) {
+                              handleFieldChange(
+                                "courses",
+                                [...existing, val].join(", "),
+                              );
+                            }
+                            e.target.value = "";
+                          }
+                        }
+                      }}
+                    />
+                  </div>
+                  <p className="text-xs text-slate-400 mt-1.5">
+                    Press Enter or comma to add. Click × to remove.
+                  </p>
                 </div>
 
                 {/* Social Media Links */}

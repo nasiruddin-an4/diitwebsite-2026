@@ -41,6 +41,7 @@ const fallbackNavigationItems = [
       { name: "Faculty Members", path: "/faculty" },
       { name: "Administrative", path: "/administrative" },
       { name: "Alumni", path: "/alumni" },
+      { name: "Video Gallery", path: "/video-gallery" },
     ],
   },
   {
@@ -129,7 +130,7 @@ const Header = () => {
     },
   );
 
-  // 3. Process navigation items and inject dynamic programs
+  // 3. Process navigation items and inject dynamic programs + ensure Video Gallery
   const navigationItems = (
     navData?.navigationItems || fallbackNavigationItems
   ).map((item) => {
@@ -146,6 +147,21 @@ const Header = () => {
           // Carry over any other properties if needed
         })),
       };
+    }
+    // Ensure Video Gallery is always present in Academics
+    if (item.name === "Academics" && item.dropdown) {
+      const hasVideoGallery = item.dropdown.some(
+        (sub) => sub.path === "/video-gallery",
+      );
+      if (!hasVideoGallery) {
+        return {
+          ...item,
+          dropdown: [
+            ...item.dropdown,
+            { name: "Video Gallery", path: "/video-gallery" },
+          ],
+        };
+      }
     }
     return item;
   });

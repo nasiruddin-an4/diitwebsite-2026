@@ -46,6 +46,7 @@ import NoticesSection from "./components/NoticesSection";
 import FacultySection from "./components/FacultySection";
 import AdministrativeSection from "./components/AdministrativeSection";
 import AlumniSection from "./components/AlumniSection";
+import VideoGallerySection from "./components/VideoGallerySection";
 import CampusActivitiesSection from "./components/CampusActivitiesSection";
 import SiteInfoSection from "./components/SiteInfoSection";
 import CallToActionSection from "./components/CallToActionSection";
@@ -75,6 +76,7 @@ const menuItems = [
       { id: "faculty-members", label: "Faculty Members" },
       { id: "administrative", label: "Administrative" },
       { id: "alumni", label: "Alumni" },
+      { id: "video-gallery", label: "Video Gallery" },
     ],
   },
   { id: "eligibility", label: "Admission Eligibility", icon: GraduationCap },
@@ -664,6 +666,7 @@ export default function AdminDashboard() {
             {activeSection === "faculty-members" && <FacultySection />}
             {activeSection === "administrative" && <AdministrativeSection />}
             {activeSection === "alumni" && <AlumniSection />}
+            {activeSection === "video-gallery" && <VideoGallerySection />}
             {activeSection === "eligibility" && <AdmissionEligibilitySection />}
             {activeSection === "online" && <OnlineAdmissionSection />}
             {activeSection === "fees" && <TuitionFeesSection />}
