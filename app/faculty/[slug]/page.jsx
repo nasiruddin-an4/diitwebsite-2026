@@ -43,11 +43,9 @@ const FacultyDetailsPage = () => {
         const result = await res.json();
 
         if (result.success && result.data) {
-          // Find the faculty by _id or id (handle both MongoDB ObjectId and string id)
+          // Find the faculty by slug
           const foundMember = result.data.find(
-            (f) =>
-              String(f._id) === String(params.id) ||
-              String(f.id) === String(params.id),
+            (f) => f.slug === params.slug,
           );
           if (foundMember) {
             setMember(foundMember);
@@ -66,7 +64,7 @@ const FacultyDetailsPage = () => {
     };
 
     fetchFaculty();
-  }, [params.id]);
+  }, [params.slug]);
 
   if (loading) {
     return (

@@ -353,7 +353,7 @@ const DynamicProgramPage = () => {
                   Message from the Head
                 </h3>
                 <p className="text-slate-600 italic mb-4">
-                  "{safeProgram.headMessage}"
+                  {safeProgram.headMessage}
                 </p>
                 <div>
                   <p className="font-bold text-slate-900">
@@ -544,7 +544,7 @@ const DynamicProgramPage = () => {
                 {safeProgram.faculty.map((member, idx) => (
                   <Link
                     key={member._id || idx}
-                    href={`/faculty/${member._id}`}
+                    href={`/faculty/${member.slug}`}
                     className="min-w-full sm:min-w-[calc(50%-12px)] lg:min-w-[calc(33.333%-16px)] snap-start group overflow-hidden transition-all duration-300"
                   >
                     <div className="aspect-[4/5] relative overflow-hidden bg-slate-100">
@@ -740,7 +740,7 @@ const DynamicProgramPage = () => {
                         />
                       </div>
                       <p className="text-sm text-slate-600 italic mb-3">
-                        "{alumniList[alumniIndex].quote}"
+                        {alumniList[alumniIndex].quote}
                       </p>
                       <h4 className="font-bold text-slate-900 text-sm">
                         {alumniList[alumniIndex].name}

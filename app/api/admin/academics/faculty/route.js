@@ -8,6 +8,39 @@ function revalidateFacultyPages() {
   revalidatePath("/faculty");
 }
 
+// Generate URL-friendly slug from name
+function slugify(text) {
+  return text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/[\s.]+/g, '-')      // Replace spaces and dots with hyphens
+    .replace(/[^\w-]+/g, '')      // Remove non-word chars (except hyphens)
+    .replace(/--+/g, '-')         // Replace multiple hyphens with single
+    .replace(/^-+/, '')           // Trim leading hyphens
+    .replace(/-+$/, '');          // Trim trailing hyphens
+}
+
+// Get a unique slug (appends -2, -3, etc. if duplicate exists)
+async function getUniqueSlug(db, name, excludeId = null) {
+  const baseSlug = slugify(name);
+  let slug = baseSlug;
+  let counter = 1;
+
+  while (true) {
+    const query = { slug };
+    if (excludeId) {
+      query._id = { $ne: new ObjectId(excludeId) };
+    }
+    const existing = await db.collection("faculty").findOne(query);
+    if (!existing) break;
+    counter++;
+    slug = `${baseSlug}-${counter}`;
+  }
+
+  return slug;
+}
+
 export async function GET() {
   try {
     const client = await clientPromise;
@@ -29,6 +62,18 @@ export async function GET() {
       ])
       .toArray();
 
+    // Backfill slugs for any faculty members that don't have one yet
+    for (const member of faculty) {
+      if (!member.slug && member.name) {
+        const slug = await getUniqueSlug(db, member.name, member._id.toString());
+        await db.collection("faculty").updateOne(
+          { _id: member._id },
+          { $set: { slug } }
+        );
+        member.slug = slug;
+      }
+    }
+
     return NextResponse.json({ success: true, data: faculty });
   } catch (error) {
     console.error("Error fetching faculty:", error);
@@ -45,9 +90,13 @@ export async function POST(request) {
     const client = await clientPromise;
     const db = client.db("diit_admin");
 
-    // Add timestamp
+    // Generate slug from name
+    const slug = await getUniqueSlug(db, data.name);
+
+    // Add timestamp and slug
     const newFaculty = {
       ...data,
+      slug,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -87,6 +136,11 @@ export async function PUT(request) {
 
     // Remove _id from update data
     delete updateData._id;
+
+    // Regenerate slug if name changed
+    if (updateData.name) {
+      updateData.slug = await getUniqueSlug(db, updateData.name, _id);
+    }
 
     const result = await db.collection("faculty").updateOne(
       { _id: new ObjectId(_id) },

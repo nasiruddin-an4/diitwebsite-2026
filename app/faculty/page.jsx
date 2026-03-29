@@ -99,7 +99,7 @@ const FacultyPage = () => {
 
                                     {/* Principal Image */}
                                     <div className="w-full md:w-80 shrink-0">
-                                        <Link href={`/faculty/${principal._id || principal.id}`} className="block relative aspect-[4/5] rounded-2xl overflow-hidden bg-slate-100 shadow-lg group-hover:shadow-2xl transition-all duration-500">
+                                        <Link href={`/faculty/${principal.slug}`} className="block relative aspect-[4/5] rounded-2xl overflow-hidden bg-slate-100 shadow-lg group-hover:shadow-2xl transition-all duration-500">
                                             <img
                                                 src={principal.image}
                                                 alt={principal.name}
@@ -114,7 +114,7 @@ const FacultyPage = () => {
                                         <div className="inline-block px-4 py-1 rounded-full bg-brandColor/10 text-brandColor text-xs font-bold uppercase tracking-wider mb-4 border border-brandColor/20">
                                             Head of Institution
                                         </div>
-                                        <Link href={`/faculty/${principal._id || principal.id}`} className="block group/link">
+                                        <Link href={`/faculty/${principal.slug}`} className="block group/link">
                                             <h2 className="text-3xl md:text-4xl font-bold text-slate-800 mb-2 group-hover/link:text-brandColor transition-colors">
                                                 {principal.name}
                                             </h2>
@@ -129,7 +129,7 @@ const FacultyPage = () => {
                                             <a href={`mailto:${principal.email}`} className="flex items-center gap-2 px-5 py-3 rounded-xl bg-slate-50 hover:bg-white border border-slate-200 hover:border-brandColor/30 hover:shadow-lg transition-all text-slate-600 hover:text-brandColor font-medium group/btn">
                                                 <Mail className="w-4 h-4 text-slate-400 group-hover/btn:text-brandColor transition-colors" /> {principal.email}
                                             </a>
-                                            <Link href={`/faculty/${principal._id || principal.id}`} className="flex items-center gap-2 px-5 py-3 rounded-xl bg-brandColor text-white font-bold hover:bg-blue-800 shadow-lg shadow-blue-900/20 transition-all">
+                                            <Link href={`/faculty/${principal.slug}`} className="flex items-center gap-2 px-5 py-3 rounded-xl bg-brandColor text-white font-bold hover:bg-blue-800 shadow-lg shadow-blue-900/20 transition-all">
                                                 View Full Profile <ChevronRight className="w-4 h-4" />
                                             </Link>
                                         </div>
@@ -180,7 +180,7 @@ const FacultyPage = () => {
                                         className="group bg-transparent"
                                     >
                                         {/* Image Card */}
-                                        <Link href={`/faculty/${member._id || member.id}`} className="block relative mb-5 overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-100 group-hover:shadow-xl group-hover:ring-brandColor/20 transition-all duration-300 aspect-[3/4]">
+                                        <Link href={`/faculty/${member.slug}`} className="block relative mb-5 overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-100 group-hover:shadow-xl group-hover:ring-brandColor/20 transition-all duration-300 aspect-[3/4]">
                                             <img
                                                 src={member.image}
                                                 alt={member.name}
@@ -198,7 +198,7 @@ const FacultyPage = () => {
 
                                         {/* Content Info */}
                                         <div className="text-center px-2">
-                                            <Link href={`/faculty/${member._id || member.id}`} className="block">
+                                            <Link href={`/faculty/${member.slug}`} className="block">
                                                 <h3 className="text-lg font-bold text-slate-800 mb-1 leading-tight group-hover:text-brandColor transition-colors">
                                                     {member.name}
                                                 </h3>

@@ -803,7 +803,7 @@ export default function FacultySection() {
                     </div>
                     <div className="flex gap-2 shrink-0">
                       <Link
-                        href={`/faculty/${member._id || member.id}`}
+                        href={`/faculty/${member.slug}`}
                         className="p-2 hover:bg-cyan-200 text-cyan-600 rounded-lg transition-colors"
                         title="View Profile"
                       >
