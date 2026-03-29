@@ -10,12 +10,58 @@ function revalidateNewsPages() {
     revalidatePath("/news");       // News listing page
 }
 
+// Generate URL-friendly slug from title
+function slugify(text) {
+    return text
+        .toString()
+        .toLowerCase()
+        .trim()
+        .replace(/[\s.]+/g, '-')
+        .replace(/[^\w-]+/g, '')
+        .replace(/--+/g, '-')
+        .replace(/^-+/, '')
+        .replace(/-+$/, '');
+}
+
+// Get a unique slug (appends -2, -3, etc. if duplicate exists)
+async function getUniqueSlug(db, title, excludeId = null) {
+    const baseSlug = slugify(title);
+    let slug = baseSlug;
+    let counter = 1;
+
+    while (true) {
+        const query = { slug };
+        if (excludeId) {
+            query._id = { $ne: new ObjectId(excludeId) };
+        }
+        const existing = await db.collection("news_events").findOne(query);
+        if (!existing) break;
+        counter++;
+        slug = `${baseSlug}-${counter}`;
+    }
+
+    return slug;
+}
+
 
 export async function GET() {
     try {
         const client = await clientPromise;
         const db = client.db("diit_admin");
         const data = await db.collection("news_events").find({}).sort({ date: -1, createdAt: -1 }).toArray();
+
+        // Backfill slugs for any news that don't have one yet
+        for (const item of data) {
+            if (!item.slug && item.title) {
+                const slug = await getUniqueSlug(db, item.title, item._id.toString());
+                await db.collection("news_events").updateOne(
+                    { _id: item._id },
+                    { $set: { slug } }
+                );
+                item.slug = slug;
+            }
+        }
+
         return NextResponse.json({ success: true, data });
     } catch (error) {
         return NextResponse.json({ success: false, message: error.message }, { status: 500 });
@@ -39,6 +85,7 @@ export async function POST(request) {
         if (action === "create") {
             const newItem = {
                 ...item,
+                slug: await getUniqueSlug(db, item.title),
                 createdAt: new Date(),
                 updatedAt: new Date(),
                 updatedBy: user.email
@@ -65,6 +112,11 @@ export async function POST(request) {
             if (!targetId) return NextResponse.json({ success: false, message: "ID missing" }, { status: 400 });
 
             const { _id, id: pid, ...updateData } = item;
+
+            // Regenerate slug if title changed
+            if (updateData.title) {
+                updateData.slug = await getUniqueSlug(db, updateData.title, targetId);
+            }
 
             let query = {};
             if (ObjectId.isValid(targetId)) {

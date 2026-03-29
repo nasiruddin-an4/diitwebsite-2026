@@ -56,7 +56,7 @@ export default function NewsFeed({ initialNews }) {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {filteredNews.map((item) => (
                         <Link
-                            href={`/news/${item.id || item._id}`}
+                            href={`/news/${item.slug}`}
                             key={item.id || item._id}
                             className="group bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col h-full"
                         >

@@ -34,7 +34,8 @@ async function getUpcomingEvents() {
         return upcoming.map(n => ({
             ...n,
             _id: n._id.toString(),
-            id: n.id || n._id.toString()
+            id: n.id || n._id.toString(),
+            slug: n.slug || ''
         }));
     } catch (e) {
         console.error("Failed to fetch upcoming events", e);

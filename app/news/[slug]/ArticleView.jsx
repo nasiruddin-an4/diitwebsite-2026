@@ -216,7 +216,7 @@ export default function ArticleView({ newsItem, recentNews }) {
                             </h3>
                             <div className="space-y-6">
                                 {recentNews.map((news) => (
-                                    <Link href={`/news/${news.id || news._id}`} key={news.id || news._id} className="group flex items-start gap-4">
+                                    <Link href={`/news/${news.slug}`} key={news.id || news._id} className="group flex items-start gap-4">
                                         <div className="w-20 h-20 shrink-0 rounded-lg overflow-hidden relative">
                                             <img src={news.image} alt={news.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                                         </div>

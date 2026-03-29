@@ -267,7 +267,7 @@ const NoticesPage = () => {
                         <AnimatePresence mode="popLayout">
                             {filteredNotices.length > 0 ? (
                                 paginatedNotices.map((notice) => (
-                                    <Link href={`/notices/${notice._id}`} key={notice._id} className="block">
+                                    <Link href={`/notices/${notice.slug}`} key={notice._id} className="block">
                                         <motion.div
                                             layout
                                             initial={{ opacity: 0, y: 10 }}

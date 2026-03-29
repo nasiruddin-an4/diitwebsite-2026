@@ -55,7 +55,8 @@ export default async function Home() {
   const newsEvents = newsEventsData.map(n => ({
     ...n,
     _id: n._id.toString(),
-    id: n.id || n._id.toString()
+    id: n.id || n._id.toString(),
+    slug: n.slug || ''
   }));
 
   return (

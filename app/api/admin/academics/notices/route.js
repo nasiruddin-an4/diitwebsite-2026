@@ -9,6 +9,39 @@ function revalidateNoticesPages() {
   revalidatePath("/notices");
 }
 
+// Generate URL-friendly slug from title
+function slugify(text) {
+  return text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/[\s.]+/g, '-')
+    .replace(/[^\w-]+/g, '')
+    .replace(/--+/g, '-')
+    .replace(/^-+/, '')
+    .replace(/-+$/, '');
+}
+
+// Get a unique slug (appends -2, -3, etc. if duplicate exists)
+async function getUniqueSlug(db, title, excludeId = null) {
+  const baseSlug = slugify(title);
+  let slug = baseSlug;
+  let counter = 1;
+
+  while (true) {
+    const query = { slug };
+    if (excludeId) {
+      query._id = { $ne: new ObjectId(excludeId) };
+    }
+    const existing = await db.collection("notices").findOne(query);
+    if (!existing) break;
+    counter++;
+    slug = `${baseSlug}-${counter}`;
+  }
+
+  return slug;
+}
+
 async function checkAuth() {
   const user = await getAuthUser();
   if (!user || (user.role !== "super_admin" && user.role !== "notice_admin")) {
@@ -36,6 +69,18 @@ export async function GET() {
       .sort({ pinned: -1, createdAt: -1 })
       .toArray();
 
+    // Backfill slugs for any notices that don't have one yet
+    for (const notice of notices) {
+      if (!notice.slug && notice.title) {
+        const slug = await getUniqueSlug(db, notice.title, notice._id.toString());
+        await db.collection("notices").updateOne(
+          { _id: notice._id },
+          { $set: { slug } }
+        );
+        notice.slug = slug;
+      }
+    }
+
     return NextResponse.json({ success: true, data: notices });
   } catch (error) {
     console.error("Error fetching notices:", error);
@@ -59,9 +104,13 @@ export async function POST(request) {
     const client = await clientPromise;
     const db = client.db("diit_admin");
 
-    // Add timestamp
+    // Generate slug from title
+    const slug = await getUniqueSlug(db, data.title);
+
+    // Add timestamp and slug
     const newNotice = {
       ...data,
+      slug,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -108,6 +157,11 @@ export async function PUT(request) {
 
     // Remove _id from update data
     delete updateData._id;
+
+    // Regenerate slug if title changed
+    if (updateData.title) {
+      updateData.slug = await getUniqueSlug(db, updateData.title, _id);
+    }
 
     const result = await db.collection("notices").updateOne(
       { _id: new ObjectId(_id) },

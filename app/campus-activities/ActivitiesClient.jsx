@@ -254,7 +254,7 @@ export default function ActivitiesClient({ data, upcomingEvents = [] }) {
                                         </div>
                                     </div>
                                     <div className="flex-shrink-0">
-                                        <a href={`/news/${event.id}`} className="btn-secondary px-6 py-2 rounded-full border border-gray-200 text-gray-700 hover:bg-gray-50 text-sm font-semibold transition-colors">
+                                        <a href={`/news/${event.slug}`} className="btn-secondary px-6 py-2 rounded-full border border-gray-200 text-gray-700 hover:bg-gray-50 text-sm font-semibold transition-colors">
                                             View Details
                                         </a>
                                     </div>

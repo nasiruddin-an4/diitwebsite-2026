@@ -20,7 +20,8 @@ export default async function NewsPage() {
     const newsEvents = newsData.map(n => ({
         ...n,
         _id: n._id.toString(),
-        id: n.id || n._id.toString()
+        id: n.id || n._id.toString(),
+        slug: n.slug || ''
     }));
 
     return <NewsFeed initialNews={newsEvents} />;

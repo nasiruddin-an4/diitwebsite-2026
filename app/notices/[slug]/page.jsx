@@ -31,8 +31,8 @@ const NoticeDetailsPage = () => {
         const result = await res.json();
 
         if (result.success && result.data) {
-          // Find the notice by _id
-          const foundNotice = result.data.find((n) => n._id === params.id);
+          // Find the notice by slug
+          const foundNotice = result.data.find((n) => n.slug === params.slug);
           if (foundNotice) {
             setNotice(foundNotice);
           } else {
@@ -50,7 +50,7 @@ const NoticeDetailsPage = () => {
     };
 
     fetchNotice();
-  }, [params.id]);
+  }, [params.slug]);
 
   if (loading) {
     return (

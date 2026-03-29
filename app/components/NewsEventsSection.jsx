@@ -125,7 +125,7 @@ const NewsEventsSection = ({ newsEvents }) => {
                         >
                             {latestItems.map((news) => (
                                 <SwiperSlide key={`slide-${news.id || news._id}`}>
-                                    <Link href={`/news/${news.id || news._id}`} className="group block relative h-full">
+                                    <Link href={`/news/${news.slug}`} className="group block relative h-full">
                                         <div className="relative h-full min-h-[500px] overflow-hidden">
                                             <img
                                                 src={news.image}
@@ -186,7 +186,7 @@ const NewsEventsSection = ({ newsEvents }) => {
                         {latestItems.map((news, index) => (
                             <Link
                                 key={`list-${news.id || news._id}`}
-                                href={`/news/${news.id || news._id}`}
+                                href={`/news/${news.slug}`}
                                 className="group flex items-center bg-white rounded-xl p-5 border border-slate-100 hover:border-brandColor/30 hover:shadow-md hover:-translate-y-1 transition-all duration-500"
                             >
                                 {/* Date Box */}
