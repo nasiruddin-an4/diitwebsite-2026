@@ -41,7 +41,6 @@ const fallbackNavigationItems = [
       { name: "Faculty Members", path: "/faculty" },
       { name: "Administrative", path: "/administrative" },
       { name: "Alumni", path: "/alumni" },
-      { name: "Video Gallery", path: "/video-gallery" },
     ],
   },
   {
@@ -76,6 +75,10 @@ const fallbackNavigationItems = [
       { name: "News & Events", path: "/news" },
       { name: "Campus Activities", path: "/campus-activities" },
     ],
+  },
+  {
+    name: "Video Gallery",
+    path: "/video-gallery",
   },
   {
     name: "About",
@@ -131,7 +134,7 @@ const Header = () => {
   );
 
   // 3. Process navigation items and inject dynamic programs + ensure Video Gallery
-  const navigationItems = (
+  const processedItems = (
     navData?.navigationItems || fallbackNavigationItems
   ).map((item) => {
     if (
@@ -144,27 +147,30 @@ const Header = () => {
         dropdown: programsDataResult.map((prog) => ({
           name: prog.title || prog.shortName,
           path: `/programs/${prog.id}`,
-          // Carry over any other properties if needed
         })),
       };
     }
-    // Ensure Video Gallery is always present in Academics
+    // Remove Video Gallery from Academics dropdown if it's still there (legacy DB data)
     if (item.name === "Academics" && item.dropdown) {
-      const hasVideoGallery = item.dropdown.some(
-        (sub) => sub.path === "/video-gallery",
-      );
-      if (!hasVideoGallery) {
-        return {
-          ...item,
-          dropdown: [
-            ...item.dropdown,
-            { name: "Video Gallery", path: "/video-gallery" },
-          ],
-        };
-      }
+      return {
+        ...item,
+        dropdown: item.dropdown.filter((s) => s.path !== "/video-gallery"),
+      };
     }
     return item;
   });
+
+  // Ensure Video Gallery exists as a top-level item (between News & Events and About)
+  const hasTopLevelVG = processedItems.some((i) => i.path === "/video-gallery");
+  const navigationItems = hasTopLevelVG
+    ? processedItems
+    : (() => {
+        const aboutIdx = processedItems.findIndex((i) => i.name === "About");
+        const insertAt = aboutIdx >= 0 ? aboutIdx : processedItems.length;
+        const copy = [...processedItems];
+        copy.splice(insertAt, 0, { name: "Video Gallery", path: "/video-gallery" });
+        return copy;
+      })();
 
   // Debounced search function
   const performSearch = useCallback(async (query) => {

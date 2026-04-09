@@ -7,6 +7,7 @@ import CredibilitySection from "./components/CredibilitySection";
 import FindYourWay from "./components/FindYourWay";
 import NewsEventsSection from "./components/NewsEventsSection";
 import TestimonialsSection from "./components/TestimonialsSection";
+import VideoSection from "./components/VideoSection";
 import CallToActionSection from "./components/CallToActionSection";
 import BackToTop from "./components/BackToTop";
 
@@ -46,6 +47,18 @@ export default async function Home() {
     id: t.id || t._id.toString()
   }));
 
+  // --- Videos (top 3) ---
+  const videosData = await db.collection("video_gallery")
+    .find({})
+    .sort({ sortOrder: 1, createdAt: -1 })
+    .limit(3)
+    .toArray();
+
+  const videos = videosData.map(v => ({
+    ...v,
+    _id: v._id.toString(),
+  }));
+
   // --- News & Events ---
   const newsEventsData = await db.collection("news_events")
     .find({})
@@ -68,6 +81,7 @@ export default async function Home() {
       <CredibilitySection data={{ ...homeData, internationalPartners: partners, collaborationBenefits: benefits }} />
       <NewsEventsSection newsEvents={newsEvents} />
       <TestimonialsSection testimonials={testimonials} />
+      <VideoSection videos={videos} />
       <CallToActionSection />
       <BackToTop />
     </div>
