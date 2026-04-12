@@ -26,6 +26,7 @@ import {
   ChevronDown,
   ChevronRight,
   ArrowLeftToLine,
+  PenTool
 } from "lucide-react";
 
 import OverviewSection from "./components/OverviewSection";
@@ -50,11 +51,13 @@ import VideoGallerySection from "./components/VideoGallerySection";
 import CampusActivitiesSection from "./components/CampusActivitiesSection";
 import SiteInfoSection from "./components/SiteInfoSection";
 import CallToActionSection from "./components/CallToActionSection";
+import NavigationSection from "./components/NavigationSection";
+import BlogSection from "./components/BlogSection";
 import Image from "next/image";
 
 const menuItems = [
   { id: "overview", label: "Overview", icon: LayoutDashboard },
-  { id: "site-info", label: "Site Information", icon: FileText },
+
   { id: "hero", label: "Hero Slides", icon: Home },
   {
     id: "general",
@@ -88,9 +91,12 @@ const menuItems = [
   { id: "partners", label: "MoU Partners", icon: Users },
   { id: "programs", label: "Programs", icon: BookOpen },
   { id: "news", label: "News & Events", icon: FileText },
+  { id: "blogs", label: "Blogs", icon: PenTool },
   { id: "testimonials", label: "Testimonials", icon: MessageSquare },
   { id: "campus-activities", label: "Campus Activities", icon: Building2 },
   { id: "cta-settings", label: "CTA Settings", icon: Monitor },
+  { id: "site-info", label: "Site Information", icon: FileText },
+  { id: "navigation", label: "Navigation Menu", icon: Menu },
 ];
 
 export default function AdminDashboard() {
@@ -640,6 +646,7 @@ export default function AdminDashboard() {
                 adminInfo={adminInfo}
               />
             )}
+            {activeSection === "navigation" && <NavigationSection />}
             {activeSection === "site-info" && <SiteInfoSection />}
             {activeSection === "hero" && (
               <HeroSection
@@ -688,6 +695,14 @@ export default function AdminDashboard() {
                 updateField={updateField}
                 addItem={addItem}
                 deleteItem={deleteItem}
+                onSave={saveData}
+                saving={saving}
+              />
+            )}
+            {activeSection === "blogs" && (
+              <BlogSection
+                data={data}
+                updateField={updateField}
                 onSave={saveData}
                 saving={saving}
               />

@@ -1,8 +1,17 @@
-import React, { useState } from "react";
+"use client";
+
+import React, { useState, useMemo } from "react";
+import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, ChevronRight, FileText, Edit2, Trash2, Save, Loader2, X, Upload, Image as ImageIcon, Quote, BookOpen, PlusCircle, MinusCircle } from "lucide-react";
 import Swal from "sweetalert2";
 import { InputField } from "./InputField";
+
+const ReactQuill = dynamic(() => import("react-quill-new"), { 
+    ssr: false,
+    loading: () => <div className="h-64 bg-slate-50 animate-pulse rounded-xl border border-slate-200" />
+});
+import "react-quill-new/dist/quill.snow.css";
 
 export default function NewsSection({ data, updateField }) {
   const [editingId, setEditingId] = useState(null);
@@ -12,7 +21,9 @@ export default function NewsSection({ data, updateField }) {
 
   const template = { title: "", category: "NEWS", date: "", image: "", excerpt: "", content: [""], author: "", readTime: "" };
 
-  const newsItems = Array.isArray(data?.newsEvents) ? data.newsEvents : [];
+  const newsItems = Array.isArray(data?.newsEvents) 
+    ? data.newsEvents.filter(item => item.category !== "BLOG") 
+    : [];
 
   const handleAdd = () => {
     setIsCreating(true);
@@ -28,23 +39,6 @@ export default function NewsSection({ data, updateField }) {
 
   const updateLocalField = (field, value) => {
     setEditingItem(prev => ({ ...prev, [field]: value }));
-  };
-
-  const updateContentParagraph = (pIndex, value) => {
-    const newContent = [...(editingItem.content || [])];
-    newContent[pIndex] = value;
-    updateLocalField("content", newContent);
-  };
-
-  const addContentParagraph = () => {
-    const newContent = [...(editingItem.content || []), ""];
-    updateLocalField("content", newContent);
-  };
-
-  const removeContentParagraph = (pIndex) => {
-    if (editingItem.content.length <= 1) return;
-    const newContent = editingItem.content.filter((_, i) => i !== pIndex);
-    updateLocalField("content", newContent);
   };
 
   const handleSaveItem = async () => {
@@ -381,36 +375,48 @@ export default function NewsSection({ data, updateField }) {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <BookOpen className="w-5 h-5 text-blue-600" />
-                      <h4 className="font-black text-slate-800 uppercase text-xs tracking-widest">Story Narrative</h4>
+                      <h4 className="font-black text-slate-800 uppercase text-xs tracking-widest">Story Narrative (Rich Text)</h4>
                     </div>
-                    <button
-                      onClick={addContentParagraph}
-                      className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-[10px] font-black uppercase hover:bg-blue-600 hover:text-white transition-all shadow-sm"
-                    >
-                      <PlusCircle className="w-3.5 h-3.5" /> Add Paragraph
-                    </button>
                   </div>
 
-                  <div className="space-y-8 max-w-3xl mx-auto">
-                    {(editingItem.content || [""]).map((para, pIndex) => (
-                      <div key={pIndex} className="group relative">
-                        <div className="absolute -left-12 top-0 flex flex-col items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <button onClick={() => removeContentParagraph(pIndex)} className="w-8 h-8 rounded-full bg-red-50 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white"><MinusCircle className="w-4 h-4" /></button>
-                        </div>
-                        <textarea
-                          className="w-full bg-transparent border-none border-b border-transparent focus:border-blue-100 text-slate-700 text-lg leading-relaxed placeholder:text-slate-300 focus:outline-none transition-all resize-none min-h-[100px]"
-                          placeholder={`Paragraph ${pIndex + 1}...`}
-                          value={para}
-                          onChange={(e) => updateContentParagraph(pIndex, e.target.value)}
-                        />
-                      </div>
-                    ))}
-                    <button onClick={addContentParagraph} className="w-full py-6 border-2 border-dashed border-slate-100 rounded-2xl flex flex-col items-center justify-center gap-2 text-slate-300 hover:border-blue-200 hover:text-blue-400 group">
-                      <PlusCircle className="w-8 h-8 transition-transform group-hover:scale-110" />
-                      <span className="font-bold text-xs uppercase tracking-widest">Append Next Paragraph</span>
-                    </button>
+                  <div className="quill-editor-container bg-white rounded-xl">
+                    <ReactQuill
+                      theme="snow"
+                      value={typeof editingItem.content === 'string' ? editingItem.content : (Array.isArray(editingItem.content) ? editingItem.content.join('<br>') : '')}
+                      onChange={(val) => updateLocalField("content", val)}
+                      modules={{
+                        toolbar: [
+                          [{ 'header': [1, 2, 3, false] }],
+                          ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+                          [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                          ['link', 'image', 'video'],
+                          ['clean']
+                        ],
+                      }}
+                      placeholder="Write your story here..."
+                      className="min-h-[300px]"
+                    />
                   </div>
                 </div>
+
+                <style jsx global>{`
+                  .quill-editor-container .ql-toolbar.ql-snow {
+                    border-top-left-radius: 0.75rem;
+                    border-top-right-radius: 0.75rem;
+                    border-color: #e2e8f0;
+                    background: #f8fafc;
+                  }
+                  .quill-editor-container .ql-container.ql-snow {
+                    border-bottom-left-radius: 0.75rem;
+                    border-bottom-right-radius: 0.75rem;
+                    border-color: #e2e8f0;
+                    min-h: 300px;
+                    font-size: 1.125rem;
+                  }
+                  .quill-editor-container .ql-editor {
+                    min-h: 300px;
+                  }
+                `}</style>
               </div>
 
               {/* Footer */}

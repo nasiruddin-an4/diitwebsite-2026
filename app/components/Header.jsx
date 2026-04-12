@@ -70,9 +70,10 @@ const fallbackNavigationItems = [
     ],
   },
   {
-    name: "News & Events",
+    name: "Media Center",
     dropdown: [
       { name: "News & Events", path: "/news" },
+      { name: "Blog", path: "/blog" },
       { name: "Campus Activities", path: "/campus-activities" },
     ],
   },
@@ -168,7 +169,10 @@ const Header = () => {
         const aboutIdx = processedItems.findIndex((i) => i.name === "About");
         const insertAt = aboutIdx >= 0 ? aboutIdx : processedItems.length;
         const copy = [...processedItems];
-        copy.splice(insertAt, 0, { name: "Video Gallery", path: "/video-gallery" });
+        copy.splice(insertAt, 0, {
+          name: "Video Gallery",
+          path: "/video-gallery",
+        });
         return copy;
       })();
 
