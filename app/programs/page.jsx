@@ -51,6 +51,11 @@ const ProgramsOverview = () => {
         p.degree?.toLowerCase().includes('master')
     );
 
+    const stripHtml = (html) => {
+        if (!html) return "";
+        return html.replace(/<[^>]*>?/gm, '').replace(/&nbsp;/g, ' ').trim();
+    };
+
     const features = [
         { title: "NU Affiliated", desc: "Recognized degrees from National University", icon: Award },
         { title: "Industry Focused", desc: "Curriculum designed with industry experts", icon: Briefcase },
@@ -160,7 +165,7 @@ const ProgramsOverview = () => {
                                                     {program.title}
                                                 </h3>
                                                 <p className="text-slate-500 text-sm leading-relaxed mb-6 flex-1 line-clamp-3">
-                                                    {program.description}
+                                                    {stripHtml(program.description)}
                                                 </p>
                                                 <div className="flex items-center text-brandColor font-bold text-sm group/btn">
                                                     View Details
@@ -217,7 +222,7 @@ const ProgramsOverview = () => {
                                                     {program.title}
                                                 </h3>
                                                 <p className="text-slate-500 text-sm leading-relaxed mb-6 line-clamp-3">
-                                                    {program.description}
+                                                    {stripHtml(program.description)}
                                                 </p>
                                                 <div className="flex items-center text-purple-600 font-bold text-sm group/btn">
                                                     Program Details

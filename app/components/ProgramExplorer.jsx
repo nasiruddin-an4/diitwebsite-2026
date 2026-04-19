@@ -13,6 +13,11 @@ const ProgramExplorer = ({ data }) => {
     const loading = programs.length === 0;
     const [activeCategory, setActiveCategory] = useState("all");
 
+    const stripHtml = (html) => {
+        if (!html) return "";
+        return html.replace(/<[^>]*>?/gm, '').replace(/&nbsp;/g, ' ').trim();
+    };
+
     const filteredPrograms =
         activeCategory === "all"
             ? programs.sort((a, b) => (a.serial || 0) - (b.serial || 0))
@@ -91,7 +96,7 @@ const ProgramExplorer = ({ data }) => {
                                     </p> */}
 
                                     <p className="text-base text-gray-600 mb-6 line-clamp-2">
-                                        {program?.description}
+                                        {stripHtml(program?.description)}
                                     </p>
 
                                     {/* Action Buttons */}

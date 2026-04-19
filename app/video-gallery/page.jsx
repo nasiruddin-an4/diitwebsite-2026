@@ -55,6 +55,7 @@ const VideoGalleryPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedVideo, setSelectedVideo] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
   // Read videos from global data store (pre-loaded)
   const videos = useStoreData("videos", []) || [];
@@ -83,6 +84,10 @@ const VideoGalleryPage = () => {
       selectedCategory === "All" || video.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
+
+  const totalPages = Math.ceil(filteredVideos.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const currentVideos = filteredVideos.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
   // Determine which categories actually have videos
   const activeCats = new Set(videos.map((v) => v.category));
@@ -125,7 +130,7 @@ const VideoGalleryPage = () => {
           <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-soft-light" />
         </div>
 
-        <div className="max-w-7xl mx-auto relative z-10 text-center">
+        <div className="container mx-auto relative z-10 text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -146,7 +151,7 @@ const VideoGalleryPage = () => {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 -mt-10 relative z-20 pb-32">
+      <div className="container mx-auto px-4 md:px-6 -mt-10 relative z-20 pb-32">
         {/* Search & Filter Bar */}
         <motion.div
           initial={{ y: 40, opacity: 0 }}
@@ -161,7 +166,10 @@ const VideoGalleryPage = () => {
                 type="text"
                 placeholder="Search videos..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setCurrentPage(1);
+                }}
                 className="w-full pl-14 pr-6 py-4 rounded-full bg-slate-50 border-none outline-none ring-1 ring-slate-100 focus:ring-2 focus:ring-brandColor transition-all text-slate-800 font-semibold placeholder:text-slate-400"
               />
             </div>
@@ -170,7 +178,10 @@ const VideoGalleryPage = () => {
               <Filter className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
               <select
                 value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
+                onChange={(e) => {
+                  setSelectedCategory(e.target.value);
+                  setCurrentPage(1);
+                }}
                 className="w-full sm:w-[220px] appearance-none pl-11 pr-12 py-4 rounded-xl bg-slate-50 ring-1 ring-slate-100 focus:ring-2 focus:ring-brandColor outline-none text-slate-800 font-semibold text-sm cursor-pointer transition-all hover:bg-slate-100"
               >
                 {categories.map((cat) => (
@@ -186,9 +197,10 @@ const VideoGalleryPage = () => {
 
         {/* Video Grid */}
         {filteredVideos.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="flex flex-col w-full">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             <AnimatePresence mode="popLayout" initial={false}>
-              {filteredVideos.map((video, index) => (
+              {currentVideos.map((video, index) => (
                 <motion.div
                   layout
                   initial={{ opacity: 0, y: 30 }}
@@ -200,11 +212,11 @@ const VideoGalleryPage = () => {
                     ease: [0.215, 0.61, 0.355, 1],
                   }}
                   key={video._id || video.id}
-                  className="group cursor-pointer"
+                  className="group cursor-pointer bg-white border border-slate-100 rounded-2xl p-3 shadow-md hover:shadow-2xl transition-all duration-300 flex flex-col h-full"
                   onClick={() => setSelectedVideo(video)}
                 >
                   {/* Thumbnail */}
-                  <div className="relative aspect-video overflow-hidden rounded-xl bg-slate-100 shadow-sm group-hover:shadow-xl transition-shadow duration-500">
+                  <div className="relative aspect-video overflow-hidden rounded-xl bg-slate-200 shadow-inner group-hover:shadow-xl transition-shadow duration-500">
                     <img
                       src={
                         video.thumbnail ||
@@ -216,19 +228,19 @@ const VideoGalleryPage = () => {
                     />
 
                     {/* Dark Overlay on Hover */}
-                    <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
                     {/* Play Button */}
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="w-16 h-16 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-2xl transform scale-90 opacity-0 group-hover:opacity-100 group-hover:scale-100 transition-all duration-500">
-                        <Play className="w-7 h-7 text-brandColor ml-1" />
+                      <div className="w-14 h-14 rounded-full bg-white/95 backdrop-blur-md flex items-center justify-center shadow-2xl transform scale-90 opacity-0 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300">
+                        <Play className="w-6 h-6 text-brandColor ml-1" />
                       </div>
                     </div>
 
                     {/* Category Badge */}
                     {video.category && (
-                      <div className="absolute top-4 left-4">
-                        <span className="px-3 py-1 rounded-lg bg-white/90 backdrop-blur-sm text-[11px] font-bold text-brandColor uppercase tracking-wider shadow-sm">
+                      <div className="absolute top-3 left-3">
+                        <span className="px-3 py-1.5 rounded-md bg-slate-900/80 backdrop-blur-md text-[10px] font-bold text-white uppercase tracking-wider shadow-sm border border-white/10">
                           {video.category}
                         </span>
                       </div>
@@ -236,12 +248,12 @@ const VideoGalleryPage = () => {
                   </div>
 
                   {/* Info */}
-                  <div className="mt-4 px-1">
-                    <h3 className="text-[18px] font-bold text-[#020617] leading-tight group-hover:text-brandColor transition-colors line-clamp-2">
+                  <div className="mt-5 px-1 flex flex-col flex-1">
+                    <h3 className="text-[16px] md:text-[18px] font-extrabold text-slate-800 leading-snug group-hover:text-brandColor transition-colors line-clamp-2">
                       {video.title}
                     </h3>
                     {video.description && (
-                      <p className="text-[14px] text-slate-500 mt-1.5 line-clamp-2 leading-relaxed">
+                      <p className="text-[13px] text-slate-500 mt-2 line-clamp-2 leading-relaxed flex-1">
                         {video.description}
                       </p>
                     )}
@@ -250,6 +262,42 @@ const VideoGalleryPage = () => {
               ))}
             </AnimatePresence>
           </div>
+
+          {/* Pagination Controls */}
+          {totalPages > 1 && (
+            <div className="flex justify-center items-center mt-12 gap-2">
+              <button
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="px-4 py-2 rounded-xl font-bold bg-white text-slate-600 hover:bg-slate-50 border border-slate-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              >
+                Previous
+              </button>
+              <div className="flex gap-2 mx-2">
+                {Array.from({ length: totalPages }).map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setCurrentPage(i + 1)}
+                    className={`min-w-10 h-10 px-2 rounded-xl font-bold transition-all ${
+                      currentPage === i + 1
+                        ? "bg-brandColor text-white shadow-lg"
+                        : "bg-white text-slate-600 hover:bg-slate-50 border border-slate-200 hidden sm:block"
+                    }`}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+              </div>
+              <button
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className="px-4 py-2 rounded-xl font-bold bg-white text-slate-600 hover:bg-slate-50 border border-slate-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              >
+                Next
+              </button>
+            </div>
+          )}
+        </div>
         ) : (
           <div className="text-center py-40 border-2 border-dashed border-slate-100 rounded-[3rem]">
             <Video className="w-16 h-16 text-slate-100 mx-auto mb-4" />
