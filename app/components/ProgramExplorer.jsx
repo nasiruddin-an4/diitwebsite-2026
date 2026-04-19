@@ -1,35 +1,17 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useStoreData } from "@/hooks/useDataStore";
 
 const ProgramExplorer = ({ data }) => {
-    const [programs, setPrograms] = useState([]);
+    const storePrograms = useStoreData("programs_data", []);
+    const programs = (data && Array.isArray(data) && data.length > 0)
+        ? data
+        : (storePrograms || []);
+    const loading = programs.length === 0;
     const [activeCategory, setActiveCategory] = useState("all");
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        if (data && Array.isArray(data)) {
-            setPrograms(data);
-            setLoading(false);
-        } else {
-            // Fetch from API if data not provided
-            const fetchPrograms = async () => {
-                try {
-                    const response = await fetch('/api/admin/data/ProgramsData');
-                    if (!response.ok) throw new Error('Failed to fetch programs');
-                    const result = await response.json();
-                    setPrograms(result.data?.programsData || result.data || []);
-                } catch (error) {
-                    console.error("Error fetching programs:", error);
-                } finally {
-                    setLoading(false);
-                }
-            };
-            fetchPrograms();
-        }
-    }, [data]);
 
     const filteredPrograms =
         activeCategory === "all"

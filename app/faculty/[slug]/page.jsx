@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
+import { useStoreData } from "@/hooks/useDataStore";
 
 // Sanitize rich text HTML — replace &nbsp; with regular spaces so text wraps normally
 const cleanHtml = (html) => {
@@ -35,36 +36,20 @@ const FacultyDetailsPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Read faculty from global data store
+  const allFaculty = useStoreData("faculty", []);
+
   useEffect(() => {
-    const fetchFaculty = async () => {
-      try {
-        setLoading(true);
-        const res = await fetch("/api/admin/academics/faculty");
-        const result = await res.json();
+    if (!allFaculty || allFaculty.length === 0) return;
 
-        if (result.success && result.data) {
-          // Find the faculty by slug
-          const foundMember = result.data.find(
-            (f) => f.slug === params.slug,
-          );
-          if (foundMember) {
-            setMember(foundMember);
-          } else {
-            setError("Faculty member not found");
-          }
-        } else {
-          setError("Failed to load faculty");
-        }
-      } catch (err) {
-        console.error("Error fetching faculty:", err);
-        setError("Failed to load faculty details");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchFaculty();
-  }, [params.slug]);
+    const foundMember = allFaculty.find((f) => f.slug === params.slug);
+    if (foundMember) {
+      setMember(foundMember);
+    } else {
+      setError("Faculty member not found");
+    }
+    setLoading(false);
+  }, [params.slug, allFaculty]);
 
   if (loading) {
     return (

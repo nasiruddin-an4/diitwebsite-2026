@@ -23,6 +23,8 @@ import {
   Briefcase
 } from 'lucide-react';
 
+import { useStoreData } from "@/hooks/useDataStore";
+
 const AlumniDetailPage = () => {
   const params = useParams();
   const router = useRouter();
@@ -30,29 +32,21 @@ const AlumniDetailPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchAlumnus = async () => {
-      try {
-        setLoading(true);
-        const res = await fetch(`/api/admin/alumni/${params.id}`);
-        const result = await res.json();
-        if (result.success) {
-          setAlumnus(result.data);
-        } else {
-          setError(result.message || "Failed to fetch alumni details");
-        }
-      } catch (err) {
-        console.error("Error fetching alumni:", err);
-        setError("Failed to load alumni details");
-      } finally {
-        setLoading(false);
-      }
-    };
+  const allAlumni = useStoreData("alumni", []);
 
-    if (params.id) {
-      fetchAlumnus();
+  useEffect(() => {
+    if (!allAlumni || allAlumni.length === 0) return;
+
+    // Support both _id and id properties depending on the API's format
+    const foundAlumnus = allAlumni.find(a => a._id === params.id || a.id === params.id);
+    
+    if (foundAlumnus) {
+      setAlumnus(foundAlumnus);
+    } else {
+      setError("The requested profile could not be found.");
     }
-  }, [params.id]);
+    setLoading(false);
+  }, [params.id, allAlumni]);
 
   if (loading) {
     return (

@@ -11,6 +11,7 @@ import {
   Filter,
   ChevronDown,
 } from "lucide-react";
+import { useStoreData } from "@/hooks/useDataStore";
 
 const ITEMS_PER_PAGE = 12;
 
@@ -51,39 +52,16 @@ function getYouTubeEmbedUrl(videoUrl) {
 
 const VideoGalleryPage = () => {
   const [mounted, setMounted] = useState(false);
-  const [videos, setVideos] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedVideo, setSelectedVideo] = useState(null);
 
+  // Read videos from global data store (pre-loaded)
+  const videos = useStoreData("videos", []) || [];
+
   useEffect(() => {
     setMounted(true);
   }, []);
-
-  useEffect(() => {
-    if (!mounted) return;
-    const fetchVideos = async () => {
-      try {
-        setLoading(true);
-        const res = await fetch("/api/admin/videos");
-        const result = await res.json();
-        if (result.success) {
-          const sorted = [...result.data].sort((a, b) => {
-            const orderA = a.sortOrder !== undefined ? a.sortOrder : 9999;
-            const orderB = b.sortOrder !== undefined ? b.sortOrder : 9999;
-            return orderA - orderB;
-          });
-          setVideos(sorted);
-        }
-      } catch (error) {
-        console.error("Failed to fetch videos:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchVideos();
-  }, [mounted]);
 
   // Close modal on ESC
   useEffect(() => {
@@ -109,7 +87,7 @@ const VideoGalleryPage = () => {
   // Determine which categories actually have videos
   const activeCats = new Set(videos.map((v) => v.category));
 
-  if (!mounted || loading) {
+  if (!mounted) {
     return (
       <div className="min-h-screen bg-[#f8fafc] flex flex-col items-center justify-center gap-4">
         <div className="relative">

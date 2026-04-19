@@ -13,7 +13,7 @@ export default async function NewsPage() {
 
     // Fetch all news/events sorted by date (newest first)
     const newsData = await db.collection("news_events")
-        .find({})
+        .find({ category: { $ne: "BLOG" } })
         .sort({ date: -1, createdAt: -1 })
         .toArray();
 

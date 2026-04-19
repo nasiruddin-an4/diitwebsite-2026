@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import {
@@ -14,28 +14,12 @@ import {
     Facebook,
     Instagram
 } from 'lucide-react';
+import { useStoreData } from "@/hooks/useDataStore";
 
 const AdministrativePage = () => {
-    const [staff, setStaff] = useState([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        fetchStaff();
-    }, []);
-
-    const fetchStaff = async () => {
-        try {
-            const res = await fetch("/api/admin/academics/administrative");
-            const result = await res.json();
-            if (result.success) {
-                setStaff(result.data);
-            }
-        } catch (error) {
-            console.error("Error fetching administrative staff:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
+    // Read from global data store
+    const staff = useStoreData("administrative", []) || [];
+    const loading = staff.length === 0;
 
     const sortMember = (a, b) => (Number(a.serial) || 9999) - (Number(b.serial) || 9999);
 

@@ -3,7 +3,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Zap } from "lucide-react";
-import useCachedFetch from "@/hooks/useCachedFetch";
+import { useStoreData } from "@/hooks/useDataStore";
 
 const fadeInUp = {
     initial: { opacity: 0, y: 30 },
@@ -23,18 +23,9 @@ const staggerContainer = {
 };
 
 export default function FacilitiesClient() {
-    const { data: facilities, loading } = useCachedFetch(
-        "campus_facilities",
-        "/api/admin/data/CampusData",
-        {
-            fallback: [],
-            transform: (data) => {
-                if (Array.isArray(data)) return data;
-                if (data?.facilities && Array.isArray(data.facilities)) return data.facilities;
-                return [];
-            }
-        }
-    );
+    const rawFacilities = useStoreData("campus_facilities", []);
+    const facilities = Array.isArray(rawFacilities) ? rawFacilities : (rawFacilities?.facilities || []);
+    const loading = facilities.length === 0 && rawFacilities === null;
 
     if (loading) {
         return (

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import {
@@ -15,29 +15,12 @@ import {
     GraduationCap,
     Loader2
 } from 'lucide-react';
+import { useStoreData } from "@/hooks/useDataStore";
 
 const ProgramsOverview = () => {
-    const [programs, setPrograms] = useState([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchPrograms = async () => {
-            try {
-                const response = await fetch('/api/admin/data/ProgramsData');
-                if (!response.ok) throw new Error('Failed to fetch programs');
-                const result = await response.json();
-                const programsData = result.data?.programsData || result.data || [];
-                setPrograms(programsData);
-            } catch (error) {
-                console.error("Error fetching programs:", error);
-                setPrograms([]);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchPrograms();
-    }, []);
+    // Read programs from global data store (pre-loaded)
+    const programs = useStoreData("programs_data", []) || [];
+    const loading = programs.length === 0;
 
     // Map program category to icon and color
     const getCategoryStyle = (category, id) => {

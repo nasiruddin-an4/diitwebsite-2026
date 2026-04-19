@@ -15,7 +15,7 @@ import {
     ExternalLink
 } from "lucide-react";
 import Image from "next/image";
-import useCachedFetch from "@/hooks/useCachedFetch";
+import { useStoreData } from "@/hooks/useDataStore";
 
 const quickLinks = [
     { label: "About DIIT", href: "/about" },
@@ -49,15 +49,8 @@ const defaultSiteInfo = {
 };
 
 export default function Footer() {
-    // Use cached fetch for instant loading
-    const { data: siteInfo } = useCachedFetch(
-        "site_info",
-        "/api/site-info",
-        {
-            fallback: defaultSiteInfo,
-            maxAge: 10 * 60 * 1000 // 10 minutes cache
-        }
-    );
+    // Use global data store for instant loading
+    const siteInfo = useStoreData("site_info", defaultSiteInfo) || defaultSiteInfo;
 
     // Build social links array from siteInfo
     const socialLinks = Object.entries(siteInfo.socialMedia || {})

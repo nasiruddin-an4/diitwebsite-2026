@@ -4,58 +4,30 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
+import { useStoreData } from "@/hooks/useDataStore";
 
 // Fallback image from public folder
 const FALLBACK_IMAGE = "/falbackImg.jpeg";
 
+const FALLBACK_SLIDES = [
+  {
+    title: "Welcome to DIIT",
+    subtitle: "Excellence in Education",
+    image: FALLBACK_IMAGE,
+    primaryButtonText: "Explore Programs",
+    primaryButtonLink: "/programs",
+    secondaryButtonText: "Contact Us",
+    secondaryButtonLink: "/contact",
+  },
+];
+
 const Hero = () => {
-  const [heroSlides, setHeroSlides] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  // Pull pre-fetched hero slides from global store
+  const storeSlides = useStoreData("hero_slides", null);
+  const heroSlides = storeSlides && storeSlides.length > 0 ? storeSlides : FALLBACK_SLIDES;
+  const isLoading = storeSlides === null;
+
   const [currentSlide, setCurrentSlide] = useState(0);
-
-  // Fetch slides from API
-  useEffect(() => {
-    const fetchSlides = async () => {
-      try {
-        const response = await fetch("/api/admin/hero");
-        const result = await response.json();
-        if (result.success && result.data.length > 0) {
-          setHeroSlides(result.data);
-        } else {
-          // Fallback data if API returns empty
-          setHeroSlides([
-            {
-              title: "Welcome to DIIT",
-              subtitle: "Excellence in Education",
-              image: FALLBACK_IMAGE,
-              primaryButtonText: "Explore Programs",
-              primaryButtonLink: "/programs",
-              secondaryButtonText: "Contact Us",
-              secondaryButtonLink: "/contact",
-            },
-          ]);
-        }
-      } catch (error) {
-        console.error("Failed to fetch hero slides:", error);
-        // Fallback on error
-        setHeroSlides([
-          {
-            title: "Welcome to DIIT",
-            subtitle: "Excellence in Education",
-            image: FALLBACK_IMAGE,
-            primaryButtonText: "Explore Programs",
-            primaryButtonLink: "/programs",
-            secondaryButtonText: "Contact Us",
-            secondaryButtonLink: "/contact",
-          },
-        ]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchSlides();
-  }, []);
 
   // Auto-play interval
   useEffect(() => {

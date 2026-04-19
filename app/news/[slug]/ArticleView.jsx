@@ -184,7 +184,7 @@ export default function ArticleView({ newsItem, recentNews }) {
                     <Bookmark className="w-32 h-32" />
                   </div>
                   <p className="text-xl md:text-2xl font-medium text-gray-800 italic leading-relaxed relative z-10">
-                    "{newsItem.excerpt || newsItem.desc}"
+                    {newsItem.excerpt || newsItem.desc}
                   </p>
                 </div>
               )}

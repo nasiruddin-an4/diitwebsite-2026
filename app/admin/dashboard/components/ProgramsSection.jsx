@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Plus,
@@ -16,9 +17,18 @@ import {
   HelpCircle,
   FileText,
   Download,
+  Maximize2,
 } from "lucide-react";
 import Swal from "sweetalert2";
 import { InputField } from "./InputField";
+
+const ReactQuill = dynamic(() => import("react-quill-new"), {
+  ssr: false,
+  loading: () => (
+    <div className="h-48 bg-slate-50 animate-pulse rounded-xl border border-slate-200" />
+  ),
+});
+import "react-quill-new/dist/quill.snow.css";
 
 export default function ProgramsSection({ data, updateField, onSave, saving }) {
   const [editingId, setEditingId] = useState(null);
@@ -283,29 +293,39 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
       {/* Edit Modal */}
       <AnimatePresence>
         {editingId !== null && editingProgram && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+          <div className="absolute inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm">
             <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              initial={{ opacity: 0, scale: 0.98, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="bg-white border border-slate-200 rounded-xl w-full max-w-2xl shadow-xl overflow-hidden"
+              exit={{ opacity: 0, scale: 0.98, y: 10 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              className="bg-white w-full h-full flex flex-col overflow-hidden"
             >
               {/* Modal Header */}
-              <div className="flex items-center justify-between p-4 border-b border-slate-100 bg-slate-50/50">
-                <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                  <BookOpen className="w-5 h-5 text-blue-600" />
-                  Edit Program
-                </h3>
+              <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-white shrink-0">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-md shadow-blue-600/20">
+                    <BookOpen className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-slate-900">
+                      Edit Program
+                    </h3>
+                    <p className="text-xs text-slate-500">
+                      {editingProgram.title || "New Program"}
+                    </p>
+                  </div>
+                </div>
                 <button
                   onClick={() => setEditingId(null)}
-                  className="p-2 hover:bg-slate-200 rounded-full transition-colors cursor-pointer"
+                  className="p-2.5 hover:bg-slate-100 rounded-xl transition-colors cursor-pointer group"
                 >
-                  <X className="w-5 h-5 text-slate-500" />
+                  <X className="w-5 h-5 text-slate-400 group-hover:text-slate-600" />
                 </button>
               </div>
 
               {/* Tabs */}
-              <div className="border-b border-slate-200 bg-slate-50 px-4 flex gap-1 overflow-x-auto">
+              <div className="border-b border-slate-200 bg-slate-50/80 px-6 flex gap-1 overflow-x-auto shrink-0">
                 {[
                   { id: "basic", label: "Basic Info" },
                   { id: "details", label: "Details" },
@@ -317,10 +337,10 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`px-4 py-3 font-medium text-sm whitespace-nowrap border-b-2 transition-colors ${
+                    className={`px-5 py-3.5 font-semibold text-sm whitespace-nowrap border-b-2 transition-all ${
                       activeTab === tab.id
-                        ? "border-blue-600 text-blue-600"
-                        : "border-transparent text-slate-600 hover:text-slate-900"
+                        ? "border-blue-600 text-blue-600 bg-white/50"
+                        : "border-transparent text-slate-500 hover:text-slate-800 hover:bg-white/30"
                     }`}
                   >
                     {tab.label}
@@ -329,7 +349,7 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
               </div>
 
               {/* Modal Body */}
-              <div className="p-6 space-y-6 max-h-[60vh] overflow-y-auto custom-scrollbar">
+              <div className="flex-1 p-6 lg:p-8 space-y-6 overflow-y-auto custom-scrollbar">
                 {/* Basic Info Tab */}
                 {activeTab === "basic" && (
                   <div className="space-y-4">
@@ -369,14 +389,32 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
                       />
                     </div>
 
-                    <InputField
-                      label="Description"
-                      value={editingProgram.description}
-                      onChange={(v) => handleUpdateField("description", v)}
-                      textarea
-                      placeholder="Brief description of the program..."
-                      rows={4}
-                    />
+                    {/* Description - Rich Text Editor */}
+                    <div className="space-y-2">
+                      <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider">
+                        Program Description
+                      </label>
+                      <div className="program-quill-editor bg-white rounded-xl border border-slate-200 overflow-hidden">
+                        <ReactQuill
+                          theme="snow"
+                          value={editingProgram.description || ""}
+                          onChange={(val) =>
+                            handleUpdateField("description", val)
+                          }
+                          modules={{
+                            toolbar: [
+                              [{ header: [2, 3, false] }],
+                              ["bold", "italic", "underline"],
+                              [{ list: "ordered" }, { list: "bullet" }],
+                              ["link"],
+                              ["clean"],
+                            ],
+                          }}
+                          placeholder="Write a brief description of the program..."
+                          className="min-h-[120px]"
+                        />
+                      </div>
+                    </div>
 
                     {/* Image Upload Area */}
                     <div className="space-y-3">
@@ -483,8 +521,8 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
 
                 {/* Details Tab */}
                 {activeTab === "details" && (
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <InputField
                         label="Affiliation"
                         value={editingProgram.affiliation || ""}
@@ -504,32 +542,82 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
                         placeholder="e.g. 148 Credits"
                       />
                     </div>
-                    <InputField
-                      label="Program Overview"
-                      value={(editingProgram.overview || []).join("\n")}
-                      onChange={(v) =>
-                        handleUpdateField(
-                          "overview",
-                          v.split("\n").filter((x) => x.trim()),
-                        )
-                      }
-                      textarea
-                      placeholder="Enter each overview point on a new line..."
-                      rows={5}
-                    />
-                    <InputField
-                      label="Eligibility Criteria"
-                      value={(editingProgram.eligibility || []).join("\n")}
-                      onChange={(v) =>
-                        handleUpdateField(
-                          "eligibility",
-                          v.split("\n").filter((x) => x.trim()),
-                        )
-                      }
-                      textarea
-                      placeholder="Enter each requirement on a new line..."
-                      rows={4}
-                    />
+
+                    {/* Program Overview - Rich Text Editor */}
+                    <div className="space-y-2">
+                      <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider">
+                        Program Overview
+                      </label>
+                      <div className="program-quill-editor bg-white rounded-xl border border-slate-200 overflow-hidden">
+                        <ReactQuill
+                          theme="snow"
+                          value={
+                            typeof editingProgram.overview === "string"
+                              ? editingProgram.overview
+                              : Array.isArray(editingProgram.overview)
+                                ? editingProgram.overview
+                                    .map((p) => `<p>${p}</p>`)
+                                    .join("")
+                                : ""
+                          }
+                          onChange={(val) => handleUpdateField("overview", val)}
+                          modules={{
+                            toolbar: [
+                              [{ header: [1, 2, 3, false] }],
+                              ["bold", "italic", "underline", "strike"],
+                              ["blockquote"],
+                              [{ list: "ordered" }, { list: "bullet" }],
+                              ["link"],
+                              [{ align: [] }],
+                              ["clean"],
+                            ],
+                          }}
+                          placeholder="Write a comprehensive program overview with rich formatting..."
+                          className="min-h-[200px]"
+                        />
+                      </div>
+                      <p className="text-[10px] text-slate-400">
+                        Use the toolbar to format text with headings, bold,
+                        italic, lists, and links.
+                      </p>
+                    </div>
+
+                    {/* Eligibility Criteria - Rich Text Editor */}
+                    <div className="space-y-2">
+                      <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider">
+                        Eligibility Criteria
+                      </label>
+                      <div className="program-quill-editor bg-white rounded-xl border border-slate-200 overflow-hidden">
+                        <ReactQuill
+                          theme="snow"
+                          value={
+                            typeof editingProgram.eligibility === "string"
+                              ? editingProgram.eligibility
+                              : Array.isArray(editingProgram.eligibility)
+                                ? `<ul>${editingProgram.eligibility.map((item) => `<li>${item}</li>`).join("")}</ul>`
+                                : ""
+                          }
+                          onChange={(val) =>
+                            handleUpdateField("eligibility", val)
+                          }
+                          modules={{
+                            toolbar: [
+                              [{ header: [2, 3, false] }],
+                              ["bold", "italic", "underline"],
+                              [{ list: "ordered" }, { list: "bullet" }],
+                              ["link"],
+                              ["clean"],
+                            ],
+                          }}
+                          placeholder="List all eligibility criteria using bullet points..."
+                          className="min-h-[180px]"
+                        />
+                      </div>
+                      <p className="text-[10px] text-slate-400">
+                        Tip: Use bullet list to structure each eligibility
+                        requirement.
+                      </p>
+                    </div>
                   </div>
                 )}
 
@@ -550,14 +638,33 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
                         placeholder="e.g. Head of Department"
                       />
                     </div>
-                    <InputField
-                      label="Head Message"
-                      value={editingProgram.headMessage || ""}
-                      onChange={(v) => handleUpdateField("headMessage", v)}
-                      textarea
-                      placeholder="Message from the head..."
-                      rows={5}
-                    />
+                    {/* Head Message - Rich Text Editor */}
+                    <div className="space-y-2">
+                      <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider">
+                        Head Message
+                      </label>
+                      <div className="program-quill-editor bg-white rounded-xl border border-slate-200 overflow-hidden">
+                        <ReactQuill
+                          theme="snow"
+                          value={editingProgram.headMessage || ""}
+                          onChange={(val) =>
+                            handleUpdateField("headMessage", val)
+                          }
+                          modules={{
+                            toolbar: [
+                              [{ header: [2, 3, false] }],
+                              ["bold", "italic", "underline"],
+                              ["blockquote"],
+                              [{ list: "ordered" }, { list: "bullet" }],
+                              ["link"],
+                              ["clean"],
+                            ],
+                          }}
+                          placeholder="Write a message from the department head..."
+                          className="min-h-[180px]"
+                        />
+                      </div>
+                    </div>
                     <div className="space-y-2">
                       <label className="block text-xs font-bold text-slate-600 uppercase">
                         Head Image
@@ -837,9 +944,12 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
                                       {career.area}
                                     </p>
                                     {career.description && (
-                                      <p className="text-xs text-slate-600 mt-1 line-clamp-2">
-                                        {career.description}
-                                      </p>
+                                      <div
+                                        className="text-xs text-slate-600 mt-1 line-clamp-2 [&_p]:mb-0"
+                                        dangerouslySetInnerHTML={{
+                                          __html: career.description,
+                                        }}
+                                      />
                                     )}
                                   </div>
                                   <button
@@ -892,16 +1002,34 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
                           }
                           placeholder="e.g. Software Development, Data Science, Web Development..."
                         />
-                        <InputField
-                          label="Career Description"
-                          value={careerInput.description}
-                          onChange={(v) =>
-                            setCareerInput({ ...careerInput, description: v })
-                          }
-                          textarea
-                          placeholder="What does a graduate in this area do? What are the responsibilities and opportunities?"
-                          rows={4}
-                        />
+                        {/* Career Description - Rich Text Editor */}
+                        <div className="space-y-2">
+                          <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider">
+                            Career Description
+                          </label>
+                          <div className="program-quill-editor bg-white rounded-xl border border-slate-200 overflow-hidden">
+                            <ReactQuill
+                              theme="snow"
+                              value={careerInput.description || ""}
+                              onChange={(val) =>
+                                setCareerInput({
+                                  ...careerInput,
+                                  description: val,
+                                })
+                              }
+                              modules={{
+                                toolbar: [
+                                  ["bold", "italic", "underline"],
+                                  [{ list: "ordered" }, { list: "bullet" }],
+                                  ["link"],
+                                  ["clean"],
+                                ],
+                              }}
+                              placeholder="What does a graduate in this area do? Responsibilities and opportunities..."
+                              className="min-h-[120px]"
+                            />
+                          </div>
+                        </div>
                         <InputField
                           label="Key Skills (comma separated)"
                           value={careerInput.skills}
@@ -1295,20 +1423,73 @@ export default function ProgramsSection({ data, updateField, onSave, saving }) {
               </div>
 
               {/* Modal Footer */}
-              <div className="p-4 border-t border-slate-100 bg-slate-50/50 flex justify-end gap-3">
+              <div className="px-6 py-4 border-t border-slate-200 bg-white shrink-0 flex justify-end gap-3">
                 <button
                   onClick={() => setEditingId(null)}
-                  className="px-6 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-md cursor-pointer font-bold transition-all text-sm"
+                  className="px-8 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg cursor-pointer font-bold transition-all text-sm"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={() => setEditingId(null)}
-                  className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md cursor-pointer font-bold transition-all text-sm"
+                  className="px-8 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg cursor-pointer font-bold transition-all text-sm shadow-md shadow-blue-600/20"
                 >
                   Save & Close
                 </button>
               </div>
+
+              {/* Rich Text Editor Styles */}
+              <style jsx global>{`
+                .program-quill-editor .ql-toolbar.ql-snow {
+                  border: none;
+                  border-bottom: 1px solid #e2e8f0;
+                  background: #f8fafc;
+                  padding: 10px 12px;
+                }
+                .program-quill-editor .ql-container.ql-snow {
+                  border: none;
+                  font-size: 0.95rem;
+                  font-family: inherit;
+                }
+                .program-quill-editor .ql-editor {
+                  min-height: 160px;
+                  padding: 16px 20px;
+                  line-height: 1.7;
+                  color: #1e293b;
+                }
+                .program-quill-editor .ql-editor.ql-blank::before {
+                  color: #94a3b8;
+                  font-style: normal;
+                  left: 20px;
+                }
+                .program-quill-editor .ql-editor h1,
+                .program-quill-editor .ql-editor h2,
+                .program-quill-editor .ql-editor h3 {
+                  font-weight: 700;
+                  color: #0f172a;
+                }
+                .program-quill-editor .ql-editor ul,
+                .program-quill-editor .ql-editor ol {
+                  padding-left: 1.5em;
+                }
+                .program-quill-editor .ql-editor li {
+                  margin-bottom: 4px;
+                }
+                .program-quill-editor .ql-snow .ql-stroke {
+                  stroke: #64748b;
+                }
+                .program-quill-editor .ql-snow .ql-fill {
+                  fill: #64748b;
+                }
+                .program-quill-editor .ql-snow button:hover .ql-stroke,
+                .program-quill-editor .ql-snow button.ql-active .ql-stroke {
+                  stroke: #2563eb;
+                }
+                .program-quill-editor .ql-snow button:hover .ql-fill,
+                .program-quill-editor .ql-snow button.ql-active .ql-fill {
+                  fill: #2563eb;
+                }
+              `}</style>
             </motion.div>
           </div>
         )}

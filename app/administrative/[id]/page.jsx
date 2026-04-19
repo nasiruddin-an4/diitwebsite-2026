@@ -20,6 +20,8 @@ import {
   Loader2
 } from 'lucide-react';
 
+import { useStoreData } from "@/hooks/useDataStore";
+
 const AdministrativeDetailPage = () => {
   const params = useParams();
   const router = useRouter();
@@ -27,29 +29,21 @@ const AdministrativeDetailPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchMember = async () => {
-      try {
-        setLoading(true);
-        const res = await fetch(`/api/admin/academics/administrative/${params.id}`);
-        const result = await res.json();
-        if (result.success) {
-          setMember(result.data);
-        } else {
-          setError(result.message || "Failed to fetch member details");
-        }
-      } catch (err) {
-        console.error("Error fetching member:", err);
-        setError("Failed to load member details");
-      } finally {
-        setLoading(false);
-      }
-    };
+  const allAdministrative = useStoreData("administrative", []);
 
-    if (params.id) {
-      fetchMember();
+  useEffect(() => {
+    if (!allAdministrative || allAdministrative.length === 0) return;
+
+    // Support both _id and id properties
+    const foundMember = allAdministrative.find(m => m._id === params.id || m.id === params.id);
+    
+    if (foundMember) {
+      setMember(foundMember);
+    } else {
+      setError("The requested profile could not be found.");
     }
-  }, [params.id]);
+    setLoading(false);
+  }, [params.id, allAdministrative]);
 
   if (loading) {
     return (

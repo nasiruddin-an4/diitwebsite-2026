@@ -30,6 +30,13 @@ import {
   Loader2,
 } from "lucide-react";
 import Image from "next/image";
+import { useStoreData } from "@/hooks/useDataStore";
+
+// Sanitize rich text HTML — replace &nbsp; with regular spaces so text wraps at word boundaries, not characters
+const cleanHtml = (html) => {
+  if (!html) return "";
+  return typeof html === "string" ? html.replace(/&nbsp;/g, " ") : html;
+};
 
 const DynamicProgramPage = () => {
   const params = useParams();
@@ -43,6 +50,12 @@ const DynamicProgramPage = () => {
   const [departmentCareers, setDepartmentCareers] = useState([]);
   const [departmentFaqs, setDepartmentFaqs] = useState([]);
   const facultyScrollRef = useRef(null);
+
+  // Read from global data store (pre-loaded)
+  const allPrograms = useStoreData("programs_data", []);
+  const allFaculty = useStoreData("faculty", []);
+  const careerDataRaw = useStoreData("career_data", {});
+  const faqDataRaw = useStoreData("faq_data", {});
 
   useEffect(() => {
     const scrollContainer = facultyScrollRef.current;
@@ -69,122 +82,87 @@ const DynamicProgramPage = () => {
     return () => clearInterval(interval);
   }, [departmentFaculty]);
 
+  // Find the program from pre-loaded data
   useEffect(() => {
-    const fetchProgram = async () => {
-      try {
-        // 1. Try fetching from API
-        let found = null;
-        try {
-          const response = await fetch("/api/admin/data/ProgramsData");
-          if (response.ok) {
-            const result = await response.json();
-            let programs = result.data?.programsData || result.data;
+    if (!allPrograms || allPrograms.length === 0) return;
 
-            // Handle if programs is an object (convert to array or lookup)
-            if (
-              programs &&
-              typeof programs === "object" &&
-              !Array.isArray(programs)
-            ) {
-              // If it's the structure like { cse: {...}, bba: {...} }
-              // Try direct lookup
-              if (programs[id]) {
-                found = programs[id];
-              } else {
-                // Convert to array and search
-                programs = Object.values(programs);
-              }
-            }
+    let found = null;
+    const programs = allPrograms;
 
-            if (!found && Array.isArray(programs)) {
-              found = programs.find(
-                (p) =>
-                  String(p.id) === String(id) ||
-                  p.shortName?.toLowerCase() === String(id).toLowerCase() ||
-                  p.active_path === String(id), // Support custom paths if added
-              );
-            }
-          }
-        } catch (err) {
-          console.warn("API fetch failed, falling back to local data");
-        }
-
-        if (found) {
-          setProgram(found);
-          // Fetch department-specific data based on category
-          fetchDepartmentData(
-            found.category || found.department || "engineering",
-          );
-        } else {
-          setProgram(null);
-        }
-      } catch (error) {
-        console.error("Error processing program data:", error);
-        setProgram(null);
-      } finally {
-        setLoading(false);
+    if (Array.isArray(programs)) {
+      found = programs.find(
+        (p) =>
+          String(p.id) === String(id) ||
+          p.shortName?.toLowerCase() === String(id).toLowerCase() ||
+          p.active_path === String(id),
+      );
+    } else if (typeof programs === "object") {
+      if (programs[id]) {
+        found = programs[id];
+      } else {
+        const arr = Object.values(programs);
+        found = arr.find(
+          (p) =>
+            String(p.id) === String(id) ||
+            p.shortName?.toLowerCase() === String(id).toLowerCase(),
+        );
       }
+    }
+
+    if (found) {
+      setProgram(found);
+      // Process department data from pre-loaded store
+      const category = found.category || found.department || "engineering";
+      processDepartmentData(category);
+    } else {
+      setProgram(null);
+    }
+    setLoading(false);
+  }, [id, allPrograms, allFaculty, careerDataRaw, faqDataRaw]);
+
+  const processDepartmentData = (category) => {
+    // Map program category/shortName to department codes
+    const deptMapping = {
+      engineering: "CSE",
+      cse: "CSE",
+      computer: "CSE",
+      business: "BBA",
+      bba: "BBA",
+      thm: "THM",
+      bthm: "THM",
+      tourism: "THM",
+      hospitality: "THM",
+      mba: "MBA",
+      mthm: "MTHM",
     };
 
-    fetchProgram();
-  }, [id]);
+    const categoryLower = category.toLowerCase();
+    const mappedDept = deptMapping[categoryLower] || category.toUpperCase();
 
-  const fetchDepartmentData = async (category) => {
-    try {
-      // Fetch faculty data from the correct API endpoint
-      const facultyResponse = await fetch(`/api/admin/academics/faculty`);
-      if (facultyResponse.ok) {
-        const facultyResult = await facultyResponse.json();
-        const facultyData = facultyResult.data || [];
+    // Faculty
+    if (allFaculty && allFaculty.length > 0) {
+      const filtered = allFaculty.filter(
+        (f) => f.department?.toUpperCase() === mappedDept.toUpperCase(),
+      );
+      setDepartmentFaculty(filtered);
+    }
 
-        // Map program category/shortName to department codes
-        // Programs might have category like "engineering", "business" or shortName like "CSE", "BBA"
-        const deptMapping = {
-          engineering: "CSE",
-          cse: "CSE",
-          computer: "CSE",
-          business: "BBA",
-          bba: "BBA",
-          thm: "THM",
-          bthm: "THM",
-          tourism: "THM",
-          hospitality: "THM",
-          mba: "MBA",
-          mthm: "MTHM",
-        };
+    // Careers
+    const careerData = careerDataRaw?.careerData || [];
+    if (careerData.length > 0) {
+      const filtered = careerData.filter(
+        (c) => c.department?.toLowerCase() === categoryLower,
+      );
+      setDepartmentCareers(filtered);
+    }
 
-        const categoryLower = category.toLowerCase();
-        const mappedDept = deptMapping[categoryLower] || category.toUpperCase();
-
-        const filtered = facultyData.filter(
-          (f) => f.department?.toUpperCase() === mappedDept.toUpperCase(),
-        );
-        setDepartmentFaculty(filtered);
-      }
-
-      // Fetch career data by department
-      const careerResponse = await fetch(`/api/admin/data/CareerData`);
-      if (careerResponse.ok) {
-        const careerResult = await careerResponse.json();
-        const careerData = careerResult.data?.careerData || [];
-        const filtered = careerData.filter(
-          (c) => c.department?.toLowerCase() === category.toLowerCase(),
-        );
-        setDepartmentCareers(filtered);
-      }
-
-      // Fetch FAQ data by department
-      const faqResponse = await fetch(`/api/admin/data/FaqData`);
-      if (faqResponse.ok) {
-        const faqResult = await faqResponse.json();
-        const faqData = faqResult.data?.faqData || [];
-        const filtered = faqData.filter(
-          (f) => f.department?.toLowerCase() === category.toLowerCase(),
-        );
-        setDepartmentFaqs(filtered);
-      }
-    } catch (error) {
-      console.error("Error fetching department data:", error);
+    // FAQs
+    const faqData = faqDataRaw?.faqData || faqDataRaw?.faqs || [];
+    if (faqData.length > 0) {
+      const filtered = faqData.filter(
+        (f) => f.department?.toLowerCase() === categoryLower,
+      );
+      setDepartmentFaqs(filtered);
     }
   };
 
@@ -207,8 +185,8 @@ const DynamicProgramPage = () => {
   // Create a safe program object with defaults for optional fields
   const safeProgram = {
     ...program,
-    overview: program.overview || [],
-    eligibility: program.eligibility || [],
+    overview: program.overview || "",
+    eligibility: program.eligibility || "",
     curriculum: program.curriculum || [],
     // Combine program-specific careers with department careers (avoid duplicates)
     careers: [
@@ -267,7 +245,7 @@ const DynamicProgramPage = () => {
           <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20" />
         </div>
 
-        <div className="max-w-7xl mx-auto relative z-10 grid lg:grid-cols-2 gap-12 items-center">
+        <div className="container mx-auto px-4 md:px-2 lg:px-6 relative z-10 grid lg:grid-cols-2 gap-12 items-center">
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
@@ -282,9 +260,15 @@ const DynamicProgramPage = () => {
                 "Bachelor of\nBusiness Admin",
               )}
             </h1>
-            <p className="text-lg text-slate-300 max-w-xl leading-relaxed mb-8">
-              {safeProgram.description}
-            </p>
+            <div
+              className="program-rich-content program-rich-content--light text-lg max-w-xl leading-relaxed mb-8"
+              dangerouslySetInnerHTML={{
+                __html: cleanHtml(
+                  safeProgram.description ||
+                    "<p>Program description not available.</p>",
+                ),
+              }}
+            />
             <div className="flex flex-wrap gap-4">
               <Link
                 href="/admission/online"
@@ -328,7 +312,7 @@ const DynamicProgramPage = () => {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 py-20 lg:py-28 grid grid-cols-1 lg:grid-cols-3 gap-10">
+      <div className="container mx-auto px-4 md:px-2 lg:px-6 py-20 lg:py-28 grid grid-cols-1 lg:grid-cols-3 gap-10">
         {/* Main Content Column */}
         <div className="lg:col-span-2 space-y-20">
           {/* Message from Head */}
@@ -352,9 +336,14 @@ const DynamicProgramPage = () => {
                 <h3 className="text-2xl font-bold text-slate-900 mb-2">
                   Message from the Head
                 </h3>
-                <p className="text-slate-600 italic mb-4">
-                  {safeProgram.headMessage}
-                </p>
+                <div
+                  className="program-rich-content program-rich-content--compact italic mb-4"
+                  dangerouslySetInnerHTML={{
+                    __html: cleanHtml(
+                      safeProgram.headMessage || "Welcome to our program",
+                    ),
+                  }}
+                />
                 <div>
                   <p className="font-bold text-slate-900">
                     {safeProgram.headName}
@@ -374,12 +363,25 @@ const DynamicProgramPage = () => {
                 <span className="w-2 h-8 bg-blue-600 rounded-full"></span>{" "}
                 Program Overview
               </h2>
-              <div className="prose prose-slate max-w-none text-slate-600 leading-relaxed bg-white p-8 rounded-2xl border border-slate-100 shadow-sm">
-                {safeProgram.overview.map((para, i) => (
-                  <p key={i} className="mb-4 last:mb-0">
-                    {para}
+              <div className="program-rich-content bg-white p-8 rounded-2xl border border-slate-100 shadow-sm">
+                {typeof safeProgram.overview === "string" ? (
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: cleanHtml(safeProgram.overview),
+                    }}
+                  />
+                ) : Array.isArray(safeProgram.overview) &&
+                  safeProgram.overview.length > 0 ? (
+                  safeProgram.overview.map((para, i) => (
+                    <p key={i} className="mb-4 last:mb-0">
+                      {para}
+                    </p>
+                  ))
+                ) : (
+                  <p className="text-slate-400 italic">
+                    No overview available.
                   </p>
-                ))}
+                )}
               </div>
             </div>
 
@@ -389,18 +391,34 @@ const DynamicProgramPage = () => {
                 <CheckCircle className="w-5 h-5 text-blue-600" /> Eligibility
                 Criteria
               </h3>
-              <div className="grid sm:grid-cols-2 gap-4">
-                {safeProgram.eligibility.map((item, i) => (
+              <div>
+                {typeof safeProgram.eligibility === "string" ? (
                   <div
-                    key={i}
-                    className="flex items-start gap-3 bg-white p-4 rounded-xl border border-blue-100"
-                  >
-                    <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-2 shrink-0" />
-                    <span className="text-sm text-slate-700 font-medium">
-                      {item}
-                    </span>
+                    className="program-rich-content program-rich-eligibility"
+                    dangerouslySetInnerHTML={{
+                      __html: cleanHtml(safeProgram.eligibility),
+                    }}
+                  />
+                ) : Array.isArray(safeProgram.eligibility) &&
+                  safeProgram.eligibility.length > 0 ? (
+                  <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-4">
+                    {safeProgram.eligibility.map((item, i) => (
+                      <div
+                        key={i}
+                        className="flex items-start gap-3 bg-white p-4 rounded-xl border border-blue-100"
+                      >
+                        <div className="w-2 h-2 rounded-full bg-blue-500 mt-1.5 shrink-0" />
+                        <span className="text-sm text-slate-700 font-medium">
+                          {item}
+                        </span>
+                      </div>
+                    ))}
                   </div>
-                ))}
+                ) : (
+                  <p className="text-slate-400 italic text-sm">
+                    No eligibility criteria specified.
+                  </p>
+                )}
               </div>
             </div>
           </section>
@@ -494,33 +512,36 @@ const DynamicProgramPage = () => {
                 {safeProgram.careers.map((career, idx) => (
                   <div
                     key={idx}
-                    className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md hover:border-blue-100 transition-all group"
+                    className="bg-white p-5 rounded-xl border border-slate-200 hover:shadow-md hover:border-blue-100 transition-all group"
                   >
                     <div className="flex items-start gap-4">
                       <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
                         <Briefcase className="w-6 h-6" />
                       </div>
                       <div className="flex-1">
-                        <h4 className="font-bold text-slate-900 text-lg group-hover:text-blue-600 transition-colors">
+                        <h4 className="font-bold text-slate-900 text-lg group-hover:text-blue-600 transition-colors mb-2">
                           {career.area}
                         </h4>
                         {career.description && (
-                          <p className="text-slate-500 text-sm mb-3">
-                            {career.description}
-                          </p>
+                          <div
+                            className="program-rich-content program-rich-content--compact text-slate-500 text-sm mb-3 line-clamp-4"
+                            dangerouslySetInnerHTML={{
+                              __html: cleanHtml(career.description),
+                            }}
+                          />
                         )}
-                        {career.skills && (
+                        {/* {career.skills && (
                           <div className="flex flex-wrap gap-2">
                             {career.skills.split(",").map((skill, sIdx) => (
                               <span
                                 key={sIdx}
-                                className="inline-block px-2.5 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full border border-blue-200"
+                                className="inline-block px-2.5 py-1 bg-blue-50 text-gray-800 text-xs font-semibold rounded-full border border-blue-100"
                               >
                                 {skill.trim()}
                               </span>
                             ))}
                           </div>
-                        )}
+                        )} */}
                       </div>
                     </div>
                   </div>
@@ -783,6 +804,159 @@ const DynamicProgramPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Rich Text Content Styles — override Tailwind reset */}
+      <style jsx global>{`
+        .program-rich-content {
+          color: #475569;
+          line-height: 1.8;
+          font-size: 1rem;
+          word-break: normal;
+          overflow-wrap: break-word;
+          white-space: normal;
+        }
+        .program-rich-content p {
+          margin-bottom: 1.25rem;
+          word-break: normal;
+        }
+        .program-rich-content p:last-child {
+          margin-bottom: 0;
+        }
+        .program-rich-content h1 {
+          font-size: 1.875rem;
+          font-weight: 800;
+          color: #0f172a;
+          margin-top: 2rem;
+          margin-bottom: 1rem;
+          line-height: 1.3;
+        }
+        .program-rich-content h2 {
+          font-size: 1.5rem;
+          font-weight: 700;
+          color: #0f172a;
+          margin-top: 1.75rem;
+          margin-bottom: 0.75rem;
+          line-height: 1.35;
+        }
+        .program-rich-content h3 {
+          font-size: 1.25rem;
+          font-weight: 700;
+          color: #1e293b;
+          margin-top: 1.5rem;
+          margin-bottom: 0.5rem;
+          line-height: 1.4;
+        }
+        .program-rich-content strong,
+        .program-rich-content b {
+          font-weight: 700;
+          color: #1e293b;
+        }
+        .program-rich-content em,
+        .program-rich-content i {
+          font-style: italic;
+        }
+        .program-rich-content u {
+          text-decoration: underline;
+          text-decoration-color: #94a3b8;
+          text-underline-offset: 3px;
+        }
+        .program-rich-content a {
+          color: #2563eb;
+          font-weight: 600;
+          text-decoration: underline;
+          text-decoration-color: #93c5fd;
+          text-underline-offset: 3px;
+          transition: color 0.15s ease;
+        }
+        .program-rich-content a:hover {
+          color: #1d4ed8;
+        }
+        .program-rich-content ul {
+          list-style-type: disc;
+          padding-left: 1.75rem;
+          margin-top: 0.5rem;
+          margin-bottom: 1.25rem;
+        }
+        .program-rich-content ol {
+          list-style-type: decimal;
+          padding-left: 1.75rem;
+          margin-top: 0.5rem;
+          margin-bottom: 1.25rem;
+        }
+        .program-rich-content li {
+          margin-bottom: 0.375rem;
+          padding-left: 0.25rem;
+        }
+        .program-rich-content li::marker {
+          color: #3b82f6;
+        }
+        .program-rich-content blockquote {
+          border-left: 4px solid #3b82f6;
+          padding: 1rem 1.25rem;
+          margin: 1.25rem 0;
+          background: #f8fafc;
+          border-radius: 0 0.75rem 0.75rem 0;
+          color: #334155;
+          font-style: italic;
+        }
+
+        /* Light variant for hero dark bg */
+        .program-rich-content--light {
+          color: #cbd5e1;
+        }
+        .program-rich-content--light strong,
+        .program-rich-content--light b {
+          color: #f1f5f9;
+        }
+        .program-rich-content--light a {
+          color: #93c5fd;
+        }
+
+        /* Compact variant */
+        .program-rich-content--compact {
+          font-size: 0.9375rem;
+          line-height: 1.7;
+          color: #475569;
+        }
+        .program-rich-content--compact p {
+          margin-bottom: 0.75rem;
+        }
+
+        /* Eligibility styled list */
+        .program-rich-eligibility ul {
+          list-style: none;
+          padding-left: 0;
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+          gap: 0.75rem;
+        }
+        .program-rich-eligibility li {
+          display: flex;
+          align-items: flex-start;
+          gap: 0.75rem;
+          background: white;
+          padding: 1rem 1.25rem;
+          border-radius: 0.75rem;
+          border: 1px solid #dbeafe;
+          font-size: 0.875rem;
+          font-weight: 500;
+          color: #334155;
+          margin-bottom: 0;
+        }
+        .program-rich-eligibility li::before {
+          content: "";
+          display: inline-block;
+          width: 8px;
+          height: 8px;
+          min-width: 8px;
+          background: #3b82f6;
+          border-radius: 50%;
+          margin-top: 6px;
+        }
+        .program-rich-eligibility li::marker {
+          content: none;
+        }
+      `}</style>
     </div>
   );
 };

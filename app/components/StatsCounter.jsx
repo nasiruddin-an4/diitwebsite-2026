@@ -1,32 +1,14 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import { useStoreData } from "@/hooks/useDataStore";
 
 const StatsCounter = ({ data }) => {
     const [isVisible, setIsVisible] = useState(false);
     const [animatedStats, setAnimatedStats] = useState({});
-    const [statsData, setStatsData] = useState(data || []);
+    const storeStats = useStoreData("homepage_stats", []);
+    const statsData = (data && data.length > 0) ? data : storeStats;
     const sectionRef = useRef(null);
-
-    // Fetch stats from database if not provided
-    useEffect(() => {
-        if (!data || data.length === 0) {
-            const fetchStats = async () => {
-                try {
-                    const res = await fetch("/api/admin/homepage");
-                    const result = await res.json();
-                    if (result.success && result.data?.statsCounter) {
-                        setStatsData(result.data.statsCounter);
-                    }
-                } catch (error) {
-                    console.error("Failed to fetch stats:", error);
-                }
-            };
-            fetchStats();
-        } else {
-            setStatsData(data);
-        }
-    }, [data]);
 
     useEffect(() => {
         const observer = new IntersectionObserver(

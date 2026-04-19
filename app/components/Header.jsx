@@ -13,7 +13,7 @@ import {
   Loader2,
 } from "lucide-react";
 import Image from "next/image";
-import useCachedFetch from "@/hooks/useCachedFetch";
+import { useStoreData } from "@/hooks/useDataStore";
 
 // Fallback navigation data (used when API is unavailable)
 const fallbackNavigationItems = [
@@ -106,33 +106,12 @@ const Header = () => {
   const pathname = usePathname();
   const router = useRouter();
 
-  // 1. Fetch Navigation Structure
-  const { data: navData } = useCachedFetch(
-    "navigation_data",
-    "/api/admin/data/NavigationData",
-    {
-      fallback: { navigationItems: fallbackNavigationItems },
-      maxAge: 10 * 60 * 1000,
-      transform: (data) => data,
-    },
-  );
+  // 1. Navigation Structure from global store
+  const navDataRaw = useStoreData("navigation_data", { navigationItems: fallbackNavigationItems });
+  const navData = navDataRaw || { navigationItems: fallbackNavigationItems };
 
-  // 2. Fetch Programs Data to make the dropdown dynamic
-  const { data: programsDataResult } = useCachedFetch(
-    "all_programs_nav",
-    "/api/admin/data/ProgramsData",
-    {
-      fallback: [],
-      maxAge: 5 * 60 * 1000,
-      transform: (data) => {
-        // Programs could be an array or an object
-        const programsArr = data?.programsData || data || [];
-        return Array.isArray(programsArr)
-          ? programsArr
-          : Object.values(programsArr);
-      },
-    },
-  );
+  // 2. Programs Data from global store
+  const programsDataResult = useStoreData("programs_data", []);
 
   // 3. Process navigation items and inject dynamic programs + ensure Video Gallery
   const processedItems = (
@@ -302,7 +281,7 @@ const Header = () => {
             : "bg-white/90 backdrop-blur-sm h-[80px] lg:h-[90px]"
         }`}
       >
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 h-full flex items-center justify-between">
+        <div className="container mx-auto px-4 sm:px-6 h-full flex items-center justify-between">
           {/* Logo (Aligned Left) */}
           <Link
             href="/"

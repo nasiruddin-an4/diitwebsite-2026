@@ -14,6 +14,7 @@ import {
   Users,
   Sparkles,
 } from "lucide-react";
+import { useStoreData } from "@/hooks/useDataStore";
 
 const ITEMS_PER_PAGE = 12;
 
@@ -23,42 +24,21 @@ const AlumniPage = () => {
   const [selectedDept, setSelectedDept] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [alumni, setAlumni] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   const departments = ["All", "BBA", "MBA", "CSE", "BTHM", "Others"];
+
+  // Read alumni from global data store (pre-loaded)
+  const rawAlumni = useStoreData("alumni", []) || [];
+  const alumni = [...rawAlumni].sort((a, b) => {
+    const orderA = a.sortOrder !== undefined ? a.sortOrder : 9999;
+    const orderB = b.sortOrder !== undefined ? b.sortOrder : 9999;
+    return orderA - orderB;
+  });
 
   // Handle mounting to prevent hydration errors
   useEffect(() => {
     setMounted(true);
   }, []);
-
-  // Fetch Alumni Data
-  useEffect(() => {
-    if (!mounted) return;
-    const fetchAlumni = async () => {
-      try {
-        setLoading(true);
-        const res = await fetch("/api/admin/alumni");
-        const result = await res.json();
-        if (result.success) {
-          // Sort by sortOrder (ascending) so admin-defined order is respected
-          const sorted = [...result.data].sort((a, b) => {
-            const orderA = a.sortOrder !== undefined ? a.sortOrder : 9999;
-            const orderB = b.sortOrder !== undefined ? b.sortOrder : 9999;
-            return orderA - orderB;
-          });
-          setAlumni(sorted);
-        }
-      } catch (error) {
-        console.error("Failed to fetch alumni:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchAlumni();
-  }, [mounted]);
 
   // Handle Scroll for sticky effect
   useEffect(() => {
@@ -108,7 +88,7 @@ const AlumniPage = () => {
   };
 
   // Before mounting, render a consistent shell to prevent hydration mismatch
-  if (!mounted || loading) {
+  if (!mounted) {
     return (
       <div className="min-h-screen bg-[#f8fafc] flex flex-col items-center justify-center gap-4">
         <div className="relative">

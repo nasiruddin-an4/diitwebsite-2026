@@ -101,8 +101,9 @@ export default function BlogSection({ data, updateField }) {
       if (isCreating) {
         updatedList.unshift({ ...editingItem, ...result.item });
       } else {
+        const targetId = editingItem._id || editingItem.id;
         const idx = updatedList.findIndex(
-          (t) => t._id === editingItem._id || t.id === editingItem.id,
+          (t) => t._id === targetId || t.id === targetId,
         );
         if (idx !== -1) {
           updatedList[idx] = { ...updatedList[idx], ...editingItem };
@@ -149,7 +150,7 @@ export default function BlogSection({ data, updateField }) {
           }
 
           const updatedList = allItems.filter(
-            (i) => i._id !== item._id && i.id !== item.id,
+            (i) => (i._id || i.id) !== targetId,
           );
           updateField("newsEvents", null, null, updatedList);
 
@@ -270,7 +271,7 @@ export default function BlogSection({ data, updateField }) {
                           )}
                         </div>
                         <div className="min-w-0 flex-1">
-                          <p className="font-extrabold text-slate-800 text-sm leading-tight group-hover:text-blue-600 transition-colors uppercase tracking-tight line-clamp-2">
+                          <p className="font-extrabold text-slate-800 text-sm leading-tight group-hover:text-blue-600 transition-colors tracking-tight line-clamp-2">
                             {item.title}
                           </p>
                           <div className="flex items-center gap-3 mt-1.5">

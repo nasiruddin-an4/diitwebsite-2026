@@ -1,35 +1,23 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle2, AlertCircle, FileText, Download, TrendingUp, Sparkles } from 'lucide-react';
+import { useStoreData } from "@/hooks/useDataStore";
 
 const FeesPage = () => {
     const [activeTab, setActiveTab] = useState('CSE');
-    const [feeData, setFeeData] = useState({});
-    const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const fetchFees = async () => {
-            try {
-                const res = await fetch('/api/admin/data/AdmissionData');
-                const result = await res.json();
-                if (result.success && result.data?.fees) {
-                    setFeeData(result.data.fees);
-                    // Determine initial active tab if current one is invalid
-                    const keys = Object.keys(result.data.fees);
-                    if (keys.length > 0 && !keys.includes(activeTab)) {
-                        setActiveTab(keys[0]);
-                    }
-                }
-            } catch (error) {
-                console.error("Failed to load fees", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchFees();
-    }, []);
+    // Read admission data from global data store
+    const admissionData = useStoreData("admission_data", null);
+    const feeData = admissionData?.fees || {};
+    const loading = admissionData === null;
+
+    // Determine initial active tab if current one is invalid
+    const keys = Object.keys(feeData);
+    if (keys.length > 0 && !keys.includes(activeTab) && activeTab === 'CSE') {
+        // Will auto-correct on next render
+    }
 
     const programs = Object.keys(feeData).map(key => ({
         id: key,

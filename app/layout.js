@@ -5,7 +5,7 @@ import "./globals.css";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import BackToTop from "./components/BackToTop";
-import DataPrefetcher from "./components/DataPrefetcher";
+import { DataStoreProvider } from "@/hooks/useDataStore";
 import { usePathname } from "next/navigation";
 
 const manrope = Manrope({
@@ -21,15 +21,15 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${manrope.variable} antialiased font-sans`}>
-        <DataPrefetcher />
-        {!isAdminRoute && <Header />}
-        <main className={isAdminRoute ? "" : "min-h-screen pt-16"}>
-          {children}
-        </main>
-        {!isAdminRoute && <BackToTop />}
-        {!isAdminRoute && <Footer />}
+        <DataStoreProvider>
+          {!isAdminRoute && <Header />}
+          <main className={isAdminRoute ? "" : "min-h-screen pt-16"}>
+            {children}
+          </main>
+          {!isAdminRoute && <BackToTop />}
+          {!isAdminRoute && <Footer />}
+        </DataStoreProvider>
       </body>
     </html>
   );
 }
-

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
     Calendar as CalendarIcon,
@@ -15,34 +15,12 @@ import {
     CheckCircle2,
     Loader2
 } from 'lucide-react';
+import { useStoreData } from "@/hooks/useDataStore";
 
 const AcademicCalendarPage = () => {
-    const [academicYear, setAcademicYear] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-
-    useEffect(() => {
-        fetchCalendarData();
-    }, []);
-
-    const fetchCalendarData = async () => {
-        try {
-            setLoading(true);
-            const res = await fetch("/api/admin/academics/calendar");
-            const result = await res.json();
-
-            if (result.success && result.data.length > 0) {
-                setAcademicYear(result.data);
-            } else {
-                setAcademicYear([]);
-            }
-        } catch (err) {
-            console.error("Error fetching calendar data:", err);
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
-    };
+    // Read from global data store
+    const academicYear = useStoreData("academic_calendar", []) || [];
+    const loading = academicYear.length === 0;
 
     const getIcon = (type) => {
         switch (type) {
@@ -78,16 +56,6 @@ const AcademicCalendarPage = () => {
                 </div>
             )}
 
-            {/* Error State */}
-            {error && !loading && (
-                <div className="min-h-screen flex items-center justify-center">
-                    <div className="text-center">
-                        <AlertCircle className="w-12 h-12 text-red-600 mx-auto mb-4" />
-                        <p className="text-slate-600 font-medium">Error loading calendar</p>
-                        <p className="text-slate-500 text-sm mt-2">Using default calendar data</p>
-                    </div>
-                </div>
-            )}
 
             {/* Main Content */}
             {!loading && (

@@ -12,27 +12,12 @@ import {
     ArrowRight
 } from 'lucide-react';
 import Link from 'next/link';
+import { useStoreData } from "@/hooks/useDataStore";
 
 const ScholarshipsPage = () => {
-    const [data, setData] = React.useState(null);
-    const [loading, setLoading] = React.useState(true);
-
-    React.useEffect(() => {
-        const fetchScholarships = async () => {
-            try {
-                const res = await fetch('/api/admin/data/AdmissionData');
-                const result = await res.json();
-                if (result.success && result.data) {
-                    setData(result.data);
-                }
-            } catch (error) {
-                console.error("Failed to fetch scholarship data", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchScholarships();
-    }, []);
+    // Read admission data from global data store
+    const data = useStoreData("admission_data", null);
+    const loading = data === null;
 
     const container = {
         hidden: { opacity: 0 },

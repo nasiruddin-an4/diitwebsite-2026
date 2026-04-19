@@ -3,17 +3,15 @@
 import React from "react";
 import Link from "next/link";
 import { ArrowRight, Download, Phone, Calendar, Sparkles } from "lucide-react";
-import useCachedFetch from "@/hooks/useCachedFetch";
+import { useStoreData } from "@/hooks/useDataStore";
 
 const CallToActionSection = () => {
-    const { data: ctaData } = useCachedFetch("cta_settings", "/api/cta", {
-        fallback: {
-            admissionOpenText: "Admissions Open 2026",
-            admissionLastDate: "25th January",
-            prospectusUrl: "/prospectus",
-            contactNumber: "+880 1234-567890",
-            applyNowUrl: "/admission/online"
-        }
+    const ctaData = useStoreData("cta_settings", {
+        admissionOpenText: "Admissions Open 2026",
+        admissionLastDate: "25th January",
+        prospectusUrl: "/prospectus",
+        contactNumber: "+880 1234-567890",
+        applyNowUrl: "/admission/online"
     });
 
     return (

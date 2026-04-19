@@ -4,7 +4,16 @@ import { NextResponse } from "next/server";
 export async function POST(request) {
     try {
         const data = await request.json();
-        const { email, phone, fullName } = data;
+        const { email, phone, fullName, botField } = data;
+
+        // Honeypot check - if a bot filled this out, silently accept without saving
+        if (botField) {
+            console.warn("Bot detected in admission form submission.");
+            return NextResponse.json({
+                success: true,
+                message: "Application submitted successfully!"
+            });
+        }
 
         // Basic validation
         if (!email || !phone || !fullName) {

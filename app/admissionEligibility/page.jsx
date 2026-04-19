@@ -15,25 +15,12 @@ import {
     ArrowRight
 } from 'lucide-react';
 import Link from 'next/link';
+import { useStoreData } from "@/hooks/useDataStore";
 
 const AdmissionEligibilityPage = () => {
-    const [data, setData] = React.useState(null);
-
-    React.useEffect(() => {
-        const loadData = async () => {
-            try {
-                // We'll fetch from the API to get the latest (including MongoDB if used)
-                const res = await fetch('/api/admin/data/AdmissionData');
-                const result = await res.json();
-                if (result.success && result.data && result.data.eligibility) {
-                    setData(result.data.eligibility);
-                }
-            } catch (e) {
-                console.error("Failed to load admission data:", e);
-            }
-        }
-        loadData();
-    }, []);
+    // Read admission data from global data store
+    const admissionDataRaw = useStoreData("admission_data", null);
+    const data = admissionDataRaw?.eligibility || null;
 
     if (!data) return (
         <div className="min-h-screen bg-slate-50 flex items-center justify-center">

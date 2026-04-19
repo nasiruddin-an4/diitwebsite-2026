@@ -1,34 +1,13 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React from "react";
+import { useStoreData } from "@/hooks/useDataStore";
 
 const TestimonialsSection = ({ testimonials: initialData }) => {
-    const [testimonials, setTestimonials] = useState(initialData || []);
-    const [loading, setLoading] = useState(!initialData);
-
-    useEffect(() => {
-        if (initialData) {
-            setLoading(false);
-            setTestimonials(initialData);
-            return;
-        }
-
-        const fetchData = async () => {
-            try {
-                const response = await fetch('/api/admin/testimonials');
-                const result = await response.json();
-                if (result.success) {
-                    setTestimonials(result.data || []);
-                }
-            } catch (error) {
-                console.error("Failed to fetch testimonials:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchData();
-    }, [initialData]);
-
+    const storeTestimonials = useStoreData("testimonials", []);
+    const testimonials = (initialData && initialData.length > 0) ? initialData : storeTestimonials;
+    const loading = !initialData && testimonials.length === 0;
+    
     if (loading) {
         return (
             <section className="py-20 bg-slate-50 relative overflow-hidden">

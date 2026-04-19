@@ -62,7 +62,8 @@ const OnlineAdmissionForm = () => {
         guardianPhone: "",
         transactionId: "",
         session: "Session 2025-26",
-        agreeToTerms: false
+        agreeToTerms: false,
+        botField: "" // Honeypot field
     });
 
     const handleInputChange = (e) => {
@@ -227,6 +228,19 @@ const OnlineAdmissionForm = () => {
                     {/* Left: Main Form */}
                     <div className="lg:col-span-8 space-y-6">
                         <form onSubmit={handleSubmit} className="space-y-6">
+                            {/* Honeypot field - visually hidden but accessible to bots */}
+                            <div className="hidden" aria-hidden="true">
+                                <label htmlFor="botField">Do not fill this out if you are human</label>
+                                <input
+                                    type="text"
+                                    id="botField"
+                                    name="botField"
+                                    value={formData.botField}
+                                    onChange={handleInputChange}
+                                    tabIndex={-1}
+                                    autoComplete="off"
+                                />
+                            </div>
 
                             {/* Section 1: Program */}
                             <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-slate-200">

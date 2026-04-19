@@ -4,6 +4,11 @@ import { motion } from "framer-motion";
 import * as LucideIcons from "lucide-react";
 import Swal from "sweetalert2";
 
+const cleanHtml = (html) => {
+  if (!html) return "";
+  return typeof html === "string" ? html.replace(/&nbsp;/g, " ") : html;
+};
+
 export default function AboutClient({ data }) {
     const {
         hero = {},
@@ -70,9 +75,12 @@ export default function AboutClient({ data }) {
                         <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 tracking-tight leading-tight">
                             {hero.title}
                         </h1>
-                        <p className="text-xl text-slate-300 max-w-6xl mx-auto font-light leading-relaxed whitespace-pre-wrap">
-                            {hero.subtitle}
-                        </p>
+                        {hero.subtitle ? (
+                            <div 
+                                className="about-rich-content about-rich-content--light max-w-6xl mx-auto"
+                                dangerouslySetInnerHTML={{ __html: cleanHtml(hero.subtitle) }}
+                            />
+                        ) : null}
                     </motion.div>
                 </div>
             </section>
@@ -117,11 +125,12 @@ export default function AboutClient({ data }) {
                             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6 leading-tight">
                                 {intro.title}
                             </h2>
-                            <div className="prose prose-lg text-gray-600 whitespace-pre-wrap">
-                                <p>
-                                    {intro.description}
-                                </p>
-                            </div>
+                            {intro.description && (
+                                <div 
+                                    className="about-rich-content"
+                                    dangerouslySetInnerHTML={{ __html: cleanHtml(intro.description) }}
+                                />
+                            )}
 
                             <div className="grid grid-cols-2 gap-4 mt-8">
                                 {(intro.stats || []).map((stat, idx) => (
@@ -164,9 +173,12 @@ export default function AboutClient({ data }) {
                             </div>
 
                             <h3 className="text-2xl font-bold text-gray-900 mb-4">{mission.title}</h3>
-                            <p className="text-gray-600 leading-relaxed text-lg whitespace-pre-wrap">
-                                {mission.description}
-                            </p>
+                            {mission.description && (
+                                <div 
+                                    className="about-rich-content"
+                                    dangerouslySetInnerHTML={{ __html: cleanHtml(mission.description) }}
+                                />
+                            )}
                         </motion.div>
 
                         {/* Vision Card */}
@@ -183,9 +195,12 @@ export default function AboutClient({ data }) {
                             </div>
 
                             <h3 className="text-2xl font-bold text-gray-900 mb-4">{vision.title}</h3>
-                            <p className="text-gray-600 leading-relaxed text-lg whitespace-pre-wrap">
-                                {vision.description}
-                            </p>
+                            {vision.description && (
+                                <div 
+                                    className="about-rich-content"
+                                    dangerouslySetInnerHTML={{ __html: cleanHtml(vision.description) }}
+                                />
+                            )}
                         </motion.div>
                     </div>
                 </div>
@@ -209,7 +224,12 @@ export default function AboutClient({ data }) {
                                     >
                                         <Icon className="w-12 h-12 mx-auto mb-4 text-indigo-300" />
                                         <h4 className="text-xl font-bold mb-2">{item.title}</h4>
-                                        <p className="text-indigo-200">{item.desc}</p>
+                                        {item.desc && (
+                                            <div 
+                                                className="about-rich-content about-rich-content--indigo text-balance"
+                                                dangerouslySetInnerHTML={{ __html: cleanHtml(item.desc) }}
+                                            />
+                                        )}
                                     </motion.div>
                                 );
                             })}
@@ -262,6 +282,86 @@ export default function AboutClient({ data }) {
                     </form>
                 </div>
             </section>
+
+            <style jsx global>{`
+                .about-rich-content {
+                    color: #475569;
+                    line-height: 1.8;
+                    font-size: 1.125rem;
+                    white-space: normal;
+                    word-wrap: normal !important;
+                    word-break: normal !important;
+                    overflow-wrap: normal !important;
+                }
+                .about-rich-content p {
+                    margin-bottom: 1.25rem;
+                    word-wrap: normal !important;
+                    word-break: normal !important;
+                    overflow-wrap: normal !important;
+                }
+                .about-rich-content p:last-child {
+                    margin-bottom: 0;
+                }
+                .about-rich-content h1, .about-rich-content h2, .about-rich-content h3 {
+                    color: #0f172a;
+                    font-weight: 700;
+                    margin-top: 1.5rem;
+                    margin-bottom: 0.75rem;
+                    line-height: 1.3;
+                }
+                .about-rich-content strong, .about-rich-content b {
+                    font-weight: 700;
+                    color: #1e293b;
+                }
+                .about-rich-content em, .about-rich-content i {
+                    font-style: italic;
+                }
+                .about-rich-content u {
+                    text-decoration: underline;
+                }
+                .about-rich-content a {
+                    color: #2563eb;
+                    font-weight: 600;
+                    text-decoration: underline;
+                    text-underline-offset: 3px;
+                }
+                .about-rich-content ul {
+                    list-style-type: disc;
+                    padding-left: 1.5rem;
+                    margin-bottom: 1.25rem;
+                }
+                .about-rich-content ol {
+                    list-style-type: decimal;
+                    padding-left: 1.5rem;
+                    margin-bottom: 1.25rem;
+                }
+                .about-rich-content li {
+                    margin-bottom: 0.25rem;
+                }
+                /* Specialized variants matching About context */
+                .about-rich-content--light {
+                    color: #cbd5e1;
+                    font-size: 1.25rem;
+                    font-weight: 300;
+                }
+                .about-rich-content--light strong, .about-rich-content--light b {
+                    color: #f8fafc;
+                }
+                .about-rich-content--indigo {
+                    color: #c7d2fe;
+                    font-size: 1rem;
+                    line-height: 1.5;
+                }
+                .about-rich-content--indigo p {
+                    margin-bottom: 0.5rem;
+                }
+                .about-rich-content--indigo strong, .about-rich-content--indigo b {
+                    color: #ffffff;
+                }
+                .about-rich-content--indigo ul {
+                    text-align: left;
+                }
+            `}</style>
         </div>
     );
 }

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Play, ArrowRight, Film } from "lucide-react";
+import { useStoreData } from "@/hooks/useDataStore";
 
 /* ─── YouTube helpers ──────────────────────────────────────── */
 function getYouTubeId(url = "") {
@@ -149,24 +150,11 @@ function VideoModal({ video, onClose }) {
 
 /* ─── Main Section ─────────────────────────────────────────── */
 export default function VideoSection({ videos: initialVideos }) {
-  const [videos, setVideos] = useState(initialVideos || []);
-  const [loading, setLoading] = useState(!initialVideos);
+  // Use global data store as fallback when no initialVideos prop
+  const storeVideos = useStoreData("videos", []);
+  const videos = initialVideos || storeVideos || [];
+  const loading = !initialVideos && videos.length === 0;
   const [activeVideo, setActiveVideo] = useState(null);
-
-  useEffect(() => {
-    if (initialVideos) return;
-    (async () => {
-      try {
-        const res = await fetch("/api/admin/videos");
-        const data = await res.json();
-        if (data.success) setVideos(data.data || []);
-      } catch (e) {
-        console.error("Video fetch error:", e);
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, [initialVideos]);
 
   const preview = videos.slice(0, 3);
 

@@ -284,7 +284,7 @@ export default function GeneralPagesSection({ pageType }) { // pageType: 'about'
                     <SectionBox title="Hero Section">
                         <InputField label="Hero Badge" value={data.hero?.badge || ""} onChange={(v) => updateDeep('hero.badge', v)} placeholder="e.g. Since 2000" />
                         <InputField label="Hero Title" value={data.hero?.title} onChange={(v) => updateDeep('hero.title', v)} />
-                        <InputField label="Hero Subtitle" value={data.hero?.subtitle} onChange={(v) => updateDeep('hero.subtitle', v)} textarea />
+                        <InputField label="Hero Subtitle" value={data.hero?.subtitle} onChange={(v) => updateDeep('hero.subtitle', v)} richText />
                         <ImageUploader
                             label="Hero Background"
                             image={data.hero?.bgImage}
@@ -297,7 +297,7 @@ export default function GeneralPagesSection({ pageType }) { // pageType: 'about'
                     {/* Intro */}
                     <SectionBox title="Introduction">
                         <InputField label="Title" value={data.intro?.title} onChange={(v) => updateDeep('intro.title', v)} />
-                        <InputField label="Description" value={data.intro?.description} onChange={(v) => updateDeep('intro.description', v)} textarea />
+                        <InputField label="Description" value={data.intro?.description} onChange={(v) => updateDeep('intro.description', v)} richText />
                         <ImageUploader
                             label="Intro Image"
                             image={data.intro?.image}
@@ -338,11 +338,11 @@ export default function GeneralPagesSection({ pageType }) { // pageType: 'about'
                     <div className="grid md:grid-cols-2 gap-6">
                         <SectionBox title="Mission">
                             <InputField label="Mission Title" value={data.mission?.title} onChange={(v) => updateDeep('mission.title', v)} />
-                            <InputField label="Description" value={data.mission?.description} onChange={(v) => updateDeep('mission.description', v)} textarea />
+                            <InputField label="Description" value={data.mission?.description} onChange={(v) => updateDeep('mission.description', v)} richText />
                         </SectionBox>
                         <SectionBox title="Vision">
                             <InputField label="Vision Title" value={data.vision?.title} onChange={(v) => updateDeep('vision.title', v)} />
-                            <InputField label="Description" value={data.vision?.description} onChange={(v) => updateDeep('vision.description', v)} textarea />
+                            <InputField label="Description" value={data.vision?.description} onChange={(v) => updateDeep('vision.description', v)} richText />
                         </SectionBox>
                     </div>
 
@@ -361,7 +361,7 @@ export default function GeneralPagesSection({ pageType }) { // pageType: 'about'
                                         />
 
                                         <div className="md:col-span-2">
-                                            <InputField label="Description" value={val.desc} onChange={(v) => updateArrayItem('values', idx, 'desc', v)} />
+                                            <InputField label="Description" value={val.desc} onChange={(v) => updateArrayItem('values', idx, 'desc', v)} richText />
                                         </div>
                                     </div>
                                 </div>

@@ -60,7 +60,8 @@ export default function TestimonialsSection({ data, updateField }) {
         updatedList.push({ ...editingItem, ...result.item });
       } else {
         // Update existing item
-        const idx = updatedList.findIndex(t => (t._id === editingItem._id) || (t.id === editingItem.id));
+        const targetId = editingItem._id || editingItem.id;
+        const idx = updatedList.findIndex(t => t._id === targetId || t.id === targetId);
         if (idx !== -1) {
           updatedList[idx] = { ...updatedList[idx], ...editingItem };
         }

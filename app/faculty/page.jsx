@@ -1,42 +1,19 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { Search, Mail, Phone, GraduationCap, ChevronRight, Loader2, AlertCircle } from 'lucide-react';
+import { useStoreData } from "@/hooks/useDataStore";
 
 const FacultyPage = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedDept, setSelectedDept] = useState('All');
-    const [faculty, setFaculty] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
     const departments = ['All', 'CSE', 'BBA', 'THM', 'MBA'];
 
-    useEffect(() => {
-        fetchFaculty();
-    }, []);
-
-    const fetchFaculty = async () => {
-        try {
-            setLoading(true);
-            const res = await fetch("/api/admin/academics/faculty");
-            const result = await res.json();
-
-            if (result.success && result.data.length > 0) {
-                setFaculty(result.data);
-            } else {
-                // Use default faculty if API returns empty
-                setFaculty(defaultFacultyData);
-            }
-        } catch (err) {
-            console.error("Error fetching faculty:", err);
-            // Fallback to default faculty on error
-            setFaculty(defaultFacultyData);
-        } finally {
-            setLoading(false);
-        }
-    };
+    // Read faculty from global data store (pre-loaded)
+    const faculty = useStoreData("faculty", []) || [];
+    const loading = faculty.length === 0;
 
     // The first member in our sorted list (by serial) will be our featured Head
     const principal = faculty.length > 0 ? faculty[0] : null;
