@@ -1,6 +1,7 @@
 import { getData } from "@/lib/data-service";
 import clientPromise from "@/lib/mongodb";
 import Hero from "./components/Hero";
+import MarqueeNotice from "./components/MarqueeNotice";
 import StatsCounter from "./components/StatsCounter";
 import ProgramExplorer from "./components/ProgramExplorer";
 import CredibilitySection from "./components/CredibilitySection";
@@ -72,9 +73,15 @@ export default async function Home() {
     slug: n.slug || ''
   }));
 
+  // --- Marquee Notice ---
+  const marqueeDoc = await db.collection("site_settings").findOne({ _id: "marquee_settings" });
+  const marqueeText = marqueeDoc?.text || "";
+  const marqueeEnabled = marqueeDoc?.enabled !== false;
+
   return (
     <div className="min-h-screen font-sans">
       <Hero />
+      <MarqueeNotice text={marqueeText} enabled={marqueeEnabled} />
       <StatsCounter data={homeData.statsCounter} />
       <ProgramExplorer data={programsData?.programsData || programsData} />
       <FindYourWay />

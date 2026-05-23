@@ -65,14 +65,14 @@ const StatsCounter = ({ data }) => {
     }, [isVisible, statsData]);
 
     return (
-        <section ref={sectionRef} className="py-20 bg-white">
+        <section ref={sectionRef} className="py-10 md:py-20 bg-white">
             <div className="max-w-7xl mx-auto px-4 md:px-0">
                 {/* Section Header */}
-                <div className="text-center mb-16">
-                    <h2 className="font-bold text-4xl lg:text-5xl text-blue-900 mb-4">
+                <div className="text-center mb-10 md:mb-16">
+                    <h2 className="font-bold text-3xl lg:text-5xl text-blue-900 mb-2">
                         Excellence in Numbers
                     </h2>
-                    <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
+                    <p className="text-lg md:text-xl text-gray-700 max-w-4xl mx-auto leading-relaxed">
                         Our commitment to quality education and student success is reflected
                         in these real-time metrics that showcase our institutional
                         excellence and impact.
@@ -80,7 +80,7 @@ const StatsCounter = ({ data }) => {
                 </div>
 
                 {/* Stats Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 text-center justify-center relative">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8 text-center justify-center relative">
                     {statsData?.map((stat, index) => (
                         <div
                             key={stat?.id}
@@ -94,7 +94,7 @@ const StatsCounter = ({ data }) => {
                             {/* Stats Content */}
                             <div className="z-10 text-center py-5">
                                 <div className="flex justify-center items-baseline space-x-1 mb-2">
-                                    <span className="font-bold text-4xl lg:text-5xl text-blue-900">
+                                    <span className="font-bold text-5xl lg:text-5xl text-blue-900">
                                         {animatedStats?.[stat?.id]?.toLocaleString() || 0}
                                         <span className="font-medium">{stat?.suffix}</span>
                                     </span>

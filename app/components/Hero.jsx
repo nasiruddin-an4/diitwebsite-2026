@@ -79,7 +79,7 @@ const Hero = () => {
   const slide = heroSlides[currentSlide];
 
   return (
-    <div className="relative h-[60vh] md:h-[90vh] w-full overflow-hidden">
+    <div className="relative h-[60vh] md:h-[85vh] w-full overflow-hidden">
       {/* Background Image Container with Cross-fade */}
       <div className="absolute inset-0">
         <AnimatePresence initial={false}>
@@ -143,11 +143,10 @@ const Hero = () => {
                 <button
                   key={index}
                   onClick={() => goToSlide(index)}
-                  className={`h-1.5 rounded-full transition-all duration-300 ${
-                    index === currentSlide
-                      ? "w-8 bg-blue-500"
-                      : "w-4 bg-white/30 hover:bg-white/50"
-                  }`}
+                  className={`h-1.5 rounded-full transition-all duration-300 ${index === currentSlide
+                    ? "w-8 bg-blue-500"
+                    : "w-4 bg-white/30 hover:bg-white/50"
+                    }`}
                   aria-label={`Go to slide ${index + 1}`}
                 />
               ))}

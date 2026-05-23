@@ -26,7 +26,8 @@ import {
   ChevronDown,
   ChevronRight,
   ArrowLeftToLine,
-  PenTool
+  PenTool,
+  Megaphone
 } from "lucide-react";
 
 import OverviewSection from "./components/OverviewSection";
@@ -53,6 +54,7 @@ import SiteInfoSection from "./components/SiteInfoSection";
 import CallToActionSection from "./components/CallToActionSection";
 import NavigationSection from "./components/NavigationSection";
 import BlogSection from "./components/BlogSection";
+import MarqueeSection from "./components/MarqueeSection";
 import Image from "next/image";
 
 const menuItems = [
@@ -74,6 +76,7 @@ const menuItems = [
     label: "Academics",
     icon: BookOpen,
     children: [
+      { id: "marquee", label: "Marquee Notice" },
       { id: "academic-calendar", label: "Academic Calendar" },
       { id: "diit-notices", label: "DIIT Notices" },
       { id: "faculty-members", label: "Faculty Members" },
@@ -728,6 +731,7 @@ export default function AdminDashboard() {
             {activeSection === "campus-activities" && (
               <CampusActivitiesSection />
             )}
+            {activeSection === "marquee" && <MarqueeSection />}
             {activeSection === "cta-settings" && <CallToActionSection />}
             {["about", "contact", "faq"].includes(activeSection) && (
               <GeneralPagesSection pageType={activeSection} />
