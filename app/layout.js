@@ -33,7 +33,7 @@ export const metadata = {
     telephone: false,
   },
   openGraph: {
-    title: "Daffodil Institute of Technology (DIIT)",
+    title: "Daffodil Institute of Information Technology (DIIT)",
     description: "Empowering students through innovative education.",
     url: "https://diit.edu.bd",
     siteName: "DIIT",
@@ -54,6 +54,9 @@ export const metadata = {
   },
   verification: {
     google: "yoursiteverification",
+    other: {
+      "msvalidate.01": "89A69082F30BCB96EAA807E92331C3A6",
+    },
   },
 };
 
@@ -62,6 +65,28 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning={true}>
       <head>
+        {/* Google Tag Manager */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-P9W7ZR82');`,
+          }}
+        />
+        {/* End Google Tag Manager */}
+        {/* Google tag (gtag.js) */}
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-33SB0W857C"></script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-33SB0W857C');`,
+          }}
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -130,9 +155,49 @@ export default function RootLayout({ children }) {
             ]),
           }}
         />
+        {/* LinkedIn Insight Tag */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `_linkedin_partner_id = "10508729";
+window._linkedin_data_partner_ids = window._linkedin_data_partner_ids || [];
+window._linkedin_data_partner_ids.push(_linkedin_partner_id);`,
+          }}
+        />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(l) {
+if (!l){window.lintrk = function(a,b){window.lintrk.q.push([a,b])};
+window.lintrk.q=[]}
+var s = document.getElementsByTagName("script")[0];
+var b = document.createElement("script");
+b.type = "text/javascript";b.async = true;
+b.src = "https://snap.licdn.com/li.lms-analytics/insight.min.js";
+s.parentNode.insertBefore(b, s);})(window.lintrk);`,
+          }}
+        />
       </head>
       <body className={`${manrope.variable} antialiased font-sans`} suppressHydrationWarning={true}>
+        {/* Google Tag Manager (noscript) */}
+        <noscript>
+          <iframe
+            src="https://www.googletagmanager.com/ns.html?id=GTM-P9W7ZR82"
+            height="0"
+            width="0"
+            style={{ display: "none", visibility: "hidden" }}
+          ></iframe>
+        </noscript>
+        {/* End Google Tag Manager (noscript) */}
         <ClientLayout>{children}</ClientLayout>
+        {/* LinkedIn Insight Tag (noscript) */}
+        <noscript>
+          <img
+            height="1"
+            width="1"
+            style={{ display: "none" }}
+            alt=""
+            src="https://px.ads.linkedin.com/collect/?pid=10508729&fmt=gif"
+          />
+        </noscript>
       </body>
     </html>
   );
