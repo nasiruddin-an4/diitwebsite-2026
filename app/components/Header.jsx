@@ -126,7 +126,7 @@ const Header = () => {
         ...item,
         dropdown: programsDataResult.map((prog) => ({
           name: prog.title || prog.shortName,
-          path: `/programs/${prog.id}`,
+          path: `/programs/${prog.active_path || prog.shortName?.toLowerCase() || prog.title?.toLowerCase().replace(/[^a-z0-9]+/g, '-') || prog.id}`,
         })),
       };
     }

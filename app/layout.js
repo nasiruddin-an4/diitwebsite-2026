@@ -1,6 +1,7 @@
 import { Manrope } from "next/font/google";
 import "./globals.css";
 import ClientLayout from "./ClientLayout";
+import Script from "next/script";
 
 const manrope = Manrope({
   variable: "--font-manrope",
@@ -66,7 +67,9 @@ export default function RootLayout({ children }) {
     <html lang="en" suppressHydrationWarning={true}>
       <head>
         {/* Google Tag Manager */}
-        <script
+        <Script
+          id="gtm-script"
+          strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -77,8 +80,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         />
         {/* End Google Tag Manager */}
         {/* Google tag (gtag.js) */}
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-33SB0W857C"></script>
-        <script
+        <Script
+          id="gtag-base"
+          strategy="afterInteractive"
+          src="https://www.googletagmanager.com/gtag/js?id=G-33SB0W857C"
+        />
+        <Script
+          id="gtag-config"
+          strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: `window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -156,14 +165,18 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           }}
         />
         {/* LinkedIn Insight Tag */}
-        <script
+        <Script
+          id="linkedin-partner"
+          strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: `_linkedin_partner_id = "10508729";
 window._linkedin_data_partner_ids = window._linkedin_data_partner_ids || [];
 window._linkedin_data_partner_ids.push(_linkedin_partner_id);`,
           }}
         />
-        <script
+        <Script
+          id="linkedin-insight"
+          strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: `(function(l) {
 if (!l){window.lintrk = function(a,b){window.lintrk.q.push([a,b])};

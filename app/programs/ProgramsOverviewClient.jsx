@@ -139,7 +139,7 @@ const ProgramsOverview = () => {
                                 const style = getCategoryStyle(program.category, program.id);
                                 const IconComponent = style.icon;
                                 return (
-                                    <Link href={`/programs/${program.id}`} key={program.id || index} className="group">
+                                    <Link href={`/programs/${program.active_path || program.shortName?.toLowerCase() || program.title?.toLowerCase().replace(/[^a-z0-9]+/g, '-') || program.id}`} key={program.id || index} className="group">
                                         <motion.div
                                             whileHover={{ y: -8 }}
                                             className="bg-white rounded-2xl overflow-hidden shadow-lg shadow-slate-200/50 border border-slate-100 h-full flex flex-col"
@@ -196,7 +196,7 @@ const ProgramsOverview = () => {
                                 const style = getCategoryStyle(program.category, program.id);
                                 const IconComponent = style.icon;
                                 return (
-                                    <Link href={`/programs/${program.id}`} key={program.id || index} className="group">
+                                    <Link href={`/programs/${program.active_path || program.shortName?.toLowerCase() || program.title?.toLowerCase().replace(/[^a-z0-9]+/g, '-') || program.id}`} key={program.id || index} className="group">
                                         <motion.div
                                             whileHover={{ y: -8 }}
                                             className="bg-white rounded-2xl overflow-hidden shadow-lg shadow-slate-200/50 border border-slate-100 flex flex-col md:flex-row h-full"

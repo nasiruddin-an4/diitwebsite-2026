@@ -72,7 +72,7 @@ const ProgramExplorer = ({ data }) => {
                         filteredPrograms.map((program) => (
                             <Link
                                 key={program?.id}
-                                href={`/programs/${program?.id}`}
+                                href={`/programs/${program?.active_path || program?.shortName?.toLowerCase() || program?.title?.toLowerCase().replace(/[^a-z0-9]+/g, '-') || program?.id}`}
                                 className="group p-4 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-500 overflow-hidden border border-gray-100 bg-white block"
                             >
                                 {/* Image Section */}
@@ -104,7 +104,7 @@ const ProgramExplorer = ({ data }) => {
                                         <span
                                             onClick={(e) => {
                                                 e.preventDefault();
-                                                window.location.href = `/programs/${program?.id}`;
+                                                window.location.href = `/programs/${program?.active_path || program?.shortName?.toLowerCase() || program?.title?.toLowerCase().replace(/[^a-z0-9]+/g, '-') || program?.id}`;
                                             }}
                                             className="group/link flex items-center gap-2 text-blue-900 font-bold text-md hover:text-blue-600 transition-all duration-300 cursor-pointer"
                                         >

@@ -26,7 +26,8 @@ export async function generateMetadata({ params }) {
             (p) =>
                 String(p.id) === String(id) ||
                 p.shortName?.toLowerCase() === String(id).toLowerCase() ||
-                p.active_path === String(id)
+                p.active_path === String(id) ||
+                p.title?.toLowerCase().replace(/[^a-z0-9]+/g, '-') === String(id).toLowerCase()
         );
     }
 
@@ -74,7 +75,7 @@ export async function generateMetadata({ params }) {
             url: `https://diit.edu.bd/programs/${id}`,
             images: [
                 {
-                    url: program.heroImage || program.image || "https://diit.edu.bd/default-og.jpg",
+                    url: program.departmentImage || program.heroImage || program.image || "https://diit.edu.bd/default-og.jpg",
                     width: 1200,
                     height: 630,
                     alt: program.title,
@@ -86,7 +87,7 @@ export async function generateMetadata({ params }) {
             card: 'summary_large_image',
             title,
             description: description.substring(0, 160),
-            images: [program.heroImage || program.image || "https://diit.edu.bd/default-og.jpg"],
+            images: [program.departmentImage || program.heroImage || program.image || "https://diit.edu.bd/default-og.jpg"],
         },
     };
 }

@@ -98,8 +98,9 @@ const DynamicProgramPage = () => {
       mthm: "MTHM",
     };
 
-    const categoryLower = category.toLowerCase();
-    const mappedDept = deptMapping[categoryLower] || category.toUpperCase();
+    const categoryStr = String(category || "engineering");
+    const categoryLower = categoryStr.toLowerCase();
+    const mappedDept = deptMapping[categoryLower] || categoryStr.toUpperCase();
 
     // Faculty
     if (allFaculty && allFaculty.length > 0) {
@@ -140,7 +141,8 @@ const DynamicProgramPage = () => {
         (p) =>
           String(p.id) === String(id) ||
           p.shortName?.toLowerCase() === String(id).toLowerCase() ||
-          p.active_path === String(id),
+          p.active_path === String(id) ||
+          p.title?.toLowerCase().replace(/[^a-z0-9]+/g, '-') === String(id).toLowerCase(),
       );
     } else if (typeof programs === "object") {
       if (programs[id]) {
@@ -150,7 +152,9 @@ const DynamicProgramPage = () => {
         found = arr.find(
           (p) =>
             String(p.id) === String(id) ||
-            p.shortName?.toLowerCase() === String(id).toLowerCase(),
+            p.shortName?.toLowerCase() === String(id).toLowerCase() ||
+            p.active_path === String(id) ||
+            p.title?.toLowerCase().replace(/[^a-z0-9]+/g, '-') === String(id).toLowerCase(),
         );
       }
     }
@@ -158,8 +162,9 @@ const DynamicProgramPage = () => {
     if (found) {
       setProgram(found);
       // Process department data from pre-loaded store
-      const category = found.category || found.department || "engineering";
-      processDepartmentData(category);
+      // Prioritize shortName/id because they are more specific than a broad category (e.g. BTHM vs Business)
+      const specificId = found.shortName || found.id || found.category || found.department || "engineering";
+      processDepartmentData(specificId);
     } else {
       setProgram(null);
     }
