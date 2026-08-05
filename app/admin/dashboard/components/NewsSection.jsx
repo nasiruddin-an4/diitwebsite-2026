@@ -51,6 +51,14 @@ export default function NewsSection({ data, updateField }) {
     ? data.newsEvents.filter((item) => item.category !== "BLOG")
     : [];
 
+  const categoryOptions = useMemo(() => {
+    const defaultCats = ["NEWS", "EVENT", "ACADEMIC", "BLOG"];
+    const allItems = Array.isArray(data?.newsEvents) ? data.newsEvents : [];
+    const extractedCats = allItems.map(n => n.category).filter(Boolean);
+    const uniqueCats = [...new Set([...defaultCats, ...extractedCats])];
+    return uniqueCats;
+  }, [data?.newsEvents]);
+
   const handleAdd = () => {
     setIsCreating(true);
     setEditingItem({ ...template });
@@ -425,18 +433,20 @@ export default function NewsSection({ data, updateField }) {
                           <label className="block text-[11px] font-black text-slate-400 uppercase tracking-wider">
                             Classification
                           </label>
-                          <select
+                          <input
+                            list="news-categories"
                             className="w-full bg-slate-50 border border-slate-200 rounded-md px-4 py-2.5 text-sm font-semibold text-slate-700 focus:bg-white focus:border-blue-500 focus:outline-none transition-all outline-none h-[42px]"
-                            value={editingItem.category}
+                            value={editingItem.category || ""}
                             onChange={(e) =>
                               updateLocalField("category", e.target.value)
                             }
-                          >
-                            <option value="NEWS">General News</option>
-                            <option value="EVENT">Upcoming Event</option>
-                            <option value="ACADEMIC">Academic News</option>
-                            <option value="BLOG">Blog</option>
-                          </select>
+                            placeholder="Select or type new"
+                          />
+                          <datalist id="news-categories">
+                            {categoryOptions.map((cat) => (
+                              <option key={cat} value={cat} />
+                            ))}
+                          </datalist>
                         </div>
                       </div>
 

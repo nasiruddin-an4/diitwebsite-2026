@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
+import Swal from "sweetalert2";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Plus,
@@ -15,14 +16,6 @@ import {
   FileText,
 } from "lucide-react";
 import FileUpload from "@/app/components/FileUpload";
-
-const categoryOptions = [
-  { value: "Academic", label: "Academic" },
-  { value: "Exam", label: "Exam" },
-  { value: "Admission", label: "Admission" },
-  { value: "Event", label: "Event" },
-  { value: "General", label: "General" },
-];
 
 const departmentOptions = [
   { value: "All", label: "All Departments" },
@@ -41,6 +34,30 @@ export default function NoticesSection() {
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState(null);
+
+  const categoryOptions = useMemo(() => {
+    const defaultCats = ["Academic", "Exam", "Admission", "Event", "General"];
+    const extractedCats = notices.map(n => n.category).filter(Boolean);
+    const uniqueCats = [...new Set([...defaultCats, ...extractedCats])];
+    return uniqueCats;
+  }, [notices]);
+
+  const sortedNotices = useMemo(() => {
+    return [...notices].sort((a, b) => {
+      const dateA = new Date(a.date || 0).getTime();
+      const dateB = new Date(b.date || 0).getTime();
+      
+      if (dateB !== dateA) {
+        return (isNaN(dateB) ? 0 : dateB) - (isNaN(dateA) ? 0 : dateA);
+      }
+      
+      // If same date, most recently added first
+      if (a._id && b._id) {
+         return a._id > b._id ? -1 : 1;
+      }
+      return 0;
+    });
+  }, [notices]);
 
   useEffect(() => {
     fetchNotices();
@@ -147,7 +164,17 @@ export default function NoticesSection() {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm("Are you sure you want to delete this notice?")) return;
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: "Are you sure you want to delete this notice?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    });
+
+    if (!result.isConfirmed) return;
 
     try {
       const res = await fetch(`/api/admin/academics/notices?id=${id}`, {
@@ -279,19 +306,18 @@ export default function NoticesSection() {
                     <label className="block text-sm font-medium text-slate-700 mb-2">
                       Category
                     </label>
-                    <select
-                      value={formData.category}
-                      onChange={(e) =>
-                        handleFieldChange("category", e.target.value)
-                      }
+                    <input
+                      list="notice-categories"
+                      value={formData.category || ""}
+                      onChange={(e) => handleFieldChange("category", e.target.value)}
                       className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                      {categoryOptions.map((opt) => (
-                        <option key={opt.value} value={opt.value}>
-                          {opt.label}
-                        </option>
+                      placeholder="Select or type new"
+                    />
+                    <datalist id="notice-categories">
+                      {categoryOptions.map((cat) => (
+                        <option key={cat} value={cat} />
                       ))}
-                    </select>
+                    </datalist>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-slate-700 mb-2">
@@ -478,7 +504,7 @@ export default function NoticesSection() {
             </p>
           </div>
         ) : (
-          notices.map((notice) => (
+          sortedNotices.map((notice) => (
             <motion.div
               key={notice._id}
               initial={{ opacity: 0, y: 10 }}

@@ -36,21 +36,27 @@ const momentDate = (dateStr) => {
 };
 
 const NoticesFeed = ({ initialNotices }) => {
-  const categories = [
-    "All",
-    "Academic",
-    "Exam",
-    "Admission",
-    "Event",
-    "General",
-  ];
+  const categories = React.useMemo(() => {
+    const defaultCats = ["Academic", "Exam", "Admission", "Event", "General"];
+    const extractedCats = (initialNotices || []).map(n => n.category).filter(Boolean);
+    const uniqueCats = [...new Set([...defaultCats, ...extractedCats])];
+    return ["All", ...uniqueCats];
+  }, [initialNotices]);
   const departments = ["All", "BBA", "CSE", "BTHM", "MBA", "MTHM"];
   const [filter, setFilter] = useState("All");
   const [departmentFilter, setDepartmentFilter] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [showMobileFilters, setShowMobileFilters] = useState(false);
-  const notices = initialNotices || [];
-
+  
+  const notices = React.useMemo(() => {
+    return [...(initialNotices || [])].sort((a, b) => {
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+      const timeA = isNaN(dateA.getTime()) ? 0 : dateA.getTime();
+      const timeB = isNaN(dateB.getTime()) ? 0 : dateB.getTime();
+      return timeB - timeA;
+    });
+  }, [initialNotices]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const isFirstRun = useRef(true);
@@ -322,8 +328,13 @@ const NoticesFeed = ({ initialNotices }) => {
                                   {notice.department}
                                 </span>
                               )}
-                            <span className="sm:hidden text-xs text-slate-400 font-medium">
-                              {notice.date}
+                            <span className="flex items-center gap-1.5 text-xs text-slate-500 font-semibold sm:ml-2">
+                              <Calendar className="w-3.5 h-3.5 text-slate-400" />
+                              {notice.date ? (
+                                !isNaN(new Date(notice.date).getTime()) 
+                                  ? new Date(notice.date).toLocaleDateString("en-US", { year: 'numeric', month: 'short', day: 'numeric' })
+                                  : notice.date
+                              ) : ""}
                             </span>
                           </div>
                         </div>

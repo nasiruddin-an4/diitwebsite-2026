@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Play,
@@ -15,17 +15,7 @@ import { useStoreData } from "@/hooks/useDataStore";
 
 const ITEMS_PER_PAGE = 12;
 
-// Video categories matching admin panel
-const categories = [
-  "All",
-  "Campus Life",
-  "Events",
-  "Seminars",
-  "Workshops",
-  "Student Activities",
-  "Achievements",
-  "Others",
-];
+// Video categories are generated dynamically
 
 /**
  * Extract a YouTube video ID from common URL formats.
@@ -59,6 +49,21 @@ const VideoGalleryPage = () => {
 
   // Read videos from global data store (pre-loaded)
   const videos = useStoreData("videos", []) || [];
+
+  const categories = useMemo(() => {
+    const defaultCats = [
+      "Campus Life",
+      "Events",
+      "Seminars",
+      "Workshops",
+      "Student Activities",
+      "Achievements",
+      "Others",
+    ];
+    const extractedCats = videos.map(v => v.category).filter(Boolean);
+    const uniqueCats = [...new Set([...defaultCats, ...extractedCats])];
+    return ["All", ...uniqueCats];
+  }, [videos]);
 
   useEffect(() => {
     setMounted(true);

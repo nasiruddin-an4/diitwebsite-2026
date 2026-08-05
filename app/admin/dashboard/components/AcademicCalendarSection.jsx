@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Swal from "sweetalert2";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Plus,
@@ -167,7 +168,17 @@ export default function AcademicCalendarSection() {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm("Are you sure you want to delete this month's events?")) return;
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: "Are you sure you want to delete this month's events?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    });
+
+    if (!result.isConfirmed) return;
 
     try {
       const res = await fetch(`/api/admin/academics/calendar?id=${id}`, {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Swal from "sweetalert2";
 import {
@@ -21,16 +21,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 
-// Video categories
-const categoryOptions = [
-  { value: "Campus Life", label: "Campus Life" },
-  { value: "Events", label: "Events" },
-  { value: "Seminars", label: "Seminars" },
-  { value: "Workshops", label: "Workshops" },
-  { value: "Student Activities", label: "Student Activities" },
-  { value: "Achievements", label: "Achievements" },
-  { value: "Others", label: "Others" },
-];
+// Video categories are generated dynamically
 
 /**
  * Extract a YouTube video ID from common URL formats.
@@ -61,6 +52,21 @@ export default function VideoGallerySection() {
   const [sortOrderChanged, setSortOrderChanged] = useState(false);
   const [savingOrder, setSavingOrder] = useState(false);
   const [editableSortOrders, setEditableSortOrders] = useState({});
+
+  const categoryOptions = useMemo(() => {
+    const defaultCats = [
+      "Campus Life",
+      "Events",
+      "Seminars",
+      "Workshops",
+      "Student Activities",
+      "Achievements",
+      "Others",
+    ];
+    const extractedCats = videos.map(v => v.category).filter(Boolean);
+    const uniqueCats = [...new Set([...defaultCats, ...extractedCats])];
+    return uniqueCats.map(c => ({ value: c, label: c }));
+  }, [videos]);
 
   useEffect(() => {
     fetchVideos();
@@ -414,24 +420,22 @@ export default function VideoGallerySection() {
                   </p>
                 </div>
 
-                {/* Category */}
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-2">
                     Category
                   </label>
-                  <select
-                    value={formData.category}
-                    onChange={(e) =>
-                      handleFieldChange("category", e.target.value)
-                    }
+                  <input
+                    list="video-categories"
+                    value={formData.category || ""}
+                    onChange={(e) => handleFieldChange("category", e.target.value)}
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
+                    placeholder="Select or type new"
+                  />
+                  <datalist id="video-categories">
                     {categoryOptions.map((opt) => (
-                      <option key={opt.value} value={opt.value}>
-                        {opt.label}
-                      </option>
+                      <option key={opt.value} value={opt.value} />
                     ))}
-                  </select>
+                  </datalist>
                 </div>
 
                 {/* Description */}

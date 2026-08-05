@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Save, Loader2 } from "lucide-react";
+import Swal from "sweetalert2";
 import { InputField } from "./InputField";
 
 export default function AdmissionEligibilitySection() {
@@ -43,10 +44,10 @@ export default function AdmissionEligibilitySection() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedData),
       });
-      alert("Changes saved successfully!");
+      Swal.fire({ icon: "success", title: "Saved", text: "Changes saved successfully!", toast: true, position: "top-end", timer: 3000, showConfirmButton: false });
     } catch (error) {
       console.error("Failed to save data", error);
-      alert("Failed to save data");
+      Swal.fire({ icon: "error", title: "Error", text: "Failed to save data" });
     } finally {
       setSaving(false);
     }
