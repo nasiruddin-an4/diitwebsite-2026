@@ -249,72 +249,111 @@ body {
   font-size: 0.875rem;
 }
 
-/* Eligibility-specific list styling */
-.rich-text-eligibility ul {
+/* Eligibility-specific list styling - Responsive Table/Card View */
+.rich-text-eligibility > ul {
   list-style: none;
   padding-left: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 0.75rem;
-}
-
-.rich-text-eligibility li {
   display: flex;
-  align-items: flex-start;
-  gap: 0.75rem;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-top: 1rem;
+}
+
+/* Top-level list items (Group Cards) */
+.rich-text-eligibility > ul > li {
   background: white;
-  padding: 1rem 1.25rem;
-  border-radius: 0.75rem;
-  border: 1px solid #dbeafe;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: #334155;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
   margin-bottom: 0;
-  padding-left: 1.25rem;
+  position: relative;
 }
 
-.rich-text-eligibility li::before {
-  content: "";
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  min-width: 8px;
-  background: #3b82f6;
-  border-radius: 50%;
-  margin-top: 6px;
+.rich-text-eligibility > ul > li::before {
+  content: none !important;
 }
 
-.rich-text-eligibility li::marker {
-  content: none;
+/* Group Title (e.g., Business Studies Group) */
+.rich-text-eligibility > ul > li > strong {
+  display: block;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid #f8fafc;
 }
 
-.rich-text-eligibility ol {
+/* Nested lists (The requirements grid) */
+.rich-text-eligibility > ul > li > ul {
   list-style: none;
   padding-left: 0;
+  margin: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: 1fr;
   gap: 0.75rem;
-  counter-reset: eligibility-counter;
 }
 
-.rich-text-eligibility ol li {
-  counter-increment: eligibility-counter;
+@media (min-width: 640px) {
+  .rich-text-eligibility > ul > li > ul {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
 }
 
-.rich-text-eligibility ol li::before {
-  content: counter(eligibility-counter);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px;
-  height: 22px;
-  min-width: 22px;
-  background: #3b82f6;
-  color: white;
-  border-radius: 50%;
-  font-size: 0.7rem;
-  font-weight: 700;
-  margin-top: 1px;
+/* Nested list items (Requirement Cells) */
+.rich-text-eligibility > ul > li > ul > li {
+  background: #f8fafc;
+  padding: 1.25rem 1rem;
+  border-radius: 0.75rem;
+  border: 1px solid #f1f5f9;
+  display: flex;
+  flex-direction: column;
+  font-size: 0.875rem;
+  color: #475569;
+  line-height: 1.5;
+  transition: all 0.2s ease;
+}
+
+.rich-text-eligibility > ul > li > ul > li:hover {
+  background: white;
+  border-color: #bfdbfe;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.05);
+}
+
+.rich-text-eligibility > ul > li > ul > li::before {
+  content: none !important;
+}
+
+/* Highlight the labels in cells */
+.rich-text-eligibility > ul > li > ul > li > strong:first-child {
+  color: #2563eb;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 800;
+  display: block;
+  margin-bottom: 0.35rem;
+}
+
+/* For non-nested lists (e.g., Passing Years) */
+.rich-text-eligibility > ul > li:not(:has(ul)) {
+  display: flex;
+  flex-direction: column;
+  padding: 1.25rem;
+  background: #f8fafc;
+}
+
+.rich-text-eligibility > ul > li:not(:has(ul)) > strong {
+  color: #3b82f6;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 800;
+  border-bottom: none;
+  margin-bottom: 0.25rem;
+  padding-bottom: 0;
 }
 
 /* ===== Marquee Notice Bar ===== */

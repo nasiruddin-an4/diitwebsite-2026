@@ -268,7 +268,7 @@ const DynamicProgramPage = () => {
               )}
             </h1>
             <div
-              className="program-rich-content program-rich-content--light text-lg max-w-xl leading-relaxed mb-8"
+              className="rich-text-content rich-text-content--light text-lg max-w-xl leading-relaxed mb-8"
               dangerouslySetInnerHTML={{
                 __html: cleanHtml(
                   safeProgram.description ||
@@ -344,7 +344,7 @@ const DynamicProgramPage = () => {
                   Message from the Head
                 </h3>
                 <div
-                  className="program-rich-content program-rich-content--compact italic mb-4"
+                  className="rich-text-content rich-text-content--compact italic mb-4"
                   dangerouslySetInnerHTML={{
                     __html: cleanHtml(
                       safeProgram.headMessage || "Welcome to our program",
@@ -370,7 +370,7 @@ const DynamicProgramPage = () => {
                 <span className="w-2 h-8 bg-blue-600 rounded-full"></span>{" "}
                 Program Overview
               </h2>
-              <div className="program-rich-content bg-white p-8 rounded-2xl border border-slate-100 shadow-sm">
+              <div className="rich-text-content bg-white p-8 rounded-2xl border border-slate-100 shadow-sm">
                 {typeof safeProgram.overview === "string" ? (
                   <div
                     dangerouslySetInnerHTML={{
@@ -401,7 +401,7 @@ const DynamicProgramPage = () => {
               <div>
                 {typeof safeProgram.eligibility === "string" ? (
                   <div
-                    className="program-rich-content program-rich-eligibility"
+                    className="rich-text-content rich-text-eligibility"
                     dangerouslySetInnerHTML={{
                       __html: cleanHtml(safeProgram.eligibility),
                     }}
@@ -437,9 +437,9 @@ const DynamicProgramPage = () => {
               Curriculum Highlights
             </h2>
             <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse">
-                  <thead>
+              <div className="w-full">
+                <table className="w-full text-left border-collapse flex flex-col md:table">
+                  <thead className="hidden md:table-header-group">
                     <tr className="bg-slate-50 border-b border-slate-100">
                       <th className="p-4 font-bold text-slate-900 w-1/4">
                         Semester
@@ -449,21 +449,21 @@ const DynamicProgramPage = () => {
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100">
+                  <tbody className="flex flex-col md:table-row-group divide-y divide-slate-100">
                     {safeProgram.curriculum.map((item, idx) => (
                       <tr
                         key={idx}
-                        className="hover:bg-slate-50/50 transition-colors"
+                        className="flex flex-col md:table-row hover:bg-slate-50/50 transition-colors"
                       >
-                        <td className="p-3 sm:p-4 font-bold text-blue-600 whitespace-nowrap align-middle">
+                        <td className="p-4 md:p-4 font-bold text-blue-700 md:text-blue-600 bg-slate-50/80 md:bg-transparent md:whitespace-nowrap align-middle border-b border-slate-100 md:border-none">
                           {item.semester}
                         </td>
-                        <td className="p-3 sm:p-4 align-middle">
+                        <td className="p-4 md:p-4 align-middle">
                           <div className="flex flex-wrap gap-2">
                             {item.subjects.map((sub, sIdx) => (
                               <span
                                 key={sIdx}
-                                className="inline-block px-2.5 py-1 bg-slate-100 text-slate-600 text-xs font-bold rounded border border-slate-200"
+                                className="inline-block px-3 py-1.5 md:px-2.5 md:py-1 bg-white md:bg-slate-100 text-slate-700 md:text-slate-600 text-[13px] md:text-xs font-semibold md:font-bold rounded-md border border-slate-200 shadow-sm md:shadow-none"
                               >
                                 {sub}
                               </span>
@@ -531,7 +531,7 @@ const DynamicProgramPage = () => {
                         </h4>
                         {career.description && (
                           <div
-                            className="program-rich-content program-rich-content--compact text-slate-500 text-sm mb-3 line-clamp-4"
+                            className="rich-text-content rich-text-content--compact text-slate-500 text-sm mb-3 line-clamp-4"
                             dangerouslySetInnerHTML={{
                               __html: cleanHtml(career.description),
                             }}
